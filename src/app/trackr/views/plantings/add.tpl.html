@@ -1,0 +1,39 @@
+<div class="">
+	<h3>New Planting</h3>
+	<form name="form">
+		<legend>Planting</legend>
+		<div class="row-fluid">
+
+			<div class="control-group">
+				<label>What?</label>
+				<input type="text" name="plant" data-model="plant" required autofocus class="span3">
+			</div>
+
+			<div class="control-group">
+				<label>Where?</label>
+				<select id="quick-add-places" class="selectpicker" name="place select-block" data-model="place" required>
+					{{#each places}}
+				  <option value="{{this._id}}">{{this.name}}</option>
+				  {{/each}}
+				</select>
+			</div>
+
+			<div class="control-group">
+				<label>When?</label>
+				<input type="text" name="date" data-model="date" required value="2012-07-17" class="span1">
+			</div>
+
+			<div class="control-group">
+				<label>How?</label>
+				<select name="how" data-model="how" class="selectpicker">
+					<option>Planted</option>
+					<option>Sowed</option>
+				</select>
+			</div>
+		</div>
+		<div class="row-fluid">
+			<hr>
+			<a class="btn btn-primary btn-block save-button" data-action="save"><i class="icon icon-white icon-ok"></i> Save</a>
+		</div>
+	</form>
+</div>

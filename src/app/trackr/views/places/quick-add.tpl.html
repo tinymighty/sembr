@@ -1,0 +1,30 @@
+	<div class="row-fluid" data-role="view" data-view="form">
+
+		<div class="control-group">
+			<label>Name</label>
+			<input type="text" name="name" data-model="name" required autofocus>
+		</div>
+
+    <label class="checkbox" for="is-subplace">
+      <input type="checkbox" value="" id="is-subplace" data-toggle="checkbox" data-action="show-subplace">
+      Part of another place...
+    </label>
+
+		<div class="control-group" hidden id="subplace-of">
+			<label>Which?</label>
+			<select id="quick-add-places" class="selectpicker" name="place" data-model="place">
+				{{#each places}}
+			  <option value="">{{this}}</option>
+			  {{/each}}
+			</select>
+		</div>
+
+		<hr>
+		<div class="row-fluid">
+			<button class="btn btn-primary btn-mini btn-block save-button span8" data-action="save"><i class="fui-check"></i> Add</button>
+			<button class="btn btn-mini btn-block save-button span4" data-action="cancel"><i class="fui-cross"></i></button>
+		</div>
+	</div>
+	<div data-role="view" data-view="success" hidden>
+		<span class="fui-check-inverted" style="font-size:40px"></span>
+	</div>

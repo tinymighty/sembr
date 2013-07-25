@@ -1,0 +1,43 @@
+			<div class="" data-popover="addAction">
+				<div class="control-group">
+					<select name="action" data-model="action_type" class="selectpicker">
+						<option value="planting">Planting</option>
+						<option value="harvest">Harvest</option>
+						<option value="observation">Observation</option>
+					</select>
+				</div>
+
+				<div class="control-group">
+				  <div class="input-prepend input-datepicker">
+				    <button type="button" class="btn">
+				      <span class="fui-calendar"></span>
+				    </button>
+				    <input type="text" class="span2 hasDatepicker" value="{{date}}" data-model="date" id="add-action-date" />
+				  </div>
+				</div>
+
+				<div class="planting_fields" hidden>
+					
+				</div>
+				<div class="harvest_fields" hidden>
+					
+				</div>
+				<div class="observation_fields" hidden>
+					
+				</div>
+
+
+				<div class="control-group">
+					<textarea placeholder="Notes..." value="" name="notes" data-model="notes"></textarea>
+				</div>
+
+				<a href="#" class="btn btn-primary btn-block btn-large" data-action="save"><i class="icon icon-white icon-ok"></i> Save</a>
+			</div>
+
+			<div class="" data-model="action_type"></div>
+			<div class="" data-model="date"></div>
+			<div class="" data-model="notes"></div>
+
+		</div>
+
+		<!--<a class="btn btn-primary" href="" data-action="" data-contentProvider="addAction"><i class="icon icon-white icon-plus-sign"></i> Add Action</a>-->

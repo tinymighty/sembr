@@ -1,0 +1,37 @@
+{
+    "name":"Sembr",
+    "title":"Sembr",
+    "description":"",
+    "version":"0.0.1",
+    "homepage":"http://sembr.es",
+    "author":{
+        "name":"Andru Vallance",
+        "email":"andru@tinymighty.com",
+        "url":"http://andru.tinymighty.com"
+    },
+    "repository":{
+        "type":"git",
+        "url":"git@github.com:andru/Sembr.git"
+    },
+    "bugs":{
+        "url":"https://github.com/andru/Sembr/issues"
+    },
+    "licenses":[
+        {
+            "type":"MIT",
+            "url":"https://github.com/Sembr/blob/master/LICENSE-MIT"
+        }
+    ],
+    "dependencies":{
+        "express":"3.x"
+    },
+    "devDependencies":{
+        "express":"3.x",
+        "grunt":"~0.4.1",
+        "grunt-contrib-requirejs":"~0.4.0",
+        "grunt-contrib-jshint":"~0.3.0",
+        "uglify-js":"~2.2.5"
+    },
+    "main":"./server/server",
+    "keywords":["Sembr"]
+}
