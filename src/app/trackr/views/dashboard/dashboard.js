@@ -1,5 +1,5 @@
-define( ['sembr', 'backbone', 'marionette', 'jquery', '../collections/planting-actions.js', '../models/action.js', '../views/actions.js', 'hbs!./show.tpl'],
-function(Sembr, Backbone, Marionette, $, PlantingActionsCollection, ActionModel, PlantingActionsView, template) {
+define( ['sembr', 'backbone', 'marionette', 'jquery', 'hbs!./dashboard.tpl'],
+function(Sembr, Backbone, Marionette, $, template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.ItemView.extend( {
     tagName: 'div',
@@ -9,3 +9,5 @@ function(Sembr, Backbone, Marionette, $, PlantingActionsCollection, ActionModel,
     events: {
         'click [data-action="addAction"]': 'addAction'
     },
+  });
+});

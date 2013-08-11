@@ -8,6 +8,7 @@ require.config({
 
         "sembr": "core/sembr",
         "sembr.modulerouter": "core/module-router",
+        "sembr.controller": "core/controller",
 
         "jquery":"../libs/jquery/jquery",
         "jquerymobile":"../libs/jquery/jquery.mobile",
@@ -20,6 +21,7 @@ require.config({
         "backbone.modelbinder":"../libs/backbone/backbone.modelbinder",
         "backbone.forms":"../libs/backbone/backbone.forms",
         "backbone.deep-model":"../libs/backbone/backbone.deep-model",
+        "backbone.relational":"../libs/backbone/backbone.relational",
 
         "pouchdb": "../libs/pouchdb",
 
@@ -85,6 +87,7 @@ require.config({
             "deps":["backbone"],
         },
         "backbone.deep-model":{ "deps":["backbone"] },
+        "backbone.relational":{ "deps":["backbone"] },
 
         //Marionette
         "marionette":{

@@ -2,30 +2,27 @@
 		Marionette = require('marionette'),
 		Layout = require('view/plantings/layout'),
 		Collection = require('../collections/plantings');*/
-define(['sembr', 'backbone', 'backbone.collectionbinder','marionette', 
-	'../views/layout.js', '../collections/plantings.js', '../models/planting.js', '../collections/planting-actions.js',
+define(['sembr', 'sembr.controller', 'backbone', 'backbone.collectionbinder','marionette', 
+	'../views/layout.js', '../views/dashboard/dashboard.js',
 	"components/loader/loader"],
-function (Sembr, Backbone, CB, Marionette, 
-	Layout, Collection, PlantingModel, PlantingActionsCollection,
+function (Sembr, Controller, Backbone, CB, Marionette, 
+	Layout, DashboardView,
 	LoaderView) {
-
-	var DashboardController = Backbone.Marionette.Controller.extend({
+	var DashboardController = Controller.extend({
 
 		initialize:function (options) {
 				this.layout = new Layout();
-				this.collection = new Collection();
-
 		},
 
 		beforeModuleRoute: function(){
-			console.log('Setting plantings layout!');
+			console.log('Controller ID', this.id);
+			//console.log('Setting plantings layout!');
 			Sembr.layout.setContent( this.layout );
 			//this.layout.sidebar.show( new Sidebar({collection: this.collection}) );
 		},
 
-
 		dashboard: function(){
-
+			this.layout.main.show( new DashboardView() );
 		}
 
 

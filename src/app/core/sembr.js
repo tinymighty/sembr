@@ -13,6 +13,8 @@ function (Backbone, PouchDB, BackbonePouch, Marionette, _, Handlebars) {
         body: "body"
     });
 
+    Sembr.user = new Backbone.Model({'_id': 'sembr.es/user/andru', 'username': 'andru', 'email':'andru@sembr.es'}),
+
     Sembr.addInitializer(function () {
         console.log('Sembr has loaded', Sembr);
 

@@ -1,7 +1,7 @@
-define(["jquery", "backbone", 'backbone.pouch'],
-    function($, Backbone, Pouch) {
+define(["jquery", "backbone", 'backbone.pouch', 'backbone.relational'],
+    function($, Backbone, Pouch, RM) {
         // Creates a new Backbone Model class object
-        var Place = Backbone.Model.extend({
+        var Place = Backbone.RelationalModel.extend({
 
             // Model Constructor
             initialize: function() {

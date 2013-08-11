@@ -87,6 +87,7 @@
       var deferred = new jQuery.Deferred();
       var self = this;
 
+      console.log('Pouch: Sync call', method, model, options);
       options = options || {};
       applyDefaults(options, model && model.pouch || {});
       applyDefaults(options, defaults);
@@ -103,6 +104,7 @@
       }
 
       function callback(err, response) {
+        console.log("Pouch: Query result", err, response);
         if (err) {
           return options.error && options.error(err);
         }
@@ -169,9 +171,24 @@
         //we now have to bind to the sync event to resolve  
         //if we resolve here then it's too soon, and anything waiting for the promise
         //will be executed before the rows have been applied to the collection
-        model.once('sync', function(){ deferred.resolve(model, response); });
+        model.once('sync', function(){
+          deferred.resolve(model, response);
+        });
 
-        return options.success && options.success(response);
+        //if the model/collection has the ability to load related JSON objects, do it!
+        if(model.fetchRelatedJSON && options.success){
+          console.log('Pouch: Fetching related JSON', model);
+          //once the model/collection has loaded the related JSON, run the success callback
+          //which in turn triggers the sync event
+          //and thus finally resolves the promise returned by the sync method
+          return model.fetchRelatedJSON(response).then(function(response){
+            console.log('Pouch: Related JSON fetched', arguments);
+            options.success(response);
+          });
+        }else{
+          return options.success && options.success(response);
+        }
+
       }
 
       model.trigger('request', model, options.db, options);

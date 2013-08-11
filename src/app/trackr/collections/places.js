@@ -9,6 +9,7 @@ define(["jquery","backbone","../models/place.js"],
 	          fun: {
 	            map: function(doc) {
 	            	if(doc.type==="place"){
+	            		console.log("fetching places...");
 	              	emit([doc.order, doc._id], null);
 	            	}
 	            }

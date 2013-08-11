@@ -1,6 +1,6 @@
-define(['sembr', 'backbone','../views/dashboard.js'],
-function (Sembr, Backbone, DashboardView, HeaderView) {
-    return Backbone.Marionette.Controller.extend({
+define(['sembr', 'backbone', 'sembr.controller', '../views/dashboard.js'],
+function (Sembr, Backbone, Controller, DashboardView, HeaderView) {
+    return Controller.extend({
 
         //gets mapped to in AppRouter's appRoutes
         home: function() {
