@@ -1,5 +1,5 @@
-define(['backbone', 'pouchdb', 'backbone.pouch', 'marionette', 'underscore', 'handlebars'],
-function (Backbone, PouchDB, BackbonePouch, Marionette, _, Handlebars) {
+define(['backbone', 'pouchdb', 'sembr.sync.pouch', 'marionette', 'sembr.module', 'underscore', 'handlebars'],
+function (Backbone, PouchDB, PouchSync, Marionette, Module, _, Handlebars) {
     console.log('Building Sembr');
 
     var Sembr = new Backbone.Marionette.Application({});
@@ -9,16 +9,24 @@ function (Backbone, PouchDB, BackbonePouch, Marionette, _, Handlebars) {
         return ((/iPhone|iPod|iPad|Android|BlackBerry|Opera Mini|IEMobile/).test(userAgent));
     }
 
+    //setup PouchDB to work with Backbone
+    Sembr.db = PouchDB('sembr');
+    PouchSync.db = Sembr.db;
+    Backbone.sync =  PouchSync;
+    Backbone.Model.prototype.idAttribute = '_id';
+
     Sembr.addRegions({
         body: "body"
     });
 
+    //temporary demo user!
     Sembr.user = new Backbone.Model({'_id': 'sembr.es/user/andru', 'username': 'andru', 'email':'andru@sembr.es'}),
+
 
     Sembr.addInitializer(function () {
         console.log('Sembr has loaded', Sembr);
 
-        Sembr.layout = Sembr.submodules.Layout; //for convenience
+        //Sembr.layout = Sembr.submodules.Layout; //for convenience
 
 
         _(Sembr.submodules).each(function(module, name){
@@ -38,9 +46,10 @@ function (Backbone, PouchDB, BackbonePouch, Marionette, _, Handlebars) {
     });
 
     Sembr.on("initialize:after", function(options){
+        console.log('Application initialized, starting Backbone.history');
         Backbone.history.start({pushState: true});
         //temporary hack for navigate until we make a proper app router
-        Sembr.navigate = Sembr.submodules.Default.router.navigate;
+        Sembr.navigate = Sembr.submodules.default.router.navigate;
     });
 
     Sembr.mobile = isMobile();

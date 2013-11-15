@@ -10,15 +10,11 @@ define(["jquery", "backbone", "marionette"], function($, Backbone, Marionette ) 
     	console.log('Extending Marionette.controller');
     	var c = Marionette.Controller.extend.apply(this, arguments);
     	if(!c.id){
-    	  c.id = ++Controller.idIncrement;
+    	  c.id = c.prototype.id = ++Controller.idIncrement;
     	}
     	console.log('Controller id is ', c.id, c);
       return c;
-    
-
   };
-  console.log('Sembr Controller: ',Controller.idIncrement);
-
   return Controller;
 
 });

@@ -1,4 +1,4 @@
-define(['backbone', 'marionette'], function(Backbone, Marionette){
+define(['jquery', 'backbone', 'marionette'], function($, Backbone, Marionette){
   var ModuleRouter = Backbone.Router.extend({
 
 
@@ -61,19 +61,29 @@ define(['backbone', 'marionette'], function(Backbone, Marionette){
         func = function(route){
           return function(){
             var ci;
-            console.log("Matched route!", route,  arguments, Math.random()*1000);
-            //console.log('Router controller instances...', router.controllerInstances);
-            //if we haven't already got an instance of the controller, make one and save it for later
-            if(!router.controllerInstances[ route[1].controller.id ]){
-              ci = router.controllerInstances[ route[1].controller.id ] = new route[1].controller( route[1].options )
-            }else{
-              ci = router.controllerInstances[ route[1].controller.id ]
-            }
-            if(_(ci['beforeModuleRoute']).isFunction()){
-              ci['beforeModuleRoute'].apply(ci, arguments);
-            }
-            //call the controller method specified for this route, passing along the data from Backbone.Router
-            ci[ route[1].method ].apply(ci, arguments);
+            console.log("Matched route!", route,  arguments);
+            var route_args = Array.prototype.slice.call(arguments);
+            
+            //check to see if the module has a ready promise available
+            var ready = (router.module.ready) ? router.module.ready : true;
+            //when the module is ready, activate the route
+            $.when(ready).then(function(){
+              console.log('Routing...', route, route_args);
+              //if we haven't already got an instance of the controller, make one and save it for later
+              if(!router.controllerInstances[ route[1].controller.id ]){
+                ci = router.controllerInstances[ route[1].controller.id ] = new route[1].controller( route[1].options )
+              }else{
+                ci = router.controllerInstances[ route[1].controller.id ]
+              }
+              if(_(ci['beforeModuleRoute']).isFunction()){
+                ci['beforeModuleRoute'].apply(ci, route_args);
+              }
+
+              //call the controller method specified for this route, passing along the data from Backbone.Route
+              ci[ route[1].method ].apply(ci, route_args);
+
+            });
+
           }
         }(routes[i]);
 

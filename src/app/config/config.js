@@ -1,5 +1,13 @@
 require.config({
     baseUrl:"/app",
+
+    /*packages: [
+        'core',
+        'layout'
+        'default',
+        'trackr'
+    ],
+*/
     // 3rd party script alias names (Easier to type "jquery" than "libs/jquery, etc")
     // probably a good idea to keep version numbers in the file names for updates checking
     paths:{
@@ -8,7 +16,15 @@ require.config({
 
         "sembr": "core/sembr",
         "sembr.modulerouter": "core/module-router",
+        "sembr.module": "core/module",
         "sembr.controller": "core/controller",
+        "sembr.collection": 'core/collection',
+        "sembr.model": 'core/model',
+        "sembr.sync.pouch": 'core/sync.pouch',
+
+        'sembr.promises': 'core/promises',
+
+        "sembr.trackr": 'trackr/module',
 
         "jquery":"../libs/jquery/jquery",
         "jquerymobile":"../libs/jquery/jquery.mobile",
@@ -30,8 +46,9 @@ require.config({
         "hbs":"../libs/hbs",
         "i18nprecompile":"../libs/i18nprecompile",
         "json2":"../libs/json2",
-        "jasmine": "../libs/jasmine/jasmine",
-        "jasmine-html": "../libs/jasmine/jasmine-html",
+
+        "jasmine": "../test/lib/jasmine-1.3.1/jasmine",
+        "jasmine-html": "../test/lib/jasmine-1.3.1/jasmine-html",
 
         "bootstrap": "../libs/bootstrap/js/bootstrap",
         "bootstrap-select": "../libs/bootstrap/bootstrap-select",
@@ -103,8 +120,8 @@ require.config({
         "pouchdb":{
             "exports":"PouchDB"
         },
+
         "jasmine": {
-            // Exports the global 'window.jasmine' object
             "exports": "jasmine"
         },
 

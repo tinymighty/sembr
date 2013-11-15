@@ -1,6 +1,6 @@
-define(["jquery","backbone","../models/action.js"],
-  function($, Backbone, Action) {
-    var Collection = Backbone.Collection.extend({
+define(["sembr.trackr", "jquery", "backbone", "../models/action.js"],
+  function(trackr, $, backbone, Action) {
+    var PlantingActions = backbone.Collection.extend({
 		  
 		  model: Action,
 
@@ -20,6 +20,7 @@ define(["jquery","backbone","../models/action.js"],
 	    },
 
 	    initialize: function(options){
+	    	console.log("Initializing PlantingActions collection", this, options);
 	    	this.pouch.options.query.planting_id = options.planting_id;
 	    	this.planting_id = options.planting_id;
 	    },
@@ -27,6 +28,7 @@ define(["jquery","backbone","../models/action.js"],
 	    comparator: function(action) {
 			  return action.get("date");
 			},
+
 
 	    plantings: function(){
 	    	return this.where({'actionType': 'planting'});
@@ -40,7 +42,7 @@ define(["jquery","backbone","../models/action.js"],
 	    	return this.where({'actionType': 'observation'});
 	    },
 
-	    create: function(data){
+	    create: function(){
 	    	var args = Array.prototype.slice.call(arguments);
 	    	args[0].subject_type = 'planting';
 	    	args[0].subject_id = this.planting_id;
@@ -48,5 +50,5 @@ define(["jquery","backbone","../models/action.js"],
 	    }
 
 		});
-    return Collection;
+    return PlantingActions;
   });

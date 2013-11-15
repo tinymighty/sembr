@@ -1,12 +1,12 @@
-define( ['sembr', 'backbone', 'marionette', 'jquery', 
+define( ['require', 'sembr', 'backbone', 'marionette', 'jquery', 
 '../../models/planting.js', '../../collections/plantings.js', 'hbs!./add.tpl', 
 'bootstrap-select'],
-function(Sembr, Backbone, Marionette, $, Planting, Plantings, template) {
+function(require, Sembr, Backbone, Marionette, $, Planting, Plantings, template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.ItemView.extend( {
     template: template,
 
-    model: new Planting({}),
+    model: new Planting(),
 
     // View Event Handlers
     events: {

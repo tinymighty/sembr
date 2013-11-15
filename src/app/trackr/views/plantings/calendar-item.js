@@ -1,4 +1,4 @@
-define( ['sembr', 'backbone', 'marionette', 'jquery', 'hbs!./list-item.tpl'],
+define( ['sembr', 'backbone', 'marionette', 'jquery', 'hbs!./calendar-item.tpl'],
 function(Sembr, Backbone, Marionette, $, template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.ItemView.extend( {

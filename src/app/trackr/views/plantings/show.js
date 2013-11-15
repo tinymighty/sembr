@@ -22,12 +22,14 @@ function(Sembr, Backbone, Marionette, $, PlantingActionsCollection, ActionModel,
     };*/
 
     initialize: function(opts){
-        this.actionsView = new PlantingActionsView( {collection: this.model.actions} );
+        console.log('Planting show view for planting model: ', this.model);
+        this.actionsView = new PlantingActionsView( {collection: this.model.get('actions')} );
     },
 
     onRender: function(){
         this.actionsView.render();
         this.$('[data-view="actions"]').append( this.actionsView.$el );
+        console.log('DATA FOR VIEW', this.model.toJSON());
     },
 
     showActions: function(actions){

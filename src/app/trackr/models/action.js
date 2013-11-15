@@ -28,7 +28,9 @@ function($, Backbone, Pouch) {
             if(!attrs.subject_id){
                 throw {error: 'subject_id property must be set'};
             }
-        }
+        },
+
+        docType: 'action'
 
     });
 

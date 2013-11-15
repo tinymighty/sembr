@@ -2,7 +2,7 @@ define(['sembr', 'backbone', 'marionette', './router.js'],
 function(Sembr, Backbone, Marionette, Router){
 
 /* Primary module */
-var defaultModule = Sembr.module("Default", function(module){
+var defaultModule = Sembr.module("default", function(module){
 
   module.addInitializer(function(){
     console.log('Dashboard module has been initialized');

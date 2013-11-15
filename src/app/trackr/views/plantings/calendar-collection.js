@@ -1,9 +1,8 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 
-'../models/planting.js', '../collections/plantings.js', '../views/list-item.js', 'hbs!../templates/list'],
-  function(Sembr, Backbone, Marionette, $, Model, Collection, ListItem, template) {
+'../../models/planting.js', '../../collections/plantings.js', './calendar-item.js'],
+  function(Sembr, Backbone, Marionette, $, Model, Collection, ListItem) {
     //ItemView provides some default rendering logic
     return Backbone.Marionette.CollectionView.extend( {
-      template: template,
       itemView: ListItem,
 
       // View Event Handlers
@@ -13,8 +12,7 @@ define( ['sembr', 'backbone', 'marionette', 'jquery',
 
       initialize: function(opts){
         if(!this.collection){
-          this.collection = (opts && opts.collection) ? opts.collection : new Plantings();
-          this.collection.fetch({wait: true});
+          throw 'No collection passed to view.';
         }
       },
 

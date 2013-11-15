@@ -2,7 +2,7 @@ define(['sembr', 'backbone', 'marionette', './views/responsive.js'],
 function(Sembr, Backbone, Marionette, ResponsiveLayout){
 
 /* Primary module */
-var LayoutModule = Sembr.module("Layout", function(module){
+var LayoutModule = Sembr.module("layout", function(module){
 
 	//active layout is private to discourage using it directly
 	var activeLayout = new ResponsiveLayout();

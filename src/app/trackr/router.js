@@ -1,5 +1,5 @@
-define(['backbone', 'sembr.modulerouter', './controllers/dashboard.controller.js', './controllers/plantings.controller.js'], 
-function(Backbone, ModuleRouter, DashboardController, PlantingsController ) {
+define(['backbone', 'sembr.modulerouter', './controllers/dashboard.js', './controllers/plantings.js', './controllers/places.js'], 
+function(Backbone, ModuleRouter, DashboardController, PlantingsController, PlacesController ) {
    return ModuleRouter.extend({
 			//"index" must be a method in AppRouter's controller
 
@@ -9,7 +9,9 @@ function(Backbone, ModuleRouter, DashboardController, PlantingsController ) {
 				"": {controller: DashboardController, method: 'dashboard'},
 			  "plantings": {controller: PlantingsController, method: 'list'},
 			  "planting/new": {controller: PlantingsController, method: 'add'},
-			  "planting/:planting_id": {controller: PlantingsController, method: 'show'}
+			  "planting/:planting_id": {controller: PlantingsController, method: 'show'},
+
+			  "places": {controller: PlacesController, method: 'dashboard'}
 			}
 
    });

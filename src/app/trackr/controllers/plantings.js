@@ -3,11 +3,15 @@
 		Layout = require('view/plantings/layout'),
 		Collection = require('../collections/plantings');*/
 define(['sembr', 'sembr.controller', 'backbone', 'backbone.collectionbinder','marionette', 
-	'../views/layout.js', '../collections/plantings.js', '../models/planting.js', '../collections/planting-actions.js', '../collections/places.js',
+	'../views/layout.js', 
+	'../collections/plantings.js', '../collections/places.js',
+	'../models/planting.js',
 	"../views/plantings/add.js", "../views/sidebar.js", "../views/plantings/list.js", "../views/plantings/show.js", "../views/plantings/add-action.js",
 	"components/loader/loader"],
-function (Sembr, Controller, Backbone, CB, Marionette, 
-	Layout, PlantingsCollection, PlantingModel, PlantingActionsCollection, PlacesCollection,
+function (sembr, Controller, Backbone, CB, Marionette, 
+	Layout,
+	Plantings, Places,
+	Planting,
 	AddPlantingView, Sidebar, PlantingsListView,	ShowPlantingView, AddActionView,
 	LoaderView) {
 
@@ -15,15 +19,16 @@ function (Sembr, Controller, Backbone, CB, Marionette,
 
 		initialize:function (options) {
 				this.layout = new Layout();
-				this.plantings = new PlantingsCollection({ user: Sembr.user.get('_id') });
+				this.plantings = new Plantings({ where: {user: sembr.user.get('_id')} })
 				this.loader  = new LoaderView();
-				this.places = new PlacesCollection({ user:Sembr.user.get('_id') });
+				//this.places = new Places({ where: {user:sembr.user.get('_id')} });
 				//console.log('INIT PLANTINGS CONTROLLER', Math.random());
 		},
 
 		beforeModuleRoute: function(){
 			console.log('Controller ID: ', this.id);
-			Sembr.layout.setContent( this.layout );
+			sembr.layout.setContent( this.layout );
+			this.places = sembr.trackr.places;
 			//this.layout.sidebar.show( new Sidebar({collection: this.plantings}) );
 		},
 
@@ -37,10 +42,23 @@ function (Sembr, Controller, Backbone, CB, Marionette,
 		list: function(){
 			var self = this;
 
-			this.plantings.fetch({wait:true}).then( this.showPlantingListView.bind(this) );
+			var plantingListView = new PlantingsListView({collection: this.plantings});
+			this.listenTo(this.plantings,'all', function(name){
+				console.log('PlantingsCollection: ', name);
+			})
+			this.listenTo(plantingListView,'all', function(name){
+				console.log('PlantingListView:', name);
+			})
+			this.plantings.fetch().done( function(){
+				console.log("Got plantings", this.plantings); 
+				console.log("Planting to JSON", this.plantings.at(0).toJSON() );
+
+				this.layout.main.show( plantingListView.render() );
+			}.bind(this));
+
 			//, success: _(this.showPlantingListView).bind(this) });
-			this.plantingListView = new PlantingsListView({collection: this.plantings});
-			/*plantingListView.on('load', function(){
+			
+			/*this.plantingListView.on('load', function(){
 				this.layout.list.show( plantingListView );
 			});*/
 
@@ -48,38 +66,29 @@ function (Sembr, Controller, Backbone, CB, Marionette,
 			this.layout.main.show( new LoaderView() );
 		}, 
 
-		showPlantingListView: function(){
-			console.log("Got plantings", this.plantings); 
-			console.log("Planting to JSON", this.plantings.at(0), this.plantings.at(0).toJSON() );
-			//console.log("Is blocked", this.plantings.at(0)._queue.isBlocked() );
-			var self = this;
-			setTimeout(function(){ console.log(self.plantings.at(0).toJSON() ); }, 1000);
-			/*this.plantings.each(function(planting){
-				planting.set('place', this.places.get( planting.get('place') ) );
-			}.bind(this));*/
-			this.layout.main.show( this.plantingListView );
-		},
-
-
 		showSidebar: function(){
 			
 		},
 
+		error: function(err){
+			throw err;
+		},
+
 
 		show: function(id){
+			if(!id){
+				this.error('Planting id missing.');
+			}
 			console.log('Getting planting', id);
 			this.layout.main.show(new LoaderView() );
 			this.layout.sidebar.show(new LoaderView() );
-			var self = this;
+			console.log('Finding plant with id '+id, Planting.find({'_id': id}) );
 			//load a planting, fetch it's actions
-			PlantingModel.findOrCreate({_id: id})
-				.fetch()
+			Planting.findOrFetch({'_id': id})
 				.done(function(planting, data){
-					console.log('Fetched planting', planting, data);
-					planting.fetchActions()
-						.done(function(){ console.log('Fetched planting actions', planting.actions); self.showPlanting(planting) })
-						.fail(function(){ console.error('Failed to load planting actions') });
-				})
+					console.log('Fetched planting', planting, planting.get('actions'));//, data);
+					this.showPlanting(planting);
+				}.bind(this))
 				.fail(function (err) {
 					console.error('Failed to load planting model!');
 				});
@@ -87,7 +96,7 @@ function (Sembr, Controller, Backbone, CB, Marionette,
 
 		showPlanting: function(planting){
 			this.layout.main.show( new ShowPlantingView({model: planting}) );
-			this.layout.sidebar.show( new AddActionView({collection: planting.actions, planting: planting }) );
+			this.layout.sidebar.show( new AddActionView({collection: planting.get('actions'), planting: planting }) );
 		}
 
 

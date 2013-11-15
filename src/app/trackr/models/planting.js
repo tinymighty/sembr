@@ -1,18 +1,70 @@
-define(["jquery", "backbone", 'backbone.pouch', 'backbone.relational', 
-'../models/place.js', '../models/action.js', '../collections/planting-actions.js', '../collections/places.js'],
-function($, Backbone, Pouch, RM, Place, Action, PlantingActionsCollection, PlacesCollection) {
+define(["jquery", "backbone", 'sembr.model'],//'./action.js', '../collections/planting-actions.js', './plant.js', '../collections/plants.js'],
+function($, Backbone, SembrModel,  Action, PlantingActionsCollection, Plant, PlantsCollection) {
     // Creates a new Backbone Model class object
-    var Planting = Backbone.RelationalModel.extend({
+
+    /**
+     * Document schema
+     * 
+     * _id
+     *      Document UID
+     * type
+     *      Document type; "planting"
+     * status
+     *      Planting status; [current, past, future]
+     * plant
+     *      Plant document UID
+     * place
+     *      Place document UID
+     * actions
+     *      Array of planting action objects (eg. sowed, planted, harvested)
+     */
+    var Planting = SembrModel.extend({
+
+        /*
+        A Planting HasOne place via a reverse relation
+        place: Place
+        */
 
         relations: [{
+            type: Backbone.HasMany,
+            key: 'actions',
+            relatedModel: 'Action',
+            reverseRelation:{
+                key: 'planting'
+            },
+            collectiontype: 'PlantingActions',
+            collectionOptions: this.plantingActionsCollectionOptions,
+            //parse:true
+        }/*,
+        {
+            type: Backbone.HasOne,
+            key: 'plant',
+            relatedModel: 'Plant',
+            reverseRelation:{
+                key: 'plantings'
+            },
+            collectiontype: 'Plants',
+            collectionOptions: this.plantsCollectionOptions,
+            //parse:true
+        },
+        {
             type: Backbone.HasOne,
             key: 'place',
-            relatedModel: Place
-        }],
+            relatedModel: 'Place',
+            reverseRelation:{
+                key: 'plantings'
+            },
+            collectiontype: 'Places',
+            collectionOptions: this.plantsCollectionOptions,
+            //parse:true
+        }*/],
 
-        // Model Constructor
-        initialize: function() {
+        plantingActionsCollectionOptions: function(){
+            return {planting_id: this.get('_id')};
+        },
 
+        plantsCollectionOptions: function(){
+            return {planting_id: this.get('_id')};
         },
 
         // Default values for all of the Model attributes
@@ -27,27 +79,42 @@ function($, Backbone, Pouch, RM, Place, Action, PlantingActionsCollection, Place
             }
         },
 
-        fetchActions: function(){
-            return new PlantingActionsCollection({ planting_id: this.get('_id') }).fetch().then( _(function(actions){
-                this.actions = actions;
-            }).bind(this));
-        },
 
-        /*fetchRelatedJSON: function(){
-            PlantingsCollection.prototype.fetchRelatedJSON(this.attributes).then(function(res){
-                this.set(res);
-            }.bind(this));
-        }*/
+        relatedDocs:[
+            {
+                target: 'place',
+                key: 'place_id'
+            },
+            {
+                target: 'plant',
+                key: 'plant_id'
+            },
+            {
+                target: 'actions',
+                key: 'subject_id',
+                source: 'remote',
+                query: {
+                    map: function(doc){
+                        if(doc.type==='action' && doc.subject_type==='planting'){
+                            emit([doc.subject_id], null);
+                        }
+                    },
+                    //options will be passed an array of planting documents before they have been used to initialize
+                    //models on this collection
+                    options: function( docs, collection ){
+                        return {
+                            keys: _(docs).pluck('_id')
+                        }
+                    }
+                }
+            }
+        ],
 
-        /*fetchPlace: function(){
-            return new PlacesCollection({ _id: this.get('place') }).fetch().then( function(places){
-                this.place = places.get( {'_id': this.get('place') }  );
-            } );
-        }*/
+
+        docType: 'planting'
 
     });
 
     // Returns the Model class
     return Planting;
-
 });

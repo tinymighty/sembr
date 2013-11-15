@@ -21,8 +21,9 @@ function(Sembr, Backbone, Marionette, $, template) {
     };*/
 
     initialize: function(opts){
-        //this.modelBinder = new Backbone.ModelBinder();
-        //this.on('render', this.bind);
+        this.modelBinder = new Backbone.ModelBinder();
+        this.on('render', this.bind);
+        var self = this;
     },
 
     bind: function () {
@@ -32,7 +33,7 @@ function(Sembr, Backbone, Marionette, $, template) {
             selector: '[data-model=place]',
             converter: function(direction, value){ console.log(direction, value); return direction==='ModelToView' ? value.name : value; }
         }*/
-        //this.modelBinder.bind(this.model, this.el, bindings);
+        this.modelBinder.bind(this.model, this.el, bindings);
     },
 
     plantingClick: function($ev){

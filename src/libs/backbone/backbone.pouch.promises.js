@@ -175,15 +175,23 @@
           deferred.resolve(model, response);
         });
 
-        //if the model/collection has the ability to load related JSON objects, do it!
-        if(model.fetchRelatedJSON && options.success){
+        //if the model/collection has an parsePouchResult method, call it
+        //this allows it to load any related JSON, transform the JSON before it's used to instantiate the model, etc 
+        if(model.parsePouchResult && options.success){
           console.log('Pouch: Fetching related JSON', model);
+
+          //create a deferred object to pass to the parsePouchResult method
+          var fetchRelatedDef = new $.Deferred();
+          //ask the collection to augment the response JSON with any further data
+          model.parsePouchResult(response, options.db, fetchRelatedDef);
+
           //once the model/collection has loaded the related JSON, run the success callback
           //which in turn triggers the sync event
           //and thus finally resolves the promise returned by the sync method
-          return model.fetchRelatedJSON(response).then(function(response){
+
+          return fetchRelatedDef.promise().then(function(parsed){
             console.log('Pouch: Related JSON fetched', arguments);
-            options.success(response);
+            options.success(parsed || response);
           });
         }else{
           return options.success && options.success(response);
