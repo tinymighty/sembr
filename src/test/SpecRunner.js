@@ -4,7 +4,7 @@ require(['underscore', 'jquery', 'jasmine-html'], function(_, $, jasmine){
   var jasmineEnv = jasmine.getEnv();
   jasmineEnv.updateInterval = 1000;
  
-  var htmlReporter = new jasmine.HtmlReporter();
+  var htmlReporter = new jasmine.TrivialReporter();
  
   jasmineEnv.addReporter(htmlReporter);
  
@@ -13,12 +13,16 @@ require(['underscore', 'jquery', 'jasmine-html'], function(_, $, jasmine){
   };
  
   var specs = [
-    '../test/spec/core.js',
-    '../test/spec/modules/tracker/places.js'
+    '/test/spec/helpers.js',
+    '/test/spec/core.js',
+    '/test/spec/modules/trackr/places.js',
+    '/test/spec/modules/trackr/plantings.js'
     ]; 
  
   $(function(){
     require(specs, function(){
+
+
       jasmineEnv.execute();
     });
   });

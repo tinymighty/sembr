@@ -1,27 +1,16 @@
-define(['sembr', "jquery", "backbone", 'sembr.collection', "../models/place.js"],
-  function(sembr, $, Backbone, Collection, Place) {
+define(["sembr", "underscore", "sembr.collection"],
+  function(sembr, _, Collection) {
 
     var Places = Collection.extend({
-		  model: Place,
-
-		  /*pouch: {
-	      fetch: 'query',
-	      options: {
-	        query: {
-	          fun: {
-	            map: function(doc) {
-	            	if(doc.type==="place"){
-	            		console.log("fetching places...");
-	              	emit([doc.order, doc._id], null);
-	            	}
-	            }
-	          }
-	        }
-	      }
-	    },*/
+		  model: function(attrs, options) {
+		    return sembr.trackr.models.Place.create(attrs, options);
+		  },
 
 	    initialize: function(options){
+	    	Collection.prototype.initialize.apply(this, arguments);
+	    	if(this.owner){
 
+	    	}
 	    },
 
 	    views: {
@@ -37,30 +26,6 @@ define(['sembr', "jquery", "backbone", 'sembr.collection', "../models/place.js"]
   	    	keys: ['user', 'in_place', 'date_created', 'date_modified']
   	    }
 	    },
-
-	    /*parse: function(jsonModels){
-	    	//create a map of _id:obj
-	    	var map = _(jsonModels).chain().pluck('_id').object( jsonModels ).value();
-	    	//iterate through the models and set up the correct place hierarchy
-	    	_(jsonModels).each(function(place, i){
-	    		if(place.in_place){
-	    			if(map[place.in_place].has_places){
-	    				map[place.in_place].has_places.push(place);
-	    			}else{
-	    				map[place.in_place].has_places = [place]
-	    			}
-	    		}
-	    	});
-	    	//get the updated objects
-	    	jsonModels = _(map).values();
-	    	//places should only be present at top-level objects if they do not have an in_place property
-	    	jsonModels = _(jsonModels).filter(function(place){
-	    		return !place.in_place;
-	    	});
-
-	    	return jsonModels;
-	    }
-*/
 
 		});
     return Places;

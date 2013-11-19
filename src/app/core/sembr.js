@@ -2,7 +2,7 @@ define(['backbone', 'pouchdb', 'sembr.sync.pouch', 'marionette', 'sembr.module',
 function (Backbone, PouchDB, PouchSync, Marionette, Module, _, Handlebars) {
     console.log('Building Sembr');
 
-    var Sembr = new Backbone.Marionette.Application({});
+    var sembr = new Backbone.Marionette.Application({});
 
     function isMobile() {
         var userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -10,49 +10,49 @@ function (Backbone, PouchDB, PouchSync, Marionette, Module, _, Handlebars) {
     }
 
     //setup PouchDB to work with Backbone
-    Sembr.db = PouchDB('sembr');
-    PouchSync.db = Sembr.db;
+    sembr.db = PouchDB('sembr');
+    PouchSync.db = sembr.db;
     Backbone.sync =  PouchSync;
     Backbone.Model.prototype.idAttribute = '_id';
 
-    Sembr.addRegions({
+    sembr.addRegions({
         body: "body"
     });
 
     //temporary demo user!
-    Sembr.user = new Backbone.Model({'_id': 'sembr.es/user/andru', 'username': 'andru', 'email':'andru@sembr.es'}),
+    sembr.user = new Backbone.Model({'_id': 'sembr.es/user/andru', 'username': 'andru', 'email':'andru@sembr.es'}),
 
 
-    Sembr.addInitializer(function () {
-        console.log('Sembr has loaded', Sembr);
+    sembr.addInitializer(function () {
+        console.log('Sembr has loaded', sembr);
 
-        //Sembr.layout = Sembr.submodules.Layout; //for convenience
+        //sembr.layout = sembr.submodules.Layout; //for convenience
 
 
-        _(Sembr.submodules).each(function(module, name){
+        _(sembr.submodules).each(function(module, name){
             //bubble all module events up to the application vent
             if(module.vent){
                 console.log('Module vent', module.vent);
-                Sembr.listenTo(module.vent, 'all', function(){
+                sembr.listenTo(module.vent, 'all', function(){
                     var args =  Array.prototype.slice.call(arguments);
                     //append the module name to the event args
                     args.push(name);
-                    //console.log('Bubbling module event', args, Sembr.vent.trigger.apply(Sembr, args));
-                    Sembr.vent.trigger.apply(Sembr.vent, args);
+                    //console.log('Bubbling module event', args, sembr.vent.trigger.apply(Sembr, args));
+                    sembr.vent.trigger.apply(sembr.vent, args);
                 });
             }
         });
 
     });
 
-    Sembr.on("initialize:after", function(options){
+    sembr.on("initialize:after", function(options){
         console.log('Application initialized, starting Backbone.history');
         Backbone.history.start({pushState: true});
         //temporary hack for navigate until we make a proper app router
-        Sembr.navigate = Sembr.submodules.default.router.navigate;
+        sembr.navigate = sembr.submodules.default.router.navigate;
     });
 
-    Sembr.mobile = isMobile();
+    sembr.mobile = isMobile();
 
-    return Sembr;
+    return sembr;
 });

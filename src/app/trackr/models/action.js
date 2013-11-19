@@ -1,12 +1,8 @@
-define(["jquery", "backbone", 'backbone.pouch', 'backbone.relational'],
-function($, Backbone, Pouch) {
+define(["sembr", 'sembr.model'],
+function(sembr, Model) {
     // Creates a new Backbone Model class object
-    var Planting = Backbone.RelationalModel.extend({
-
-        // Model Constructor
-        initialize: function() {
-
-        },
+    var Action = Model.extend({
+        name: 'action',
 
         // Default values for all of the Model attributes
         defaults: {
@@ -30,11 +26,16 @@ function($, Backbone, Pouch) {
             }
         },
 
+        parse: function(obj){
+            obj.date = new Date(obj.date);
+            return obj;
+        },
+
         docType: 'action'
 
     });
 
     // Returns the Model class
-    return Planting;
+    return Action;
 
 });

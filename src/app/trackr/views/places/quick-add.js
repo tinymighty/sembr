@@ -1,12 +1,11 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 
-'../../models/place.js', '../../collections/places.js', 'hbs!./quick-add.tpl', 
+'hbs!./quick-add.tpl', 
 'bootstrap-select', 'flatui-checkbox'],
-function(Sembr, Backbone, Marionette, $, Place, Places, template) {
+function(sembr, Backbone, Marionette, $, 
+template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.ItemView.extend( {
     template: template,
-
-    model: new Place({}),
 
     // View Event Handlers
     events: {
@@ -33,6 +32,7 @@ function(Sembr, Backbone, Marionette, $, Place, Places, template) {
     };*/
 
     initialize: function(opts){
+        this.place = new sembr.trackr.models.Place();
         this._modelBinder = new Backbone.ModelBinder();
         if(!this.collection){
             console.log('getting places');

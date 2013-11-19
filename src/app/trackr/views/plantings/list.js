@@ -1,6 +1,6 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 
-'../../models/planting.js', '../../collections/plantings.js', './list-item.js', 'hbs!./list.tpl'],
-  function(Sembr, Backbone, Marionette, $, Model, Collection, ListItem, template) {
+'./list-item', 'hbs!./list.tpl'],
+  function(sembr, Backbone, Marionette, $, ListItem, template) {
     //ItemView provides some default rendering logic
     return Backbone.Marionette.CollectionView.extend( {
       template: template,

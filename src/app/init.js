@@ -1,12 +1,11 @@
-define(['sembr',  
-    './layout/module.js', './default/module.js', 'sembr.trackr'], 
-function(Sembr, layoutModule, defaultModule, trackrModule){
+define(['sembr', 'sembr.base', 'sembr.default', 'sembr.trackr'], 
+function(sembr, layoutModule, defaultModule, trackrModule){
 	
-    Sembr.vent.on('all', function(){
+    sembr.vent.on('all', function(){
     	//console.log("Sembr event: ", arguments);
     });
     //try{
-        Sembr.start();
+        sembr.start();
     //}catch(err){
       //  console.error("Fail.", err);
     //}

@@ -1,5 +1,5 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 'hbs!./action.tpl'],
-function(Sembr, Backbone, Marionette, $, template) {
+function(sembr, Backbone, Marionette, $, template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.ItemView.extend( {
     /*tagName: 'div',

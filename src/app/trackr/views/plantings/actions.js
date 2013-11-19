@@ -1,5 +1,5 @@
-define( ['sembr', 'backbone', 'marionette', 'jquery', './action.js', 'hbs!./action.tpl'],
-function(Sembr, Backbone, Marionette, $, PlantingActionView, template) {
+define( ['sembr', 'backbone', 'marionette', 'jquery', 'trackr/views/plantings/action', 'hbs!./action.tpl'],
+function(sembr, Backbone, Marionette, $, PlantingActionView, template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.CollectionView.extend( {
     template: template,

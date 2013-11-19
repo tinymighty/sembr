@@ -3,8 +3,8 @@
 		Layout = require('view/plantings/layout'),
 		Collection = require('../collections/plantings');*/
 define(['sembr', 'sembr.controller', 'backbone', 'backbone.collectionbinder','marionette', 
-	'../views/layout.js', '../views/dashboard/dashboard.js',
-	'../collections/places.js', '../collections/plantings.js',
+	'trackr/views/layout', 'trackr/views/dashboard/dashboard',
+	'trackr/collections/places', 'trackr/collections/plantings',
 	"components/loader/loader"],
 function (sembr, Controller, Backbone, CB, Marionette, 
 	Layout, DashboardView,
@@ -25,7 +25,7 @@ function (sembr, Controller, Backbone, CB, Marionette,
 			console.log(sembr);
 			this.places = sembr.trackr.places;
 			console.log('beforeModuleRoute... places...', sembr.trackr.places);
-			sembr.layout.setContent( this.layout );
+			sembr.base.layout.setContent( this.layout );
 			//this.layout.sidebar.show( new Sidebar({collection: this.collection}) );
 		},
 

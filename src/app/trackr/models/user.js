@@ -1,9 +1,9 @@
-define(["sembr", 'sembr.model'],
-function(sembr, Model) {
+define(["sembr", 'sembr.base', 'sembr.model', 'base/models/user'],
+function(sembr, base, Model, User) {
     // Creates a new Backbone Model class object
 
-    var Plant = Model.extend({
-        name: 'plant',
+    _(base.models.User).extend({
+
 
         plantingsCollectionOptions: function(){
             return { plant_id: this.get('_id') };
@@ -47,7 +47,6 @@ function(sembr, Model) {
         docType: 'plant'
 
     });
-
-    // Returns the Model class
-    return Plant;
+    
+    return User;
 });

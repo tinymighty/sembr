@@ -1,6 +1,6 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 
- './places/quick-add.js', 'hbs!./sidebar.tpl', 'bootstrap'],
-function(Sembr, Backbone, Marionette, $, QuickAddPlaceView, template) {
+ 'trackr/views/places/quick-add', 'hbs!./sidebar.tpl', 'bootstrap'],
+function(sembr, Backbone, Marionette, $, QuickAddPlaceView, template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.ItemView.extend( {
     template: template,

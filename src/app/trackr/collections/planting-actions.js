@@ -1,28 +1,21 @@
-define(["sembr.trackr", "jquery", "backbone", "../models/action.js"],
-  function(trackr, $, backbone, Action) {
-    var PlantingActions = backbone.Collection.extend({
+define(["sembr", "underscore", "sembr.collection"],
+  function(sembr, _, Collection) {
+    var PlantingActions = Collection.extend({
 		  
-		  model: Action,
-
-		  pouch: {
-	      fetch: 'query',
-	      options: {
-	        query: {
-	          fun: {
-	            map: function(doc) {
-	            	if(doc.type==="action" && doc.subject_type==="planting" && doc.subject_id===options.planting_id){
-	              	emit([doc.planting_id, doc.order], doc._id);
-	            	}
-	            }
-	          }
-	        }
-	      }
-	    },
+		  model: function(attrs, options) {
+		    return sembr.trackr.models.Action.create(attrs, options);
+		  },
 
 	    initialize: function(options){
-	    	console.log("Initializing PlantingActions collection", this, options);
-	    	this.pouch.options.query.planting_id = options.planting_id;
-	    	this.planting_id = options.planting_id;
+	    	Collection.prototype.initialize.apply(this, arguments);
+	    	/*console.log("Initializing PlantingActions collection", this, options);
+	    	var planting_id = options.planting_id || this.owner.id || undefined;
+	    	if(planting_id){
+		    	this.pouch.options.query.planting_id = planting_id;
+		    	this.planting_id = planting_id;
+		    }else{
+		    	throw 'No planting_id provided to PlantingActions collection.';
+		    }*/
 	    },
 
 	    comparator: function(action) {

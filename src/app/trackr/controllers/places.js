@@ -1,8 +1,8 @@
 define(['sembr', 'sembr.controller', 'backbone', 'backbone.collectionbinder','marionette', 
-	'../collections/places.js',
-	'../views/layout.js', '../views/dashboard/dashboard.js', '../views/places/treeview.js',
+	'trackr/collections/places',
+	'trackr/views/layout', 'trackr/views/dashboard/dashboard', 'trackr/views/places/treeview',
 	"components/loader/loader"],
-function (Sembr, Controller, Backbone, CB, Marionette, 
+function (sembr, Controller, Backbone, CB, Marionette, 
 	PlacesCollection,
 	Layout, DashboardView, TreeView,
 	LoaderView) {
@@ -16,7 +16,7 @@ function (Sembr, Controller, Backbone, CB, Marionette,
 		beforeModuleRoute: function(){
 			console.log('Controller ID', this.id);
 			//console.log('Setting plantings layout!');
-			Sembr.layout.setContent( this.layout );
+			sembr.layout.setContent( this.layout );
 			//this.layout.sidebar.show( new Sidebar({collection: this.collection}) );
 		},
 

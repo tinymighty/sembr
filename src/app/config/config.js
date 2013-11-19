@@ -12,8 +12,7 @@ require.config({
     // probably a good idea to keep version numbers in the file names for updates checking
     paths:{
         // Core Libraries
-        //"sembr",:"Sembr.js"
-
+        'init': 'init',
         "sembr": "core/sembr",
         "sembr.modulerouter": "core/module-router",
         "sembr.module": "core/module",
@@ -24,6 +23,8 @@ require.config({
 
         'sembr.promises': 'core/promises',
 
+        "sembr.base": 'base/module',
+        "sembr.default": 'default/module',
         "sembr.trackr": 'trackr/module',
 
         "jquery":"../libs/jquery/jquery",
@@ -38,6 +39,7 @@ require.config({
         "backbone.forms":"../libs/backbone/backbone.forms",
         "backbone.deep-model":"../libs/backbone/backbone.deep-model",
         "backbone.relational":"../libs/backbone/backbone.relational",
+        "backbone.supermodel":"../libs/backbone/backbone.supermodel",
 
         "pouchdb": "../libs/pouchdb",
 
@@ -105,11 +107,15 @@ require.config({
         },
         "backbone.deep-model":{ "deps":["backbone"] },
         "backbone.relational":{ "deps":["backbone"] },
+        "backbone.supermodel":{ 
+            "deps":["backbone", "underscore"],
+            "exports": "Supermodel"
+        },
 
         //Marionette
         "marionette":{
             "deps":["underscore", "backbone", "jquery"],
-            "exports":"Marionette"
+            "exports": "Marionette"
         },
         //Handlebars
         "handlebars":{

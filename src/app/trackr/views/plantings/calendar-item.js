@@ -1,5 +1,5 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 'hbs!./calendar-item.tpl'],
-function(Sembr, Backbone, Marionette, $, template) {
+function(sembr, Backbone, Marionette, $, template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.ItemView.extend( {
     template: template,
@@ -38,7 +38,7 @@ function(Sembr, Backbone, Marionette, $, template) {
     plantingClick: function($ev){
         console.log('Plant click!')
         $ev.preventDefault();
-        Sembr.navigate( $($ev.target).attr('href'), {trigger: true});
+        sembr.navigate( $($ev.target).attr('href'), {trigger: true});
     }
 
   });

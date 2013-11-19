@@ -6,12 +6,12 @@
 
 			<div class="control-group">
 				<label>What?</label>
-				<input type="text" name="plant" data-model="plant" required autofocus class="span3">
+				<input type="text" name="plant" data-model="plant" required autofocus class="span3" id="plant-picker">
 			</div>
 
 			<div class="control-group">
 				<label>Where?</label>
-				<select id="quick-add-places" class="selectpicker" name="place select-block" data-model="place" required>
+				<select id="places-picker" class="selectpicker" name="place select-block" data-model="place" required>
 					{{#each places}}
 				  <option value="{{this._id}}">{{this.name}}</option>
 				  {{/each}}

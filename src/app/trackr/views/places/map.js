@@ -1,6 +1,6 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 
-'./map-nested.js'],
-function(Sembr, Backbone, Marionette, $, 
+'trackr/views/plantings/map-nested'],
+function(sembr, Backbone, Marionette, $, 
 MapNested) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.CollectionView.extend( {

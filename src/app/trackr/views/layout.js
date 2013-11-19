@@ -1,5 +1,5 @@
 define( ['sembr', 'backbone', 'marionette', 'hbs!./layout.tpl'],
-function(Sembr, Backbone, Marionette, template) {
+function(sembr, Backbone, Marionette, template) {
     //ItemView provides some default rendering logic
     var PlantingsLayout = Backbone.Marionette.Layout.extend( {
         template: template,

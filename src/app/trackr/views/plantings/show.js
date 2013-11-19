@@ -1,5 +1,5 @@
-define( ['sembr', 'backbone', 'marionette', 'jquery', '../../collections/planting-actions.js', '../../models/action.js', './actions.js', 'hbs!./show.tpl'],
-function(Sembr, Backbone, Marionette, $, PlantingActionsCollection, ActionModel, PlantingActionsView, template) {
+define( ['sembr', 'backbone', 'marionette', 'jquery', 'trackr/views/plantings/actions', 'hbs!./show.tpl'],
+function(sembr, Backbone, Marionette, $, PlantingActionsView, template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.ItemView.extend( {
     tagName: 'div',
@@ -23,13 +23,13 @@ function(Sembr, Backbone, Marionette, $, PlantingActionsCollection, ActionModel,
 
     initialize: function(opts){
         console.log('Planting show view for planting model: ', this.model);
-        this.actionsView = new PlantingActionsView( {collection: this.model.get('actions')} );
+        this.actionsView = new PlantingActionsView( {collection: this.model.actions()} );
     },
 
     onRender: function(){
         this.actionsView.render();
         this.$('[data-view="actions"]').append( this.actionsView.$el );
-        console.log('DATA FOR VIEW', this.model.toJSON());
+        console.log('DATA FOR VIEW', this.serializeData());
     },
 
     showActions: function(actions){
@@ -45,6 +45,10 @@ function(Sembr, Backbone, Marionette, $, PlantingActionsCollection, ActionModel,
         $el.popover({ content:'Whaaaaat', trigger:'manual'});
         $el.popover('show');
     },
+
+    serializeData: function(){
+        return this.model.toJSON({include_associations:true});
+    }
 
   });
 });

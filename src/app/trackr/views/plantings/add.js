@@ -1,17 +1,20 @@
-define( ['require', 'sembr', 'backbone', 'marionette', 'jquery', 
-'../../models/planting.js', '../../collections/plantings.js', 'hbs!./add.tpl', 
+define( ['sembr', 'backbone', 'marionette', 'jquery', 
+'hbs!./add.tpl', 
 'bootstrap-select'],
-function(require, Sembr, Backbone, Marionette, $, Planting, Plantings, template) {
+function(sembr, Backbone, Marionette, $, template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.ItemView.extend( {
     template: template,
-
-    model: new Planting(),
 
     // View Event Handlers
     events: {
         'click [data-action=save]': 'save',
         'click [data-action=clear]': 'clear'
+    },
+
+    ui:{
+        placeField: '#place-picker',
+        plantField: '#plant-picker'
     },
 
     /*bindings: {
@@ -26,27 +29,41 @@ function(require, Sembr, Backbone, Marionette, $, Planting, Plantings, template)
     };*/
 
     initialize: function(opts){
+        this.model = new sembr.trackr.models.Planting();
         this._modelBinder = new Backbone.ModelBinder();
         if(!this.collection){
-          this.collection = (opts && opts.collection) ? opts.collection : new Plantings();
+          this.collection = (opts && opts.collection) ? opts.collection : new sembr.trackr.collections.Plantings();
         }
         //can we come up with more decoupled dependency management than this? RequestReponse maybe?
         if(!opts.places){
             throw 'No places collection was provided to add.js';
         }
-        this.places = opts.places;
-        this.listenTo(this.places, 'change', this.render);
+        this.places = sembr.trackr.places; //the cached user places collection
+        this.plants = new sembr.trackr.collections.Plants();
+        this.plantsPromise = this.plants.fetch();
+        //this.listenTo(this.places, 'change', this.render);
         console.log('Places: ',opts.places);
     },
 
     onRender: function(){
         this.bindForm();
+        this.ui.plantField.typeahead({
+            source: function(query, cb){
+                this.plantsPromise.then(function(plants){
+                    var arr = _(plants.toJSON()).chain().filter(function(plant){
+                        return plant.use_name.toLowerCase().match(query.toLowerCase());
+                    }).pluck('use_name').value() || [];
+                    console.log('Typeahead: ', query, arr);
+                    cb( arr );
+                });
+            }.bind(this)
+        })
         this.$('.selectpicker').selectpicker({style: 'btn-info', menuStyle: 'dropdown-inverse'});
     },
 
     serializeData: function(){
       var data = {};
-      data = this.model.toJSON();
+      data.model = this.model.toJSON();
       data.places = this.places.toJSON();
       return data;
     },

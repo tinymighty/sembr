@@ -1,6 +1,6 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 
 'hbs!./treeview-item.tpl'],
-function(Sembr, Backbone, Marionette, $, 
+function(sembr, Backbone, Marionette, $, 
 template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.CompositeView.extend( {

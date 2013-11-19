@@ -1,5 +1,5 @@
 define(['sembr', 'jquery', 'backbone', 'marionette', 'hbs!../templates/header'],
-    function (Sembr, $, Backbone, Marionette, template) {
+    function (sembr, $, Backbone, Marionette, template) {
         //ItemView provides some default rendering logic
         return Backbone.Marionette.ItemView.extend({
             template:template,
@@ -11,7 +11,7 @@ define(['sembr', 'jquery', 'backbone', 'marionette', 'hbs!../templates/header'],
             currentModule: '',
 
             initialize:function(){
-                this.listenTo(Sembr.vent, 'route', function(name, params, module){
+                this.listenTo(sembr.vent, 'route', function(name, params, module){
                     this.currentModule = module;
                     this.setActiveItem(module);
                 });
@@ -29,7 +29,7 @@ define(['sembr', 'jquery', 'backbone', 'marionette', 'hbs!../templates/header'],
 
             menuClick: function($ev){
             	$ev.preventDefault();
-            	Sembr.navigate($($ev.target).attr('href'), {trigger:true});
+            	sembr.navigate($($ev.target).attr('href'), {trigger:true});
             }
         });
     });

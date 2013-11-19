@@ -6,9 +6,7 @@
 define(["underscore", 'jquery', "backbone", 'pouchdb'],
 function(_, $, Backbone, Pouch ) {
   var Sync = function(method, model, options){
-    if(model instanceof Backbone.Model){
 
-    }
     if(!model.query){
          console.warn('No query function defined for model: %o', model)
       }
@@ -21,20 +19,23 @@ function(_, $, Backbone, Pouch ) {
       //dispatch to the relevent method (eg. _read)
       console.log('Dispatching to method _'+method, method, model, options);
 
-      Sync['_'+method](deferred, model, options)
-      .done(function(result){
-        deferred.resolve(result);
-      })
-      .fail(function(error){
-        deferred.reject(error);
-      })
-      .then(function(res){
-        if(model._afterSync){
-          model._afterSync(method, model, options, res);
-        }
-      });
-
-      
+      Sync['_'+method](model, options)
+        .done(function(result){
+          if(options.success){
+            options.success(result);
+          }
+          //model.once('sync', function(){
+            deferred.resolve(model, result);
+          //});
+        })
+        .fail(function(error){
+          deferred.reject(error);
+        })
+        .then(function(res){
+          if(model._afterSync){
+            model._afterSync(method, model, options, res);
+          }
+        });
 
       return deferred.promise();
   }
@@ -47,23 +48,79 @@ function(_, $, Backbone, Pouch ) {
       console.log.apply(console, arguments);
     },
 
-    _read: function(deferred, model, options){
 
-      var docs_promise = [],
+    _create: function(model, options){
+      var deferred = new $.Deferred();
+
+      var doc = model.toJSON();
+      this.createUpdateDoc(doc)
+        .done(function( resp ){
+          deferred.resolve( _(resp).pick('id', 'rev') )
+        })
+        .fail(function( err ){
+          deferred.reject(err);
+        });
+
+      return deferred.promise();
+    },
+
+    _update: function(model, options){
+      var deferred = new $.Deferred();
+
+      var doc = model.toJSON();
+      this.createUpdateDoc(doc)
+        .done(function( resp ){
+          deferred.resolve( _(resp).pick('id', 'rev') )
+        })
+        .fail(function( err ){
+          deferred.reject(err);
+        });
+
+      return deferred.promise();
+    },
+
+    _delete: function(model, options){
+      var deferred = new $.Deferred();
+
+      var doc = model.toJSON();
+      this.deleteDoc(doc)
+        .done(function( resp ){
+          deferred.resolve( _(resp).pick('id', 'rev') )
+        })
+        .fail(function( err ){
+          deferred.reject(err);
+        });
+
+      return deferred.promise();
+    },
+
+    _read: function(model, options){
+
+      var deferred = new $.Deferred(),
+          modelObj,
+          docs_promise = [],
           ids = [],
           rel_ids = [],
           relatedIdFields = [],
           relatedQueries = [];
 
       //grab a reference to the model so we can check if it has any document UID properties which need to be replaced
-      var modelObj = model instanceof Backbone.Collection ? model.model.prototype : model;
+      
+      if(model instanceof Backbone.Collection){
+        modelObj = _(model.model).isFunction() ? model.model() : model.model;
+      }else{
+        modelObj = model;
+      }
+
+      console.log('modelObj is %o', modelObj);
+
       //if it's got a model instance grab the relatedDocs property, else
-      console.log('relatedDocs: %o', modelObj.relatedDocs);
+      console.log('relatedDocs: %o', modelObj.relatedDocs, modelObj);
       if(modelObj.relatedDocs){
         relatedIdFields = _(modelObj.relatedDocs)
           .chain()
           .filter(function(rel){
-            return (rel.source===undefined || rel.source==='local');
+            return (rel.source==='local' && rel.autoload===true);
           })
           .value();
 
@@ -177,13 +234,13 @@ function(_, $, Backbone, Pouch ) {
 	  				.done(function(relatedDocs){
               docs = docs.concat(relatedDocs);
               Sync._log('Got relatedDocs', relatedDocs);
+              Sync._log('Combined relatedDocs with docs', docs);
               var data = Sync.structureDocs(docs, model, modelObj);
-	  					//attempt to parse the docs using a parse method, if defined on the model
-		  				data = (model.parse) ? model.parse(data) : data;
-              //if it's a collection, reset all models, otherwise set new data to the model
-		  				model instanceof Backbone.Collection ? model.reset(data) : model.set(data.pop());
-		  				//pass the result along with the resolution for convenience
-		  				deferred.resolve( model );
+              //if we're dealing with a Model sync, return an object not an array
+              if( data.length === 1 && !(model instanceof Backbone.Collection) ){
+                data = data[0];
+              }
+		  				deferred.resolve( data );
 	  				})
 	  				.fail(function(err){
 	  					deferred.reject(err);
@@ -236,11 +293,37 @@ function(_, $, Backbone, Pouch ) {
     	return deferred.promise();
     },
 
+    createUpdateDoc: function(doc){
+      var deferred = new $.Deferred();
+      function cb(err, resp){
+        if(err)
+            deferred.reject(err);
+          deferred.resolve(resp);
+      }
+      if(doc._id){
+        this.db.put(doc, cb);
+      }else{
+        this.db.post(doc, cb);
+      }
+      return deferred.promise();
+    },
+
+    deleteDoc: function(doc){
+      var deferred = new $.Deferred();
+      this.db.remove(doc, function cb(err, resp){
+        if(err)
+            deferred.reject(err);
+          deferred.resolve(resp);
+      });
+      return deferred.promise();
+    },
+
     structureDocs: function(docs, model, modelObj){
       if(!modelObj.docType){
-        console.error('No docType exists on modelObj prototype %o', modelObj);
+        console.error('No docType exists on modelObj prototype %o', modelObj, model);
         return docs;
       }
+      Sync._log('structing docs', docs, model, modelObj);
       //pull out the top-level documents; ie. the data used for the model or models in this collection
       var primary = _(docs).filter(function(doc){
         return doc.type === modelObj.docType;

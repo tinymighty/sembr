@@ -1,6 +1,6 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 
-'../../models/planting.js', '../../collections/plantings.js', './calendar-item.js'],
-  function(Sembr, Backbone, Marionette, $, Model, Collection, ListItem) {
+'trackr/views/plantings/calendar-item'],
+  function(sembr, Backbone, Marionette, $, ListItem) {
     //ItemView provides some default rendering logic
     return Backbone.Marionette.CollectionView.extend( {
       itemView: ListItem,

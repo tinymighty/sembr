@@ -1,41 +1,16 @@
-define(['sembr', 'sembr.model', "backbone", 'backbone.pouch',
-    '../models/planting.js', '../collections/plantings.js'],
-    function(sembr, Model, Backbone, Pouch,
-        Planting, PlantingsCollection) {
+define(['sembr', 'sembr.model'],
+    function(sembr, Model) {
         //first we have to define Place so we can reference it within its own relation property
         //to set up a self-nested hierarchy 
-        var Place = function () {
-            Model.apply(this, arguments);
-        };
         Place = Model.extend({
-            constructor: Place,
+            name: 'place',
 
             docType: 'place',
 
             // Model Constructor
             initialize: function() {
-
+                Model.prototype.initialize.apply(this, arguments);
             },
-
-            relations: [{
-                type: Backbone.HasMany,
-                key: 'places',
-                relatedModel: Place,
-                reverseRelation:{
-                    key: 'in_place'
-                },
-                parse:true
-            }/*,{
-                type: Backbone.HasMany,
-                key: 'plantings',
-                relatedModel: 'Planting',
-                reverseRelation:{
-                    key: 'place_id'
-                },
-                collectiontype: 'Plantings',
-                collectionOptions: this.plantingsCollectionOptions,
-                parse:true
-            }*/],
 
 
             relatedDocs:[

@@ -1,8 +1,8 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 
-'../../models/planting.js', '../../collections/plantings.js', './calendar-collection.js', 
+'trackr/views/plantings/calendar-collection', 
 'hbs!./calendar.tpl'],
 function( Sembr, Backbone, Marionette, $, 
-PlantingModel, PlantingsCollection, CalendarCollectionView, 
+CalendarCollectionView, 
 template ){
   //ItemView provides some default rendering logic
   return Backbone.Marionette.Layout.extend( {

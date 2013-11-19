@@ -1,21 +1,20 @@
-define(["jquery", "backbone", "underscore", "sembr.collection", "../models/plant.js"],
-  function($, Backbone, _, Collection, Plant) {
-    var Collection = Collection.extend({
-		  model: Plant,
+define(["sembr", "underscore", "sembr.collection"],
+  function(sembr, _, Collection) {
+    var Plants = Collection.extend({
+		  model: function(attrs, options) {
+		    return sembr.trackr.models.Plant.create(attrs, options);
+		  },
 
-	    initialize: function(options){
-	    	//if a place_id is passed in options, only fetch rows which match that place_id
-	    	this.options = {};
-
-	    	if(options && options.where){
-	    		this.query.map = this.views.fetch_where.map;
-	    		this.query.keys = this.views.fetch_where.keys;
-	    		this.options = options;
-	    	}
-
-	    },
 
 	    views: {
+	    	fetch_all: {
+	    		map: function(doc){
+	    			if(doc.type==='plant'){
+	    				emit(doc.use_name, null);
+	    			}
+	    		},
+	    		keys: ['use_name']
+	    	},
 	    	fetch_where: {
 	    		map: function(doc){
 	    			if(doc.type==='plant'){
@@ -27,5 +26,5 @@ define(["jquery", "backbone", "underscore", "sembr.collection", "../models/plant
 	    }
 
 		});
-    return Collection;
+    return Plants;
   });

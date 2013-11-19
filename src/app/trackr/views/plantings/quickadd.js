@@ -1,7 +1,7 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 
-'../../models/planting.js', '../../collections/plantings.js', 'hbs!./quickadd.tpl', 
+'hbs!./quickadd.tpl', 
 'bootstrap-select'],
-function(Sembr, Backbone, Marionette, $, Planting, Plantings, template) {
+function(sembr, Backbone, Marionette, $, template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.ItemView.extend( {
     template: template,

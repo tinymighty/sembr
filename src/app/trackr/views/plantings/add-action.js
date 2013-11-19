@@ -1,6 +1,6 @@
-define( ['sembr', 'backbone', 'marionette', 'jquery', '../../models/action.js', 'hbs!./add-action.tpl',
+define( ['sembr', 'backbone', 'marionette', 'jquery', 'hbs!./add-action.tpl',
 'jqueryui'],
-function(Sembr, Backbone, Marionette, $, ActionModel, template) {
+function(sembr, Backbone, Marionette, $, template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.ItemView.extend( {
     /*tagName: 'div',
@@ -21,24 +21,32 @@ function(Sembr, Backbone, Marionette, $, ActionModel, template) {
         }
         this.planting = opts.planting;
         this.modelBinder = new Backbone.ModelBinder();
-        this.prefilModelData = {
+        this.prefillModelData = {
             'date': new Date().toString(),
             'action_type': 'harvest',
             'subject_type': 'planting',
             'subject_id': this.planting.get('_id')
         };    
-        this.model = new ActionModel(this.prefillModelData);
+        this.model = sembr.trackr.models.Action.create(this.prefillModelData);
 
     },
 
     createAction: function(){
-        var values = this.model.toJSON();
-        this.collection.create( values, {wait:true, success: _(this.createdAction).bind(this) });
+        this.saving(true);
+        this.model.save()
+            .done(function(){
+                this.collection.add( this.model );
+                this.saving(false);
+                this.model = sembr.trackr.models.Action.create(this.prefillModelData);
+            }.bind(this))
+            .fail(function(){
+                console.error('Failed to save action!');
+            });
+        
     },
 
-    createdAction: function(action){
-        this.model.clear();
-        this.model.set(this.prefillModelData);
+    saving: function(toggle){
+        toggle ? this.$el.css('opacity', '0.5') : this.$el.css('opacity','');
     },
 
     onRender: function(){
@@ -60,6 +68,7 @@ function(Sembr, Backbone, Marionette, $, ActionModel, template) {
 
         // Now let's align datepicker with the prepend button
         $(datepickerSelector).datepicker('widget').css({'margin-left': -$(datepickerSelector).prev('.btn').outerWidth() - 2});
+    
     },
 
     bind: function () {

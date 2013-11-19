@@ -11,15 +11,37 @@ function(_, $, Backbone ) {
   {
     //pouch: new Pouch('sembr'),
 
-    query:{},
+    initialize: function(models, options){
+      //if a place_id is passed in options, only fetch rows which match that place_id
+      this.options = _(options || {}).defaults({
+        where:undefined
+      });
+      this.query = {};
+      if(options && options.where){
+        this.query.map = this.views.fetch_where.map;
+        this.query.keys = this.views.fetch_where.keys;
+        this.options = options;
+      }
+
+    },
+    
+    fetch: function(options){
+      if(!this.views || !this.views.fetch_all || !this.views.fetch_all.map || !this.views.fetch_all.keys){
+        //immediately return a rejected promise
+        return new $.Deferred().reject('fetch called without a defined fetch_all view object').promise();
+      }
+      this.query.map = this.views.fetch_all.map;
+      this.query.options = { };
+      return Backbone.Collection.prototype.fetch.apply(this, arguments);
+    },
 
     /**
      * fetchWhere: like where(), except always syncs for new results
      * 
      * Returns a jQuery promise object.
      */
-    fetchWhere: function(options){
-      if(!options){
+    fetchWhere: function(where){
+      if(!where){
         //immediately return a rejected promise
         return new $.Deferred().reject('No options supplied to fetchWhere').promise();
       }
@@ -35,12 +57,10 @@ function(_, $, Backbone ) {
       var startkey = [], endkey = [];
 
       //build the start keys and end keys
-      _(this.query.keys).each(function(v){
-        var val = options[v];
+      _(this.query.keys).each(function(k){
+        var val = where[k];
         if( !_(val).isEmpty() ){
-          if( !_(val).isArray() ){
-            val = [val]
-          }
+          _(val).isArray() || (val = [val])
           _(val).sort();
           startkey.push( _(val).first() );
           endkey.push( _(val).last() );
@@ -60,7 +80,7 @@ function(_, $, Backbone ) {
       //the query is set up, so resolve to 
       return Backbone.Collection.prototype.fetch.apply(this, arguments);
 
-    },
+    }
 
   },
 
