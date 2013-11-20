@@ -1,0 +1,52 @@
+#A little think about data schema
+
+A Place may have many Plantings
+	Past
+	Current
+	Future
+
+A Planting must have one Place
+
+A Planting may have many Actions
+
+
+
+An Action must have
+	An action type
+	A subject type
+	A subject id
+	A status (planned / performed)
+
+
+Actions can be realted to places or plantings (or whatever else may arise...) and so can have other attributes according to their subject type...
+
+
+planting
+
+	plant
+		Indicates the plant was planted (eg. from modules or rooted tree etc)
+
+	sow
+		Indicated the seed was sown directly
+			method (broadcast, drill)
+			density (weight/area)
+
+	transplant
+		Similar to planted except indicated the plant was moved from another place on the farm (eg. nursary)
+
+	shared properties:
+		date
+		form (rows, diamonds, scatter)
+		spacing
+		density (plant units or seed weight per area)
+
+	harvest
+	fertilize
+	spray
+	dig in
+
+
+place
+	weed
+	mulch
+	till

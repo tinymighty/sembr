@@ -7,7 +7,11 @@ function(sembr, Model) {
         // Default values for all of the Model attributes
         defaults: {
             type: 'action',
-            order: 0
+            action_type: undefined,
+            subject_type: undefined,
+            subject_id: undefined,
+            order: 0,
+            status: 1 //0=provisional / 1=plan / 2=actual
         },
 
         // Get's called automatically by Backbone when the set and/or save methods are called (Add your own logic)
@@ -24,11 +28,6 @@ function(sembr, Model) {
             if(!attrs.subject_id){
                 throw {error: 'subject_id property must be set'};
             }
-        },
-
-        parse: function(obj){
-            obj.date = new Date(obj.date);
-            return obj;
         },
 
         docType: 'action'

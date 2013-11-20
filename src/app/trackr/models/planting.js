@@ -21,17 +21,36 @@ function(sembr, Model) {
 	var Planting = Model.extend({
 		name: 'planting',
 
+		defaults: {
+			type: 'planting',
+			status: 'current', //past, current or future
+			from: 'seed', //seed, plant, cutting
+			from_planting_id: null,
+
+			planted_on:null,
+			removed_on:null
+		},
+
+		initialize: function(attrs, options){
+			if(attrs && !attrs._id){
+				this.created = new Date().toString();
+			}
+			Model.prototype.initialize.apply(this, arguments);
+		},
+
+		__set_created: function(value){
+			return this.attributes.created = (value instanceof Date) ? Date.toString() : value;
+		},
+		__get_created: function(){
+			return new Date(this.attributes.created);
+		},
+
 		plantingActionsCollectionOptions: function(){
 			return {planting_id: this.get('_id')};
 		},
 
 		plantsCollectionOptions: function(){
 			return {planting_id: this.get('_id')};
-		},
-
-		// Default values for all of the Model attributes
-		defaults: {
-			type: 'planting'
 		},
 
 		// Get's called automatically by Backbone when the set and/or save methods are called (Add your own logic)

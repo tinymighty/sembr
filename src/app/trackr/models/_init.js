@@ -8,6 +8,7 @@ define([
   'trackr/models/place', 
   'trackr/models/plant', 
   'trackr/models/planting',
+  'trackr/models/planting-action',
   'trackr/models/user'
 ],
 function(
@@ -17,6 +18,7 @@ function(
 	Place,
 	Plant,
 	Planting,
+	PlantingAction,
 	User
 ){
 	
@@ -25,6 +27,7 @@ function(
 		Place: Place,
 		Plant: Plant,
 		Planting: Planting,
+		PlantingAction: PlantingAction,
 		User: User
 	}
 

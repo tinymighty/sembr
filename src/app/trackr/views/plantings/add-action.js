@@ -1,4 +1,4 @@
-define( ['sembr', 'backbone', 'marionette', 'jquery', 'hbs!./add-action.tpl',
+    define( ['sembr', 'backbone', 'marionette', 'jquery', 'hbs!./add-action.tpl',
 'jqueryui'],
 function(sembr, Backbone, Marionette, $, template) {
   //ItemView provides some default rendering logic
@@ -10,6 +10,12 @@ function(sembr, Backbone, Marionette, $, template) {
     // View Event Handlers
     events: {
         'click [data-action="save"]': 'createAction',
+        'change select[data-model=action_type]': 'actionTypeChange'
+    },
+
+    ui:{
+        actionSelect: 'select[data-model=action_type]',
+        actionFields: '.action_fields'
     },
 
     initialize: function(opts){
@@ -23,11 +29,9 @@ function(sembr, Backbone, Marionette, $, template) {
         this.modelBinder = new Backbone.ModelBinder();
         this.prefillModelData = {
             'date': new Date().toString(),
-            'action_type': 'harvest',
-            'subject_type': 'planting',
             'subject_id': this.planting.get('_id')
         };    
-        this.model = sembr.trackr.models.Action.create(this.prefillModelData);
+        this.model = sembr.trackr.models.PlantingAction.create(this.prefillModelData);
 
     },
 
@@ -45,11 +49,23 @@ function(sembr, Backbone, Marionette, $, template) {
         
     },
 
+    actionTypeChange: function (ev) {
+        var $el = $(ev.target);
+        this.ui.actionFields.hide();
+        this.ui.actionFields.filter('.'+$el.val()+'_fields').show();
+    },
+
     saving: function(toggle){
         toggle ? this.$el.css('opacity', '0.5') : this.$el.css('opacity','');
     },
 
     onRender: function(){
+        this.ui.actionFields.hide().removeAttr('hidden');
+
+        _(this.model.action_types).each(function(type){
+            this.ui.actionSelect.append('<option value="'+type+'">'+type+'</option>');
+        }, this);
+        
         this.bind();
         this.$('.selectpicker').selectpicker({style: 'btn-info', menuStyle: 'dropdown-inverse'});
 

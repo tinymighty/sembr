@@ -16,8 +16,6 @@ function(_, Backbone, Pouch, Supermodel ) {
       //array of active association names on this model instance
       this._associations = [];
 
-      Supermodel.Model.prototype.initialize.apply(this, arguments);
-
       this.processRelatedDocs();
 
       //keep an array of active association names so we can know the getter names to use.
@@ -39,6 +37,9 @@ function(_, Backbone, Pouch, Supermodel ) {
       this.on('all', function(){
         //console.log('Model event: ', arguments);
       });
+
+      Supermodel.Model.prototype.initialize.apply(this, arguments);
+
     },
 
     //define getters and setters for attribute values...
@@ -49,8 +50,20 @@ function(_, Backbone, Pouch, Supermodel ) {
       //or it has already been defined as an actual object property
       if(!this.hasOwnProperty(key)){
         Object.defineProperty(model, key, {
-          get: function () { return model.get(key); },
-          set: function (value) { return model.set(key, value); }
+          get: function () { 
+            if(this['__'+key]){
+              return this['__'+key]();
+            }else{
+              return model.get(key);
+            }
+          },
+          set: function (value) { 
+            if(this['__'+key]){
+              return this['__'+key]();
+            }else{
+              return model.set(key, value);
+            }
+          }
         });
       }
     },
