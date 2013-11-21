@@ -38,7 +38,7 @@ function(sembr, Backbone, Marionette, $, template) {
     },
 
     confirmDestroy: function(){
-        console.log('Destroy');
+        sembr.log('Destroy');
         this.ui.destroy.tooltip({title: 'Are you sure? Click again to confirm.', trigger:'manual'}).tooltip('show');
         this.ui.destroy.addClass('btn-warning')
             .attr('data-action', 'destroy_confirm')

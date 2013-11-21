@@ -31,43 +31,64 @@ function(
 		User: User
 	}
 
-	//models and collections are now all available to setup associations...
+	//define module association setup functions. 
+	//these are defined like this so we can reset all associations during 
+	//unit testing, and just build the ones we need...	
+	models._init = {
+		all: function(){
+			models._init.planting();
+			models._init.place();
+			models._init.user();
+		},
+		planting: function(){
+			models.Planting.has()
+			  .one('place', {
+			    model: models.Place,
+			    inverse: 'plantings',
+			  })
+			  .one('plant', {
+			    model: models.Plant,
+			    inverse: 'plantings'
+			  })
+			  .many('actions', {
+			    inverse: 'planting',
+			    collection: collections.PlantingActions
+			  });
+			},
+		place: function(){
+			models.Place.has()
+			  .many('places', {
+			    inverse: 'place',
+			    collection: collections.Places
+			  })
+			  .one('place', {
+			    inverse: 'places',
+			    model: models.Place
+			  });
+		},
+		user: function(){
+			models.User.has()
+			  .many('places', {
+			    inverse: 'user',
+			    collection: collections.Places
+			  })
+			  .many('plantings', {
+			    inverse: 'user',
+			    collection: collections.Plantings
+			  });
+		}
+	}
 
-	models.Planting.has()
-	  .one('place', {
-	    model: models.Place,
-	    inverse: 'plantings',
-	  })
-	  .one('plant', {
-	    model: models.Plant,
-	    inverse: 'plantings'
-	  })
-	  .many('actions', {
-	    inverse: 'planting',
-	    collection: collections.PlantingActions
-	  });
+	models._reset = {
+		all: function(){
+			_(models).each(function(model){
+				if(model.reset)
+					model.reset();
+			});
+		}
+	}
 
-
-	models.Place.has()
-	  .many('places', {
-	    inverse: 'place',
-	    collection: collections.Places
-	  })
-	  .one('place', {
-	    inverse: 'places',
-	    model: models.Place
-	  });
-
-	models.User.has()
-	  .many('places', {
-	    inverse: 'user',
-	    collection: collections.Places
-	  })
-	  .many('plantings', {
-	    inverse: 'user',
-	    collection: collections.Plantings
-	  });
-
+	models._init.all();
 
 	return models;
 

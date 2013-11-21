@@ -27,16 +27,16 @@ function(sembr, Backbone, Marionette, $, template) {
 
     bind: function () {
         var bindings = Backbone.ModelBinder.createDefaultBindings(this.el, 'data-model');
-        //console.log(bindings);
+        //sembr.log(bindings);
         /*bindings.place = {
             selector: '[data-model=place]',
-            converter: function(direction, value){ console.log(direction, value); return direction==='ModelToView' ? value.name : value; }
+            converter: function(direction, value){ sembr.log(direction, value); return direction==='ModelToView' ? value.name : value; }
         }*/
         //this.modelBinder.bind(this.model, this.el, bindings);
     },
 
     plantingClick: function($ev){
-        console.log('Plant click!')
+        sembr.log('Plant click!')
         $ev.preventDefault();
         sembr.navigate( $($ev.target).attr('href'), {trigger: true});
     },

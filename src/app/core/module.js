@@ -1,27 +1,27 @@
-define(['jquery', 'backbone', 'marionette', 'sembr.promises'], function($, Backbone, Marionette, Promises){
+define(['jquery', 'backbone', 'marionette', 'sembr.promises', 'sembr.mixins.readypromise'], function($, Backbone, Marionette, Promises, ReadyPromise){
 	
 	MarionetteModule = Marionette.Module;
 
 	//create new Marionette constructor
-	Marionette.Module = function(){
-		this._deferReady = new $.Deferred();
-		this.ready = this._deferReady.promise();
-		this.ready
-			.fail(function(err){
-				console.error(err);
-			})
-			.always(function(){
-				this.triggerMethod('ready');
-			}.bind(this));
+	Marionette.Module = function(options){
+
 		this.on('start', this._runInitializerPromises.bind(this));
 		this.vent = new Backbone.Wreqr.EventAggregator();
-		return MarionetteModule.apply(this, arguments);
-	}
 
+		//by default, do not start module with the application
+
+		_(this).extend( new ReadyPromise() );
+
+		MarionetteModule.apply(this, arguments);
+
+		this.startWithParent = false;
+
+	}
 	//copy over all static methods and properties
 	_.extend(Marionette.Module, MarionetteModule);
 
 	_.extend(Marionette.Module.prototype, MarionetteModule.prototype);
+
 	_.extend(Marionette.Module.prototype, {
 
 		constructor: Marionette.Module,

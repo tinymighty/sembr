@@ -16,7 +16,7 @@ define( ['sembr', 'backbone', 'marionette', 'jquery',
       },
 
       onClose: function(){
-        //console.log('plantings list view closed.');
+        //sembr.log('plantings list view closed.');
       }
 
     });

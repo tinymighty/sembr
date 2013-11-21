@@ -2,7 +2,7 @@ define(["sembr", "underscore", "sembr.collection"],
   function(sembr, _, Collection) {
     var Plantings = Collection.extend({
 		  model: function(attrs, options) {
-		  	console.log('Creating new Planting model from Plantings collection.');
+		  	sembr.log('Creating new Planting model from Plantings collection.');
 		    return sembr.trackr.models.Planting.create(attrs, options);
 		  },
 

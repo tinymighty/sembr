@@ -14,12 +14,15 @@ require.config({
         // Core Libraries
         'init': 'init',
         "sembr": "core/sembr",
+        "sembr.error": 'core/error',
         "sembr.modulerouter": "core/module-router",
         "sembr.module": "core/module",
         "sembr.controller": "core/controller",
         "sembr.collection": 'core/collection',
         "sembr.model": 'core/model',
         "sembr.sync.pouch": 'core/sync.pouch',
+
+        "sembr.mixins.readypromise": 'core/mixins/readypromise',
 
         'sembr.promises': 'core/promises',
 

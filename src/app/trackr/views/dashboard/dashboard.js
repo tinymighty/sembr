@@ -19,7 +19,7 @@ template) {
     		throw 'No places collection was passed to DashboardView';
     	}
 
-    	console.log('Dashboard layout init.');
+    	sembr.log('Dashboard layout init.');
 
 
     	this.placesCollection = opts.places;
@@ -29,7 +29,7 @@ template) {
           return true;
         })
       );
-      console.log('TopLevelPlaces %o', topLevelPlaces);
+      sembr.log('TopLevelPlaces %o', topLevelPlaces);
     	this.placesListView = new PlacesTreeView({collection: topLevelPlaces});
 
     	this.plantingsCollection = opts.plantings;

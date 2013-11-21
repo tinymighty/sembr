@@ -35,9 +35,9 @@ template) {
         this.place = new sembr.trackr.models.Place();
         this._modelBinder = new Backbone.ModelBinder();
         if(!this.collection){
-            console.log('getting places');
-          this.collection = (opts && opts.collection) ? opts.collection : new Places();
-          this.collection.fetch().then(function(places){ console.log('Got places', places); this.render() }.bind(this));
+            sembr.log('getting places');
+          this.collection = (opts && opts.collection) ? opts.collection : new sembr.trackr.collections.Places();
+          this.collection.fetch().then(function(places){ sembr.log('Got places', places); this.render() }.bind(this));
         }
     },
 
@@ -53,7 +53,7 @@ template) {
 
         var $check = $($ev.currentTarget);
         var $control = this.$('#subplace-of');
-        console.log('hide/show', $check.attr('checked'));
+        sembr.log('hide/show', $check.attr('checked'));
         $check.attr('checked') ? $control.show() : $control.hide();
     },
 
@@ -65,8 +65,8 @@ template) {
     },
 
     save: function(){
-        console.log("Save");
-        //console.log('Save the model: ', this.model.toJSON());
+        sembr.log("Save");
+        //sembr.log('Save the model: ', this.model.toJSON());
         this.collection.create(this.model.toJSON(), {wait: true, success:function(){
                 this.model.clear();
                 this.ui.formView.hide();

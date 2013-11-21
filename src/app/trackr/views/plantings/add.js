@@ -42,7 +42,7 @@ function(sembr, Backbone, Marionette, $, template) {
         this.plants = new sembr.trackr.collections.Plants();
         this.plantsPromise = this.plants.fetch();
         //this.listenTo(this.places, 'change', this.render);
-        console.log('Places: ',opts.places);
+        sembr.log('Places: ',opts.places);
     },
 
     onRender: function(){
@@ -53,7 +53,7 @@ function(sembr, Backbone, Marionette, $, template) {
                     var arr = _(plants.toJSON()).chain().filter(function(plant){
                         return plant.use_name.toLowerCase().match(query.toLowerCase());
                     }).pluck('use_name').value() || [];
-                    console.log('Typeahead: ', query, arr);
+                    sembr.log('Typeahead: ', query, arr);
                     cb( arr );
                 });
             }.bind(this)
@@ -69,7 +69,7 @@ function(sembr, Backbone, Marionette, $, template) {
     },
 
     save: function(){
-        console.log('Save the model: ', this.model.toJSON());
+        sembr.log('Save the model: ', this.model.toJSON());
         this.collection.create(this.model.toJSON(), {wait: true, success:_(this.newModel).bind(this)});
     },
 
@@ -82,10 +82,10 @@ function(sembr, Backbone, Marionette, $, template) {
     },
 
     bindForm: function () {
-        console.log('Render QuickAdd view: ',this);
+        sembr.log('Render QuickAdd view: ',this);
 
         var bindings = Backbone.ModelBinder.createDefaultBindings(this.el, 'data-model');
-        console.log(bindings);
+        sembr.log(bindings);
         this._modelBinder.bind(this.model, this.el, bindings);
     }
 

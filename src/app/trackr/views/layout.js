@@ -10,7 +10,7 @@ function(sembr, Backbone, Marionette, template) {
         },
 
         onBeforeClose: function(){
-        	console.log('Trying to close the Plantings layout.')
+        	sembr.log('Trying to close the Plantings layout.')
         	//@todo: this is a total zombie maker. We need to check if this view should be persisted
         	return false;
         }

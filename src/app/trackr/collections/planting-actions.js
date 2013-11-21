@@ -8,7 +8,7 @@ define(["sembr", "underscore", "sembr.collection"],
 
 	    initialize: function(options){
 	    	Collection.prototype.initialize.apply(this, arguments);
-	    	/*console.log("Initializing PlantingActions collection", this, options);
+	    	/*sembr.log("Initializing PlantingActions collection", this, options);
 	    	var planting_id = options.planting_id || this.owner.id || undefined;
 	    	if(planting_id){
 		    	this.pouch.options.query.planting_id = planting_id;

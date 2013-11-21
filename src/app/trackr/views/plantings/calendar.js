@@ -21,12 +21,12 @@ template ){
       if(!this.collection){
         throw 'No collection passed to view.';
       }
-      console.log(this.collection.models);
+      sembr.log(this.collection.models);
       /*var grouped_by_plants = _(this.collection.models).groupBy(function(model){
-      	console.log(model.get);
+      	sembr.log(model.get);
       	return model.get('plant').get('use_name');
       });
-      console.log(grouped_by_plants);*/
+      sembr.log(grouped_by_plants);*/
       this.collectionView = new CalendarCollectionView({collection: opts.collection, group_by:'plant'});
     },
 
@@ -35,7 +35,7 @@ template ){
     },
 
     onClose: function(){
-      //console.log('plantings list view closed.');
+      //sembr.log('plantings list view closed.');
     },
 
     /*serializeData: function(){

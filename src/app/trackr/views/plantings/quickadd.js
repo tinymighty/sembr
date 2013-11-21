@@ -28,7 +28,7 @@ function(sembr, Backbone, Marionette, $, template) {
     initialize: function(opts){
         this._modelBinder = new Backbone.ModelBinder();
         if(!this.collection){
-          this.collection = (opts && opts.collection) ? opts.collection : new Plantings();
+          this.collection = (opts && opts.collection) ? opts.collection : new sembr.trackr.collections.Plantings();
         }
         this.placesCollection = new PlacesCollection();
         this.placesCollection.fetch().then(function(){this.render()}.bind(this));
@@ -47,7 +47,7 @@ function(sembr, Backbone, Marionette, $, template) {
     },
 
     save: function(){
-        //console.log('Save the model: ', this.model.toJSON());
+        //sembr.log('Save the model: ', this.model.toJSON());
         this.collection.create(this.model.toJSON(), {wait: true, success:_(this.newModel).bind(this)});
     },
 
@@ -60,10 +60,10 @@ function(sembr, Backbone, Marionette, $, template) {
     },
 
     bindForm: function () {
-        //console.log('Render QuickAdd view: ',this);
+        //sembr.log('Render QuickAdd view: ',this);
 
         var bindings = Backbone.ModelBinder.createDefaultBindings(this.el, 'data-model');
-        console.log(bindings);
+        sembr.log(bindings);
         this._modelBinder.bind(this.model, this.el, bindings);
     }
 

@@ -31,7 +31,7 @@ define(['sembr', 'sembr.model'],
                         //options will be passed an array of place documents before they have been used to initialize
                         //models on this collection
                         options: function( docs, collection ){
-                            console.log('Building options', docs, collection);
+                            sembr.log('Building options', docs, collection);
                             return {
                                 keys: _(docs).pluck('_id')
                             }

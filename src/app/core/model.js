@@ -16,7 +16,8 @@ function(_, Backbone, Pouch, Supermodel ) {
       //array of active association names on this model instance
       this._associations = [];
 
-      this.processRelatedDocs();
+      this._processSerializers();
+      this._processRelatedDocs();
 
       //keep an array of active association names so we can know the getter names to use.
       //without this there is no way to access associations programatically
@@ -43,7 +44,7 @@ function(_, Backbone, Pouch, Supermodel ) {
     },
 
     //define getters and setters for attribute values...
-    defineAttribute: function(key) {
+    _defineAttribute: function(key) {
       var model = this;
       //silently fail if the object already has a property with this name
       //this could be because this method has already run for the property
@@ -68,7 +69,39 @@ function(_, Backbone, Pouch, Supermodel ) {
       }
     },
 
-    processRelatedDocs: function(){
+    _processSerializers: function(){
+      if(this.serialized){
+        this.serialized = _(this.serialized).each(function(item, key, obj){
+          if( _(item).isString() ){
+            if( this.serializers[item] ){
+              item = this.serializers[item];
+            }else{
+              throw 'Invalid serializer name';
+            }
+          }
+          if(item.in){
+            item.in = _(item.in).bind(this);
+          }
+          if(item.out){
+            item.out = _(item.out).bind(this);
+          }
+          obj[key] = item;
+        }, this);
+      }
+    },
+
+    serializers: {
+      date: {
+        in: function(val){ return (val instanceof Date) ? Date.toString() : val; },
+        out: function(val){ return new Date(val); }
+      }
+    },
+
+    _serialize: function(){
+      return this.attributes;
+    },
+
+    _processRelatedDocs: function(){
       if(this.relatedDocs){
         _(this.relatedDocs).each(function(rel){
           _(rel).defaults({
@@ -85,6 +118,8 @@ function(_, Backbone, Pouch, Supermodel ) {
       options = _(options || {}).defaults({
         include_associations: false
       });
+
+      this._serialize();
 
       //defer to previous implementation for this objects attributes
       json = Supermodel.Model.prototype.toJSON.apply(this, arguments);

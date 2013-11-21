@@ -130,9 +130,13 @@
 
             boilerplateMVC.loadFiles(production, filesToLoad, function() {
                 if(!production && window.require) {
-                    require([filesToLoad["dev-init"]]);
+                    require([filesToLoad["dev-init"]], function(init){
+                        init({environment:'development'});
+                    });
                 } else if ( production ) {
-                    require([filesToLoad["prod-init"]])
+                    require([filesToLoad["prod-init"]], function(init){
+                        init({environment:'production'});
+                    })
                 }
             });
 

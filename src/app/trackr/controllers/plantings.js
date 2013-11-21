@@ -18,11 +18,11 @@ function (sembr, Controller, Backbone, CB, Marionette,
 				this.plantings = new sembr.trackr.collections.Plantings();
 				this.loader  = new LoaderView();
 				this.places = sembr.trackr.places;
-				//console.log('INIT PLANTINGS CONTROLLER', Math.random());
+				//sembr.log('INIT PLANTINGS CONTROLLER', Math.random());
 		},
 
 		beforeModuleRoute: function(){
-			console.log('Controller ID: ', this.id);
+			sembr.log('Controller ID: ', this.id);
 			sembr.base.setContent( this.layout );
 			this.places = sembr.trackr.places;
 			//this.layout.sidebar.show( new Sidebar({collection: this.plantings}) );
@@ -34,22 +34,22 @@ function (sembr, Controller, Backbone, CB, Marionette,
 		},
 
 		list: function(){
-			console.log('Plantings list view...');
+			sembr.log('Plantings list view...');
 			var self = this;
 
 			var plantingListView = new PlantingsListView({collection: this.plantings});
 			this.listenTo(this.plantings,'all', function(name){
-				console.log('PlantingsCollection: ', name);
+				sembr.log('PlantingsCollection: ', name);
 			})
 			this.listenTo(plantingListView,'all', function(name){
-				console.log('PlantingListView:', name);
+				sembr.log('PlantingListView:', name);
 			})
-			console.log('Fetching plantings', this.plantings, this.plantings.model());
+			sembr.log('Fetching plantings', this.plantings, this.plantings.model());
 			this.plantings.fetchWhere({user: sembr.user.get('_id')})
 				.done( function(){
-					console.log("Got plantings", this.plantings); 
-					console.log("Planting associations", this.plantings.at(0));
-					console.log("Planting to JSON", this.plantings.at(0).toJSON() );
+					sembr.log("Got plantings", this.plantings); 
+					sembr.log("Planting associations", this.plantings.at(0));
+					sembr.log("Planting to JSON", this.plantings.at(0).toJSON() );
 
 					this.layout.main.show( plantingListView.render() );
 				}.bind(this))
@@ -80,14 +80,14 @@ function (sembr, Controller, Backbone, CB, Marionette,
 			if(!id){
 				this.error('Planting id missing.');
 			}
-			console.log('Getting planting', id);
+			sembr.log('Getting planting', id);
 			this.layout.main.show(new LoaderView() );
 			this.layout.sidebar.show(new LoaderView() );
 
 			//load a planting, fetch it's actions
 			sembr.trackr.models.Planting.findOrFetch({'_id': id})
 				.done(function(planting, data){
-					console.log('Fetched planting', planting);//, data);
+					sembr.log('Fetched planting', planting);//, data);
 
 					this.showPlanting(planting);
 				}.bind(this))

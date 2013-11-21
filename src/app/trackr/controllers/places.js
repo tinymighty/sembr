@@ -14,8 +14,8 @@ function (sembr, Controller, Backbone, CB, Marionette,
 		},
 
 		beforeModuleRoute: function(){
-			console.log('Controller ID', this.id);
-			//console.log('Setting plantings layout!');
+			sembr.log('Controller ID', this.id);
+			//sembr.log('Setting plantings layout!');
 			sembr.layout.setContent( this.layout );
 			//this.layout.sidebar.show( new Sidebar({collection: this.collection}) );
 		},
@@ -23,7 +23,7 @@ function (sembr, Controller, Backbone, CB, Marionette,
 		dashboard: function(){
 			this.layout.main.show( this.loaderView );
 			new PlacesCollection().fetch().then(function(places){
-				console.log('Places...', places);
+				sembr.log('Places...', places);
 				this.layout.main.show( new TreeView({collection:places}) );
 			}.bind(this));
 		}

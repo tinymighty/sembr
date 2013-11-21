@@ -4,11 +4,9 @@
 		Collection = require('../collections/plantings');*/
 define(['sembr', 'sembr.controller', 'backbone', 'backbone.collectionbinder','marionette', 
 	'trackr/views/layout', 'trackr/views/dashboard/dashboard',
-	'trackr/collections/places', 'trackr/collections/plantings',
 	"components/loader/loader"],
 function (sembr, Controller, Backbone, CB, Marionette, 
 	Layout, DashboardView,
-	Places, Plantings,
 	LoaderView) {
 	var DashboardController = Controller.extend({
 
@@ -16,15 +14,15 @@ function (sembr, Controller, Backbone, CB, Marionette,
 				this.layout = new Layout();
 				this.loader  = new LoaderView();
 
-				console.log('Dashboard controller initializing');
+				sembr.log('Dashboard controller initializing');
 		},
 
 		beforeModuleRoute: function(){
-			console.log('Controller ID', this.id);
-			//console.log('Setting plantings layout!');
-			console.log(sembr);
+			sembr.log('Controller ID', this.id);
+			//sembr.log('Setting plantings layout!');
+			sembr.log(sembr);
 			this.places = sembr.trackr.places;
-			console.log('beforeModuleRoute... places...', sembr.trackr.places);
+			sembr.log('beforeModuleRoute... places...', sembr.trackr.places);
 			sembr.base.layout.setContent( this.layout );
 			//this.layout.sidebar.show( new Sidebar({collection: this.collection}) );
 		},
@@ -34,14 +32,14 @@ function (sembr, Controller, Backbone, CB, Marionette,
 			this.layout.main.show( this.loader );
 
 			//@todo: restrict to plantings based on criteria
-			plantings = new Plantings();
+			plantings = new sembr.trackr.collections.Plantings();
 			plantings
 				.fetchWhere({user: sembr.user.get("_id")})
 				.fail(function(err){
 					console.error(err);
 				})
 				.done(function(plantings){
-					console.log('Loaded plantings. Showing dashboard view.');
+					sembr.log('Loaded plantings. Showing dashboard view.');
 					this.layout.main.show( new DashboardView({places: this.places, plantings: plantings}) );
 				}.bind(this));
 

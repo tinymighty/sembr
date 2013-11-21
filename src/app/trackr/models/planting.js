@@ -2,22 +2,6 @@ define(['sembr', 'sembr.model'],
 function(sembr, Model) {
 	// Creates a new Backbone Model class object
 
-	/**
-	 * Document schema
-	 * 
-	 * _id
-	 *      Document UID
-	 * type
-	 *      Document type; "planting"
-	 * status
-	 *      Planting status; [current, past, future]
-	 * plant
-	 *      Plant document UID
-	 * place
-	 *      Place document UID
-	 * actions
-	 *      Array of planting action objects (eg. sowed, planted, harvested)
-	 */
 	var Planting = Model.extend({
 		name: 'planting',
 
@@ -26,14 +10,19 @@ function(sembr, Model) {
 			status: 'current', //past, current or future
 			from: 'seed', //seed, plant, cutting
 			from_planting_id: null,
-
+			plant_id: null,
+			place_id: null,
 			planted_on:null,
 			removed_on:null
 		},
 
 		initialize: function(attrs, options){
-			if(attrs && !attrs._id){
-				this.created = new Date().toString();
+			if(attrs){
+				if(!attrs._id){
+					this.created = new Date().toString();
+				}else{
+					this.validate(attrs);
+				}
 			}
 			Model.prototype.initialize.apply(this, arguments);
 		},
@@ -45,18 +34,14 @@ function(sembr, Model) {
 			return new Date(this.attributes.created);
 		},
 
-		plantingActionsCollectionOptions: function(){
-			return {planting_id: this.get('_id')};
-		},
-
-		plantsCollectionOptions: function(){
-			return {planting_id: this.get('_id')};
-		},
-
 		// Get's called automatically by Backbone when the set and/or save methods are called (Add your own logic)
 		validate: function(attrs) {
+			sembr.log("VALIDATING ATTRS", attrs);
 			if(attrs.type!=='planting'){
-				throw {error: 'type property must be planting'};
+				throw sembr.error('type property must be planting');
+			}
+			if(!attrs.plant_id){
+				throw sembr.error('plant_id is not defined');
 			}
 		},
 
@@ -68,7 +53,10 @@ function(sembr, Model) {
 		},
 
 		serialized: {
-			date: 'date',
+			planted_on: 'date',
+			removed_on: 'date',
+			created_at: 'date',
+			updated_at: 'date',
 			place_id: {	
 				in: 	function(id){ return this.place() && this.place().get('id') || id }, 
 				out: 	function(id){ return id; }

@@ -1,12 +1,14 @@
-define(['trackr/models/planting', 'init'],
-function(PlantingModel) {
+define(['sembr', 'init'],
+function(sembr) {
 
 	describe('Planting Model', function() {
-    var planting, mock_data;
-
+    var planting, mock_data, 
+        PlantingModel = sembr.trackr.models.Planting;
+    sembr.trackr.models._reset.all();
     beforeEach(function () {
-      
-      planting = new PlantingModel();
+      sembr.trackr.models._init.all();
+
+      //planting = new PlantingModel();
 
       mock_data = {
         type: 'planting',
@@ -73,6 +75,10 @@ function(PlantingModel) {
         ]
       }
     });
+
+    afterEach(function(){
+      sembr.trackr.models._reset.all();
+    });
     
     describe('Model class', function(){
       it('should have a find method', function(){
@@ -92,7 +98,9 @@ function(PlantingModel) {
     });
 
     describe('findOrFetch', function(){
-
+      beforeEach(function(){
+        planting = PlantingModel.create();
+      });
       it("should return a promise from", function() {
   	    var promise = planting.fetch({id: ''});
   	    expect(promise).toBePromise();
@@ -130,6 +138,8 @@ function(PlantingModel) {
       });
     });*/
     describe('Instantiation', function(){
+      beforeEach(function(){
+      });
       it('should set data and associations when instantiated with data', function(){
         planting = PlantingModel.create(mock_data);
         expect(planting).toBeDefined();
@@ -140,6 +150,7 @@ function(PlantingModel) {
       });
 
       it('should set data and associations when data is set()', function(){
+        planting = PlantingModel.create();
         planting.set(mock_data);
         expect(planting).toBeDefined();
         expect(planting.get('_id')).toBe(mock_data._id);
@@ -147,22 +158,59 @@ function(PlantingModel) {
         expect(planting.place).toBeDefined();
         expect(planting.actions).toBeDefined();
       });
+
+      it('should throw an error if there is no plant_id assigned', function(){
+        delete mock_data.plant_id;
+        delete mock_data.plant;
+        
+        expect( PlantingModel.create.bind(this, mock_data) ).toThrow();
+      });
+
+      it('should instantiate without error when place_id and/or place are undefined', function(){
+        delete mock_data.place_id;
+        delete mock_data.place;
+        console.log( "CREATE PLANTING WITHOUT PLANT", mock_data, PlantingModel.create(mock_data) );
+        expect( PlantingModel.create.bind(this, mock_data) ).not.toThrow();
+      });
+      describe('when place is undefined', function(){
+        beforeEach(function(){
+          delete mock_data.place_id;
+          delete mock_data.place;
+          planting = PlantingModel.create(mock_data);
+        });
+        it('should not create a place assocation when place_id or place properties are undefined in attributes', function(){
+          expect( planting._place ).toBeUndefined();
+        });
+
+        it('should not create a place assocation when place_id or place properties are undefined in attributes', function(){
+          expect( planting._place ).toBeUndefined();
+        });
+
+        it('should still define the place() association accessor, but return false', function(){
+          expect(planting.place).toBeDefined();
+          expect(planting.place()).toBeFalsy();
+        });
+      });
     });
 
     describe('An instance', function(){
       beforeEach(function(){
-        planting = new PlantingModel(mock_data)
+        PlantingModel.reset();
+        planting = new PlantingModel(mock_data);
       });
       it('should expose association names as an array', function(){
-        expect(planting.associations).toBeDefined();
-        expect(planting.associations).toContain('plant');
-        expect(planting.associations).toContain('place');
-        expect(planting.associations).toContain('actions');
+        expect(planting._associations).toBeDefined();
+        expect(planting._associations).toContain('plant');
+        expect(planting._associations).toContain('place');
+        expect(planting._associations).toContain('actions');
       });
     });
 
     describe('the save method', function(){
-      it('should call sync when called', function(){
+      beforeEach(function(){
+        planting = new PlantingModel(mock_data);
+      });
+      it('should call sync', function(){
         spyOn(planting, 'sync');
         planting.save();
         expect(planting.sync).toHaveBeenCalled();

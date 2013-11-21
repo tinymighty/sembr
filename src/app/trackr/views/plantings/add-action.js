@@ -69,7 +69,7 @@ function(sembr, Backbone, Marionette, $, template) {
         this.bind();
         this.$('.selectpicker').selectpicker({style: 'btn-info', menuStyle: 'dropdown-inverse'});
 
-        //console.log(this.$('#add-action-date'));
+        //sembr.log(this.$('#add-action-date'));
         // jQuery UI Datepicker JS init
         var datepickerSelector = '#add-action-date';
         this.$(datepickerSelector).datepicker({

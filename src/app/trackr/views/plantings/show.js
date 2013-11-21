@@ -22,26 +22,26 @@ function(sembr, Backbone, Marionette, $, PlantingActionsView, template) {
     };*/
 
     initialize: function(opts){
-        console.log('Planting show view for planting model: ', this.model);
+        sembr.log('Planting show view for planting model: ', this.model);
         this.actionsView = new PlantingActionsView( {collection: this.model.actions()} );
     },
 
     onRender: function(){
         this.actionsView.render();
         this.$('[data-view="actions"]').append( this.actionsView.$el );
-        console.log('DATA FOR VIEW', this.serializeData());
+        sembr.log('DATA FOR VIEW', this.serializeData());
     },
 
     showActions: function(actions){
-        console.log('Got actions, show actions view', actions)
+        sembr.log('Got actions, show actions view', actions)
     },
 
     openPopover: function($ev){
         $ev.preventDefault();
         var $el = $($ev.currentTarget);
-        console.log($el.attr('data-contentProvider'));
+        sembr.log($el.attr('data-contentProvider'));
         var content = $('[data-popover="'+$el.attr('data-contentProvider')+'"]')();
-        console.log(content);
+        sembr.log(content);
         $el.popover({ content:'Whaaaaat', trigger:'manual'});
         $el.popover('show');
     },
