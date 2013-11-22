@@ -1,4 +1,5 @@
-define(['jquery', 'backbone', 'marionette', 'sembr.promises', 'sembr.mixins.readypromise'], function($, Backbone, Marionette, Promises, ReadyPromise){
+define(['sembr', 'jquery', 'backbone', 'marionette', 'sembr.promises', 'sembr.mixins.readypromise'], 
+function(sembr, $, Backbone, Marionette, Promises, ReadyPromise){
 	
 	MarionetteModule = Marionette.Module;
 
@@ -17,6 +18,18 @@ define(['jquery', 'backbone', 'marionette', 'sembr.promises', 'sembr.mixins.read
 
 		this.startWithParent = false;
 
+		/* This is an imperfect solution, but without a rewrite of Marionette.Module it'll have
+		to do...
+		Marionette.Module currently provides no way of checking for the existence of a module definition
+		via a module name string without automatically creating it if it does not exist...
+
+		So, for now dependencies can only be siblings (that is, other modules defined as submodules of the this.app
+		object.
+
+		Additionally, there is currently 
+		*/
+		this.dependencies = [];
+
 	}
 	//copy over all static methods and properties
 	_.extend(Marionette.Module, MarionetteModule);
@@ -26,19 +39,36 @@ define(['jquery', 'backbone', 'marionette', 'sembr.promises', 'sembr.mixins.read
 	_.extend(Marionette.Module.prototype, {
 
 		constructor: Marionette.Module,
+		_start: Marionette.Module.prototype.start,
+		start: function(){
+
+			//start any dependent modules first
+			if(this.dependencies){
+				_(this.dependencies).each(function(moduleName){
+					if(this.app.submodules[moduleName] && !this.app.submodules[moduleName]._isInitialized){
+	          this.app.log('Module %o is a dependency of module %o but is not initialized. Lazy initializing...', moduleName, this.name);
+	          this.app.module(moduleName).start();
+					}
+				}.bind(this));
+			}
+
+			this._start.apply(this, arguments);
+		},
+
+		isDependentOn: function(moduleName){
+			this.dependencies.push(moduleName);
+		},
 
 		addRouter: function(router){
 			this.router = router;
 			this.navigate = router.navigate; //convenience method
 			this.listenTo(router, 'route', function( route, params){
-          sembr.log('Route event received by module, bubbling:', route, this, params);
           this.vent.trigger('route', route, this.moduleName, params);
 	    }.bind(this));
 		},
 
 	  // Run initializerPromises on start
 	  _runInitializerPromises: function(options){
-	  	//sembr.log("Running initializer promises", this._initializerPromises);
 	  	this._initializerPromises.run(options, this)
 	    	.fail(function(err){
 	    		this._deferReady.reject(err);
@@ -58,14 +88,10 @@ define(['jquery', 'backbone', 'marionette', 'sembr.promises', 'sembr.mixins.read
 
 	  addAsyncInitializer: function(callback){
 	  	this._initializerPromises.add(callback);
-	  	//sembr.log('Adding AsyncInitializer', this._initializerPromises);
 
 	  }
 
 	});
-
-
-
 
 	return Marionette.Module;
 });

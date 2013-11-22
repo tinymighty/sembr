@@ -23,7 +23,7 @@ function (sembr, Controller, Backbone, CB, Marionette,
 			sembr.log(sembr);
 			this.places = sembr.trackr.places;
 			sembr.log('beforeModuleRoute... places...', sembr.trackr.places);
-			sembr.base.layout.setContent( this.layout );
+			sembr.base.setContent( this.layout );
 			//this.layout.sidebar.show( new Sidebar({collection: this.collection}) );
 		},
 

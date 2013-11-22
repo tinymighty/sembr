@@ -67,6 +67,7 @@ define(['sembr', 'jquery', 'backbone', 'marionette'], function(sembr, $, Backbon
               throw sembr.error('No controller id specified for controller %o (%o) in module %o', route[1].controller, controller, module);
             }
             if(!module._isInitialized){
+              sembr.log('Module %o not initialized for route %o. Lazy initializing...', module.name, route);
               sembr.initModule(module.name)
             }
             //when the module is ready, activate the route

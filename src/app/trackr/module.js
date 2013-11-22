@@ -11,8 +11,12 @@ var Trackr = sembr.module("trackr", function(module){
 
   module.collections = collections;
 
+  module.addRouter( new Router({ module: module }) )
+
+  module.isDependentOn('base');
+
   module.on('before:start', function(){
-    module.addRouter( new Router({ module: module }) )
+    
   });
 
   //since places are needed quite regularly and is a nested tree
@@ -32,6 +36,7 @@ var Trackr = sembr.module("trackr", function(module){
   			deferred.reject(err);
   		});
   });
+
 
   module.on('start', function(){
 

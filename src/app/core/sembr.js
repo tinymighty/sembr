@@ -1,15 +1,19 @@
-define(['backbone', 'jquery', 'pouchdb',  'marionette', 'sembr.module', 'underscore', 'handlebars', 
+define(['backbone', 'jquery', 'pouchdb', 'sembr.module', 'underscore', 'handlebars', 
 	'sembr.error', 'sembr.sync.pouch', 'sembr.mixins.readypromise'],
-function (Backbone, $, PouchDB, Marionette, Module, _, Handlebars, 
+function (Backbone, $, PouchDB, Marionette, _, Handlebars, 
 	Error, PouchSync, ReadyPromise) {
 
 	Backbone.Model.prototype.idAttribute = '_id';
 
 	var sembr = new Backbone.Marionette.Application();
 
+	var settings = {
+		container: 'body'
+	}
+
 	sembr.initModule = function(name, options){
 		app_options = sembr.options[name] || {};
-		options = _(options).defaults(app_options);
+		options = _(options || {}).defaults(app_options);
 		return this.module(name).start(options);
 	}
 
@@ -25,8 +29,7 @@ function (Backbone, $, PouchDB, Marionette, Module, _, Handlebars,
 	sembr.log = _(console.log).bind(console);
 
 	sembr.addInitializer(function(options){
-		//setup logging...
-		sembr.options = options;
+	
 		//check for mobile user agents...
 		sembr.mobile = sembr.isMobile();
 
@@ -36,26 +39,22 @@ function (Backbone, $, PouchDB, Marionette, Module, _, Handlebars,
 		Backbone.sync =  PouchSync;
 	});
 
-	sembr.addInitializer(function(){
+	sembr.on("initialize:before", function(options){
+		sembr.options = _(options).defaults(settings);
+		console.log('Setting container region:%o', sembr.options.container);
+	  sembr.addRegions({
+			container: sembr.options.container
+		});
+	});
+
+	//load current user for the whole application...
+	sembr.addInitializer(function(options){
+		//temporary demo user!
 		sembr.user = new Backbone.Model({'_id': 'sembr.es/user/andru', 'username': 'andru', 'email':'andru@sembr.es'});
-
-		sembr.initModule('trackr');
-
 	});
-
-	sembr.addRegions({
-		body: "body"
-	});
-
-	//temporary demo user!
-
-
-
 
 	sembr.addInitializer(function (options) {
 		sembr.log('Sembr has loaded', sembr);
-
-		//sembr.layout = sembr.submodules.Layout; //for convenience
 
 		_(sembr.submodules).each(function(module, name){
 			//bubble all module events up to the application vent
@@ -95,7 +94,7 @@ function (Backbone, $, PouchDB, Marionette, Module, _, Handlebars,
 		sembr.log('Application initialized, starting Backbone.history');
 		Backbone.history.start({pushState: true});
 		//temporary hack for navigate until we make a proper app router
-		sembr.navigate = sembr.submodules.default.router.navigate;
+		sembr.navigate = Backbone.history.navigate.bind(Backbone.history);
 	});
 
 	return sembr;

@@ -15,8 +15,7 @@ function (sembr, Controller, Backbone, CB, Marionette,
 
 		beforeModuleRoute: function(){
 			sembr.log('Controller ID', this.id);
-			//sembr.log('Setting plantings layout!');
-			sembr.layout.setContent( this.layout );
+			sembr.base.setContent( this.layout );
 			//this.layout.sidebar.show( new Sidebar({collection: this.collection}) );
 		},
 

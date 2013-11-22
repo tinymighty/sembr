@@ -1,4 +1,4 @@
-define(['sembr', 'backbone', 'marionette', 
+define(['sembr', 'backbone', 'marionette',  
 'default/controllers/dashboard',
 'default/router'], 
 function(sembr, Backbone, Marionette, 

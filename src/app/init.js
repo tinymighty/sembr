@@ -1,7 +1,24 @@
-define(['jquery', 'underscore', 
-        'sembr', 'sembr.base', 'sembr.default', 'sembr.trackr'], 
-function($, _, 
-        sembr, layoutModule, defaultModule, trackrModule){
+/**
+ * Sembr application initializer.  This AMD function sets up the core 
+ * application dependencies and defines a mean to start Sembr with an
+ * object hash of options.
+ *  
+ * This initialization design allows us to require the sembr application
+ * object as a dependency for all modules without having a circular 
+ * dependency problem. 
+ *
+ * Note that the design of Marionette.Module makes it difficult to simply
+ * extend it to add custom functionality. To get around that we monkey patch
+ * it, which means it's simplest to load it upfront.
+ *
+ * Returns an init function which, when called, starts the application.
+ */
+define(['underscore', 
+        'sembr', 'sembr.module',
+        'sembr.base', 'sembr.default', 'sembr.trackr'], 
+function(_, 
+        sembr, monkey_patch_module,
+        layoutModule, defaultModule, trackrModule){
 	
     function init(options){
         var envDefaults = {

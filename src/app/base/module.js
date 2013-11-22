@@ -21,7 +21,10 @@ var BaseModule = sembr.module("base", function(module){
 	};
 
 	var layout = new ResponsiveLayout();
-	sembr.body.show(layout);
+
+	module.addInitializer(function(options){
+		sembr.container.show(layout);
+	});
 
 	//the layout should be managed via a consistent API defined by this module
 	module.setContent = function(view){
