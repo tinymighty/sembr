@@ -4,15 +4,7 @@ require(['underscore', 'jquery', 'jasmine-html', 'init'], function(_, $, jasmine
   var jasmineEnv = jasmine.getEnv();
   jasmineEnv.updateInterval = 1000;
  
-  var htmlReporter = new jasmine.TrivialReporter();
- 
-  jasmineEnv.addReporter(htmlReporter);
- 
-  jasmineEnv.specFilter = function(spec) {
-    return htmlReporter.specFilter(spec);
-  };
-
-  var sembr = init();
+  
  
   var specs = [
     '/test/spec/helpers.js',
@@ -21,10 +13,22 @@ require(['underscore', 'jquery', 'jasmine-html', 'init'], function(_, $, jasmine
     '/test/spec/modules/trackr/plantings.js'
     ]; 
  
-  $(sembr.ready.done(function(){
+  $(function(){
+    var sembr = init({
+      container: '#sembr'
+    });
+
     require(specs, function(){
+      var htmlReporter = new jasmine.HtmlReporter();
+ 
+      jasmineEnv.addReporter(htmlReporter);
+     
+      jasmineEnv.specFilter = function(spec) {
+        return htmlReporter.specFilter(spec);
+      };
+
       jasmineEnv.execute();
     });
-  }));
+  });
  
 });

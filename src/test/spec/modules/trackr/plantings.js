@@ -1,4 +1,4 @@
-define(['sembr', 'init'],
+define(['sembr'],
 function(sembr) {
 
 	describe('Planting Model', function() {
