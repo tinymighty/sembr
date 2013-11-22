@@ -10,7 +10,9 @@ ResponsiveLayout){
 /* Primary module */
 var BaseModule = sembr.module("base", function(module){
 
-	module.controllers = {};
+	module.controllers = {
+		
+	};
 	module.collections = {
 		Users: UsersCollection
 	};

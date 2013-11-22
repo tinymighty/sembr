@@ -3,8 +3,8 @@
  *
  * Defines a model class which can autoload it's dependencies. 
  **/
-define(["underscore", 'jquery', "backbone"],
-function(_, $, Backbone ) {
+define(['sembr', "underscore", 'jquery', "backbone"],
+function(sembr, _, $, Backbone ) {
   var Collection = Backbone.Collection.extend( 
 
   /* INSTANCE METHODS */
@@ -75,7 +75,7 @@ function(_, $, Backbone ) {
         endkey: endkey
       }
 
-      console.log('Fetching from fetch_where view with key range ',this.query.options);
+      sembr.log('Fetching from fetch_where view with key range ',this.query.options);
 
       //the query is set up, so resolve to 
       return Backbone.Collection.prototype.fetch.apply(this, arguments);

@@ -6,6 +6,13 @@ function (Backbone, $, PouchDB, Marionette, Module, _, Handlebars,
 	Backbone.Model.prototype.idAttribute = '_id';
 
 	var sembr = new Backbone.Marionette.Application();
+
+	sembr.initModule = function(name, options){
+		app_options = sembr.options[name] || {};
+		options = _(options).defaults(app_options);
+		return this.module(name).start(options);
+	}
+
 	sembr.error = Error;
 	sembr.isMobile = function() {
 		var userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -13,12 +20,13 @@ function (Backbone, $, PouchDB, Marionette, Module, _, Handlebars,
 	}
 	//mixin readypromise properties...
 	_(sembr).extend( new ReadyPromise() );
-
+	
+	//sembr.log = (options.log && console) ? sembr.log : function(){};
+	sembr.log = _(console.log).bind(console);
 
 	sembr.addInitializer(function(options){
 		//setup logging...
-		sembr.log = (options.log && console) ? console.log : function(){};
-
+		sembr.options = options;
 		//check for mobile user agents...
 		sembr.mobile = sembr.isMobile();
 
@@ -30,6 +38,9 @@ function (Backbone, $, PouchDB, Marionette, Module, _, Handlebars,
 
 	sembr.addInitializer(function(){
 		sembr.user = new Backbone.Model({'_id': 'sembr.es/user/andru', 'username': 'andru', 'email':'andru@sembr.es'});
+
+		sembr.initModule('trackr');
+
 	});
 
 	sembr.addRegions({
@@ -42,7 +53,7 @@ function (Backbone, $, PouchDB, Marionette, Module, _, Handlebars,
 
 
 	sembr.addInitializer(function (options) {
-		console.log('Sembr has loaded', sembr);
+		sembr.log('Sembr has loaded', sembr);
 
 		//sembr.layout = sembr.submodules.Layout; //for convenience
 
@@ -55,7 +66,7 @@ function (Backbone, $, PouchDB, Marionette, Module, _, Handlebars,
 						var args =  Array.prototype.slice.call(arguments);
 						//append the module name to the event args
 						args.push(name);
-						//console.log('Bubbling module event', args, sembr.vent.trigger.apply(Sembr, args));
+						//sembr.log('Bubbling module event', args, sembr.vent.trigger.apply(Sembr, args));
 						sembr.vent.trigger.apply(sembr.vent, args);
 					});
 				}
@@ -64,7 +75,7 @@ function (Backbone, $, PouchDB, Marionette, Module, _, Handlebars,
 
 		if(options.log){
 			sembr.vent.on('all', function(){
-				console.log("Application Event:", arguments);
+				sembr.log("Application Event:", arguments);
 			});
 		}
 
@@ -81,7 +92,7 @@ function (Backbone, $, PouchDB, Marionette, Module, _, Handlebars,
 	});
 
 	sembr.on("initialize:after", function(options){
-		console.log('Application initialized, starting Backbone.history');
+		sembr.log('Application initialized, starting Backbone.history');
 		Backbone.history.start({pushState: true});
 		//temporary hack for navigate until we make a proper app router
 		sembr.navigate = sembr.submodules.default.router.navigate;

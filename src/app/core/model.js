@@ -3,8 +3,8 @@
  *
  * Defines a model class which can autoload it's dependencies. 
  **/
-define(["underscore", "backbone", 'pouchdb', 'backbone.supermodel'],
-function(_, Backbone, Pouch, Supermodel ) {
+define(['sembr', "underscore", "backbone", 'pouchdb', 'backbone.supermodel'],
+function(sembr, _, Backbone, Pouch, Supermodel ) {
   var SembrModel = Supermodel.Model.extend( 
 
   // INSTANCE METHODS 
@@ -12,7 +12,7 @@ function(_, Backbone, Pouch, Supermodel ) {
     
 
     initialize: function(){
-      console.log('Initializing model ', this.name, arguments);
+      sembr.log('Initializing model ', this.name, arguments);
       //array of active association names on this model instance
       this._associations = [];
 
@@ -23,7 +23,7 @@ function(_, Backbone, Pouch, Supermodel ) {
       //without this there is no way to access associations programatically
 
       this.on('associate', function(property, inverse_property, model, inverse_model){
-        console.log('Model %s (%s): received associate event %o with inverse_property %o; model %o; inverse_model:%o', this.name, this.cid, property, inverse_property, model, inverse_model);
+        sembr.log('Model %s (%s): received associate event %o with inverse_property %o; model %o; inverse_model:%o', this.name, this.cid, property, inverse_property, model, inverse_model);
         //add the association to this model instance
         _(inverse_model._associations).contains(property) || inverse_model._associations.push(property);
         //add the association to the associated model instance
@@ -33,10 +33,10 @@ function(_, Backbone, Pouch, Supermodel ) {
         //model._associations = _(model._associations).without(inverse_property);
         inverse_model._associations = _(inverse_model._associations).without(property);
         this._assocations = _(this._assocations).without(inverse_property);
-        console.log('Model %s (%s): received associate event %o with inverse_property %o; model %o; inverse_model:%o', this.name, this.cid, property, inverse_property, model, inverse_model);
+        sembr.log('Model %s (%s): received associate event %o with inverse_property %o; model %o; inverse_model:%o', this.name, this.cid, property, inverse_property, model, inverse_model);
       }.bind(this));
       this.on('all', function(){
-        //console.log('Model event: ', arguments);
+        //sembr.log('Model event: ', arguments);
       });
 
       Supermodel.Model.prototype.initialize.apply(this, arguments);
@@ -146,7 +146,7 @@ function(_, Backbone, Pouch, Supermodel ) {
     	if(model){
     		deferred.resolve(model);
     	}else{
-        console.log('findOrFetch: Instantiating new model %o with attrs %o', this, attributes);
+        sembr.log('findOrFetch: Instantiating new model %o with attrs %o', this, attributes);
 	    	new this(attributes)
 	    		.fetch()
 	    		.done(function(new_model, data){

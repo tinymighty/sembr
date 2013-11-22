@@ -34,13 +34,13 @@ define(['backbone', 'marionette'], function(Backbone, Marionette){
 
       for(route in moduleRoutes){
         if (moduleRoutes.hasOwnProperty(route)){
-          console.log('Adding route', route);
-          console.log(router);
+          sembr.log('Adding route', route);
+          sembr.log(router);
           routes.unshift([route, moduleRoutes[route] ]);
         }
       }
 
-      console.log('Route array', routes);
+      sembr.log('Route array', routes);
 
       routesLength = routes.length;
       for (i = 0; i < routesLength; i++){

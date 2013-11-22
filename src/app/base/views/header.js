@@ -22,7 +22,7 @@ define(['sembr', 'jquery', 'backbone', 'marionette', 'hbs!../templates/header'],
             },
 
             setActiveItem: function(module){
-                console.log('Setting menu item', module);
+                sembr.log('Setting menu item', module);
                 this.$('#main-menu li').removeClass('active').filter('[data-activate='+module+']').addClass('active');
             },
 

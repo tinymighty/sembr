@@ -3,9 +3,10 @@ define(['jquery', 'backbone', 'marionette', 'sembr.promises', 'sembr.mixins.read
 	MarionetteModule = Marionette.Module;
 
 	//create new Marionette constructor
-	Marionette.Module = function(options){
+	Marionette.Module = function(name, app){
 
 		this.on('start', this._runInitializerPromises.bind(this));
+		this.name = name;
 		this.vent = new Backbone.Wreqr.EventAggregator();
 
 		//by default, do not start module with the application
@@ -30,14 +31,14 @@ define(['jquery', 'backbone', 'marionette', 'sembr.promises', 'sembr.mixins.read
 			this.router = router;
 			this.navigate = router.navigate; //convenience method
 			this.listenTo(router, 'route', function( route, params){
-          console.log('Route event received by module, bubbling:', route, this, params);
+          sembr.log('Route event received by module, bubbling:', route, this, params);
           this.vent.trigger('route', route, this.moduleName, params);
 	    }.bind(this));
 		},
 
 	  // Run initializerPromises on start
 	  _runInitializerPromises: function(options){
-	  	//console.log("Running initializer promises", this._initializerPromises);
+	  	//sembr.log("Running initializer promises", this._initializerPromises);
 	  	this._initializerPromises.run(options, this)
 	    	.fail(function(err){
 	    		this._deferReady.reject(err);
@@ -57,7 +58,7 @@ define(['jquery', 'backbone', 'marionette', 'sembr.promises', 'sembr.mixins.read
 
 	  addAsyncInitializer: function(callback){
 	  	this._initializerPromises.add(callback);
-	  	//console.log('Adding AsyncInitializer', this._initializerPromises);
+	  	//sembr.log('Adding AsyncInitializer', this._initializerPromises);
 
 	  }
 

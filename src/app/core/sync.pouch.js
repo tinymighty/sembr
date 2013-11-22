@@ -17,7 +17,7 @@ function(_, $, Backbone, Pouch ) {
       }
 
       //dispatch to the relevent method (eg. _read)
-      console.log('Dispatching to method _'+method, method, model, options);
+      Sync._log('Dispatching to method _'+method, method, model, options);
 
       Sync['_'+method](model, options)
         .done(function(result){
@@ -112,10 +112,10 @@ function(_, $, Backbone, Pouch ) {
         modelObj = model;
       }
 
-      console.log('modelObj is %o', modelObj);
+      Sync._log('modelObj is %o', modelObj);
 
       //if it's got a model instance grab the relatedDocs property, else
-      console.log('relatedDocs: %o', modelObj.relatedDocs, modelObj);
+      Sync._log('relatedDocs: %o', modelObj.relatedDocs, modelObj);
       if(modelObj.relatedDocs){
         relatedIdFields = _(modelObj.relatedDocs)
           .chain()
@@ -155,7 +155,7 @@ function(_, $, Backbone, Pouch ) {
             .done(function( result ){
               //get the docs with the ids from the view result rows
               ids = _(result.rows).chain().pluck('id').uniq().value();
-              console.log('Collection query result ids', ids);
+              Sync._log('Collection query result ids', ids);
               Sync.getDocs( ids )
                 .done(function( result ){
                   //resolve the docs promise
@@ -199,19 +199,19 @@ function(_, $, Backbone, Pouch ) {
     		if(relatedQueries){
           Sync._log('Running relatedQueries', relatedQueries);
     			_(relatedQueries).each(function(rel){
-            console.log('Deferring query', docs, rel);
+            Sync._log('Deferring query', docs, rel);
     				var queryOpts = _(rel.query.options).isFunction() ? rel.query.options(docs, model): rel.query.options;
 	    			deferredQueries.push( Sync.query(rel.query.map, queryOpts) );
 	    		});
     		}
 
-    		console.log('Deferred queries', deferredQueries);
+    		Sync._log('Deferred queries', deferredQueries);
 
   			//when all deferred queries are satisfied, parse the results
   			$.when.apply($, deferredQueries)
   			.done(function(){
   				//combine all query results into a single array of ids and add them to the fetch list
-  				console.log('All deferred queries done, returned arguments', arguments);
+  				Sync._log('All deferred queries done, returned arguments', arguments);
 
   				var queryIds = _(arguments)
     				.chain()
@@ -221,14 +221,14 @@ function(_, $, Backbone, Pouch ) {
 
 	  			rel_ids = _.union(rel_ids, queryIds);
 
-          console.log('Initial ids are %o and related ids are %o', ids, rel_ids);
+          Sync._log('Initial ids are %o and related ids are %o', ids, rel_ids);
 
           //ensure duplicate docs are not fetched... this can happen if
           //the model is a tree
           rel_ids = _(rel_ids).difference( ids );
-          console.log('Removed ids from rel_ids: %o', rel_ids);
+          Sync._log('Removed ids from rel_ids: %o', rel_ids);
 
-  			 	console.log('Fetching docs with rel_ids', rel_ids);
+  			 	Sync._log('Fetching docs with rel_ids', rel_ids);
 
   				Sync.getDocs(rel_ids)
 	  				.done(function(relatedDocs){
