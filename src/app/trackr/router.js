@@ -6,12 +6,12 @@ function(Backbone, ModuleRouter, DashboardController, PlantingsController, Place
 			urlPrefix: "track",
 
 			moduleRoutes: {
-				"": {controller: DashboardController, method: 'dashboard'},
-			  "plantings": {controller: PlantingsController, method: 'list'},
-			  "planting/new": {controller: PlantingsController, method: 'add'},
-			  "planting/:planting_id": {controller: PlantingsController, method: 'show'},
+				"": {controller: 'Dashboard', method: 'dashboard'},
+			  "plantings": {controller: 'Plantings', method: 'list'},
+			  "planting/new": {controller: 'Plantings', method: 'add'},
+			  "planting/:planting_id": {controller: 'Plantings', method: 'show'},
 
-			  "places": {controller: PlacesController, method: 'dashboard'}
+			  "places": {controller: 'Places', method: 'dashboard'}
 			}
 
    });

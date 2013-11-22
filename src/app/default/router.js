@@ -1,4 +1,4 @@
-define(['backbone', 'sembr.modulerouter', 'default/controllers/dashboard'], 
+define(['backbone', 'sembr.modulerouter'], 
 function(Backbone, ModuleRouter, DashboardController) {
    return ModuleRouter.extend({
 			//"index" must be a method in AppRouter's controller
@@ -6,8 +6,8 @@ function(Backbone, ModuleRouter, DashboardController) {
 			urlPrefix: "",
 
 			moduleRoutes: {
-				"": {controller: DashboardController, method: "home"},
-			  "dashboard": {controller: DashboardController, method: "home"}
+				"": {controller: 'Dashboard', method: "home"},
+			  "dashboard": {controller: 'Dashboard', method: "home"}
 			}
 
    });

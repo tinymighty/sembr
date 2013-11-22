@@ -1,11 +1,15 @@
-define(['sembr', 'backbone', 'marionette', 'default/router'], 
-function(sembr, Backbone, Marionette, Router){
+define(['sembr', 'backbone', 'marionette', 
+'default/controllers/dashboard',
+'default/router'], 
+function(sembr, Backbone, Marionette, 
+DashboardController,
+Router){
 
 /* Primary module */
 var defaultModule = sembr.module("default", function(module){
 
   module.addInitializer(function(){
-    console.log('Dashboard module has been initialized');
+    sembr.log('Dashboard module has been initialized');
   });
 
   module.vent = new Backbone.Wreqr.EventAggregator();
@@ -15,7 +19,9 @@ var defaultModule = sembr.module("default", function(module){
 
   module.navigate = module.router.navigate; //for convenience...
 
-
+  module.controllers = {
+  	Dashboard: DashboardController
+  }
 });
 
 

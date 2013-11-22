@@ -1,10 +1,10 @@
-define(['sembr', 'backbone', 'sembr.controller', 'trackr/views/dashboard/dashboard'],
-function (sembr, Backbone, Controller, DashboardView, HeaderView) {
+define(['sembr', 'backbone', 'sembr.controller'],
+function (sembr, Backbone, Controller) {
     return Controller.extend({
 
         //gets mapped to in AppRouter's appRoutes
         home: function() {
-            sembr.layout.setContent(new DashboardView());
+            //sembr.layout.setContent(new DashboardView());
         }
     });
 });

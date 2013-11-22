@@ -1,7 +1,11 @@
-define(['require', 'jquery', 'sembr', 'backbone', 'marionette', 'trackr/router', 'trackr/models/_init', 'trackr/collections/_init'], 
-function(require, $, sembr, Backbone, Marionette, Router, models, collections){
+define(['require', 'jquery', 'sembr', 'backbone', 'marionette', 
+  'trackr/router', 'trackr/controllers/_init', 'trackr/models/_init', 'trackr/collections/_init'], 
+function(require, $, sembr, Backbone, Marionette, 
+  Router, controllers, models, collections){
 
 var Trackr = sembr.module("trackr", function(module){
+
+  module.controllers = controllers;
 
   module.models = models;
 
