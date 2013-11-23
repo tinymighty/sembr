@@ -1,5 +1,0 @@
-define(["sembr"],
-function(Sembr) {
-
-
-});
