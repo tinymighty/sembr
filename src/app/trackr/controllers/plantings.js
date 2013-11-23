@@ -85,7 +85,7 @@ function (sembr, Controller, Backbone, CB, Marionette,
 			this.layout.sidebar.show(new LoaderView() );
 
 			//load a planting, fetch it's actions
-			sembr.trackr.models.Planting.findOrFetch({'_id': id})
+			sembr.trackr.models.Planting.findOrFetchById(id)
 				.done(function(planting, data){
 					sembr.log('Fetched planting', planting);//, data);
 

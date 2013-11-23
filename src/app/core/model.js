@@ -139,21 +139,23 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
   // STATIC METHODS 
   {
 
-  	findOrFetch: function(attributes){
+  	findOrFetchById: function(id){
     	var model, deferred;
     	deferred = new $.Deferred();
-    	model = this.find(attributes);
+    	model = this.find({_id: id});
     	if(model){
+        sembr.log('findOrFetch: Found model instance for id %o', id);
     		deferred.resolve(model);
     	}else{
-        sembr.log('findOrFetch: Instantiating new model %o with attrs %o', this, attributes);
-	    	new this(attributes)
-	    		.fetch()
+        sembr.log('findOrFetch: Instantiating new model %o with _id %o', this, id);
+	    	model = new this({_id: id})
+	      model.fetch()
 	    		.done(function(new_model, data){
 	    			deferred.resolve(new_model, data);
 	    		})
-	    		.fail(function(){
-	    			console.error("Failed to fetch model");
+	    		.fail(function(err){
+            model = false;
+	    			deferred.reject(err);
 	    		});
     	}
     	return deferred.promise();

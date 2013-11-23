@@ -18,10 +18,9 @@ function(sembr, Model) {
 
 		initialize: function(attrs, options){
 			if(attrs){
+				//attrs = _(attrs).defaults(this.defaults);
 				if(!attrs._id){
 					this.created = new Date().toString();
-				}else{
-					this.validate(attrs);
 				}
 			}
 			Model.prototype.initialize.apply(this, arguments);

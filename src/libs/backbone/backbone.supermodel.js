@@ -499,7 +499,7 @@
       // If `attrs` belongs to an existing model, return it.
       if (id && (model = all.get(id))) {
         if(model.attrs!==attrs && merge){
-          model.parse(attrs);
+          attrs = model.parse(attrs);
           model.set(attrs);
         }
         return model;

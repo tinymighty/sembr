@@ -1,9 +1,10 @@
-define(['sembr'],
-function(sembr) {
+define(['sembr', 'backbone'],
+function(sembr, Backbone) {
 
-	describe('Planting Model', function() {
+	describe('PlantingModel', function() {
     var planting, mock_data, 
-        PlantingModel = sembr.trackr.models.Planting;
+        PlantingModel = sembr.trackr.models.Planting,
+        sync_spy, mock_sync_deferred;
     sembr.trackr.models._reset.all();
     beforeEach(function () {
       sembr.trackr.models._init.all();
@@ -74,6 +75,10 @@ function(sembr) {
           } 
         ]
       }
+      mock_sync_deferred = new $.Deferred();
+      sync_spy = spyOn(Backbone, 'sync').andCallFake(function(){
+        return mock_sync_deferred.promise();
+      });
     });
 
     afterEach(function(){
@@ -84,8 +89,8 @@ function(sembr) {
       it('should have a find method', function(){
         expect(PlantingModel.find).toBeDefined();
       })
-      it('should have a findOrFetch method', function(){
-        expect(PlantingModel.findOrFetch).toBeDefined();
+      it('should have a findOrFetchById method', function(){
+        expect(PlantingModel.findOrFetchById).toBeDefined();
       })
       it('should have associations', function(){
         expect(PlantingModel.associations).toBeDefined();
@@ -97,47 +102,8 @@ function(sembr) {
       });
     });
 
-    describe('findOrFetch', function(){
-      beforeEach(function(){
-        planting = PlantingModel.create();
-      });
-      it("should return a promise from", function() {
-  	    var promise = planting.fetch({id: ''});
-  	    expect(promise).toBePromise();
-  	  });
 
-      it("should reject the promise when the ID does not represent a valid document ID", function() {
-        
-        var callback = jasmine.createSpy();
-
-        var promise = planting.fetch({id: 'nowaywillthiseverbeanidfoooool'}).fail(callback);
-        expect(promise).toBePromise();
-
-        waitsFor(function() {
-            return callback.callCount > 0;
-        }, '', 500);
-
-        runs(function() {
-            expect(callback).toHaveBeenCalled();
-        });
-
-      });
-    });
-
-    /*it('should return a model and a json document representation', function(){
-      var callback = jasmine.createSpy();
-
-      planting.fetch({id: 'fixture-id'}).done(callback);
-
-      waitsFor(function() {
-          return callback.callCount > 0;
-      }, '', 500);
-
-      runs(function(){
-        expect(callback).toHaveBeenCalledWith();
-      });
-    });*/
-    describe('Instantiation', function(){
+    describe('when instantiating', function(){
       beforeEach(function(){
       });
       it('should set data and associations when instantiated with data', function(){
@@ -169,9 +135,9 @@ function(sembr) {
       it('should instantiate without error when place_id and/or place are undefined', function(){
         delete mock_data.place_id;
         delete mock_data.place;
-        console.log( "CREATE PLANTING WITHOUT PLANT", mock_data, PlantingModel.create(mock_data) );
-        expect( PlantingModel.create.bind(this, mock_data) ).not.toThrow();
+        expect( PlantingModel.create.bind(PlantingModel, mock_data) ).not.toThrow();
       });
+
       describe('when place is undefined', function(){
         beforeEach(function(){
           delete mock_data.place_id;
@@ -193,9 +159,8 @@ function(sembr) {
       });
     });
 
-    describe('An instance', function(){
+    describe('instances', function(){
       beforeEach(function(){
-        PlantingModel.reset();
         planting = new PlantingModel(mock_data);
       });
       it('should expose association names as an array', function(){
@@ -205,6 +170,71 @@ function(sembr) {
         expect(planting._associations).toContain('actions');
       });
     });
+
+
+    describe('.findOrFetchById', function(){
+      var planting, planting2;
+      beforeEach(function(){
+        planting = PlantingModel.create(mock_data);
+        planting2 = PlantingModel.findOrFetchById(mock_data._id);
+      });
+      it("should return a promise", function() {
+        expect(planting2).toBePromise();
+      });
+      it("should retrieve an existing model instance if one exists", function(){
+        expect(Backbone.sync).not.toHaveBeenCalled();
+        waitsFor(function(){
+          var resolved;
+          planting2.done(function(model){
+            planting2 = model;
+            resolved = true;
+          });
+          return resolved===true;
+        }, 100);
+        runs(function(){
+          expect(planting).toEqual(planting2);
+        });
+        
+      });
+      it("should attempt to query Backbone.sync for data if no matching model instance is found", function(){
+        var planting3 = PlantingModel.findOrFetchById('nonexistent_id!fgsyfdsj');
+        expect(sync_spy).toHaveBeenCalled();
+      });
+      it('should cascade a rejection from Backbone.sync', function(){
+        //reject the mock sync deferred object
+        mock_sync_deferred.reject();
+        var planting3;
+        runs(function(){
+          planting3 = PlantingModel.findOrFetchById('nonexistent_id!vbnjmkfds')
+        });
+        waitsFor(function(){
+          return planting3.state()!=='pending';
+        }, 200);
+        runs(function(){
+          expect(planting3.state()).toBe('rejected');
+        });
+      });
+    });
+
+    xdescribe('.find', function(){
+
+      it("should reject the promise when the ID does not represent a valid document ID", function() {
+        
+        var callback = jasmine.createSpy();
+
+        var promise = PlantingModel.find({id: 'nowaywillthiseverbeanidfoooool'}).fail(callback);
+
+        waitsFor(function() {
+            return promise.state()==='rejected';
+        }, '', 100);
+
+        runs(function() {
+            expect(promise.state()).toEqual('rejected');
+        });
+
+      });
+    });
+
 
     describe('the save method', function(){
       beforeEach(function(){
@@ -221,7 +251,7 @@ function(sembr) {
     describe('Exporting data', function(){
       it('should include associations in JSON', function(){
         planting = PlantingModel.create(mock_data);
-        var json = planting.toJSON();
+        var json = planting.toJSON({include_associations:true});
         expect(json).toBeDefined();
         expect(json.plant).toBeDefined();
         expect(json.place).toBeDefined();
