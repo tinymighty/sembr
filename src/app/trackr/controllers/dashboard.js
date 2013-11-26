@@ -36,7 +36,7 @@ function (sembr, Controller, Backbone, CB, Marionette,
 			plantings
 				.fetchWhere({user: sembr.user.get("_id")})
 				.fail(function(err){
-					console.error(err);
+					sembr.showError('Failed to load user plantings.');
 				})
 				.done(function(plantings){
 					sembr.log('Loaded plantings. Showing dashboard view.');

@@ -1,0 +1,53 @@
+person.backpack('type')
+	.fetches()
+		.all(function(doc){ if(type==='type') emit(doc._id, null) })
+		.where('id')
+		.where('name', {})
+		.where('name_and_department',{
+				map: function(doc){
+					emit([doc.surname, doc.name])
+				},
+				options: function(docs, collection){ return { keys: _(docs).pluck('_id') } } //or just an object...
+			})
+	.has()
+		.one('place')
+		.one('job', {model:Job, source: 'employment_id'})
+		.many('things', {model: Thing, source: 'thing_ids'})
+		.many('tasks', {model: Task })
+		.many('friends', {model: Person, via:Friendship })
+
+Task.backpack('task')
+	.fetches()
+		.where('owner')
+	.has()
+		.one('owner', {'model': Person, via': 'owner_id'})
+
+Friendship.backpack('friendship')
+	.where()
+		.person(function(){
+
+		})
+	.has()
+		.many('people', {model:Person})
+
+
+need to know
+* how to fetch ALL documents
+* how to fetch a single document
+* how to fetch based on a fetchWhere or fetchByX
+* document properties which reference other documents by id (hasOne & hasMany via ids in local array)
+* documents to fetch which reference this document by id (hasMany via id on foreign object)
+* documents to fetch via a Many-to-Many relationship
+
+
+get initial document(s) (1 query)
+build a list of ids from hasOne and hasMany(here) fields
+run a fetchWhere query on models defined on hasMany(there) fields (1+n queries)
+run a fetchWhere query on the 'via' model for a ManyToMany relationship
+fetch all document ids (2+n queries)
+
+fetch where type=person
+fetch where type=thing && [person_ids] in(things_index_by_personid)
+fetch where type=task && [person_ids} in(tasks_index_by_personid)
+fetch where type=friendship && [person_ids] in(friendships_index_by_personid)
+fetch where type=person && [friendship_person_ids] in (persons_index_by_id)

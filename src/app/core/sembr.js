@@ -28,6 +28,10 @@ function (Backbone, $, PouchDB, Marionette, _, Handlebars,
 	//sembr.log = (options.log && console) ? sembr.log : function(){};
 	sembr.log = _(console.log).bind(console);
 
+	sembr.showError = function(message){
+		console.error(message);
+	}
+
 	sembr.addInitializer(function(options){
 	
 		//check for mobile user agents...

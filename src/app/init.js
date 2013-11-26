@@ -13,10 +13,10 @@
  *
  * Returns an init function which, when called, starts the application.
  */
-define(['underscore', 
+define(['jquery', 'underscore', 
         'sembr', 'sembr.module',
         'sembr.base', 'sembr.default', 'sembr.trackr'], 
-function(_, 
+function($, _, 
         sembr, monkey_patch_module,
         layoutModule, defaultModule, trackrModule){
 	
@@ -30,18 +30,25 @@ function(_,
                 log: false,
                 global: false
             }
+        };
+        var defaults = {
+            wait_for_dom: true
         }
 
         options = _(options || {}).defaults({
             environment: 'production'
         });
-        options = _(options).defaults(envDefaults[options.environment]);
+        options = _(options).defaults(
+            envDefaults[options.environment],
+            defaults);
 
-        //try{
+        if(options.wait_for_dom){
+            $(function(){
+                sembr.start(options);
+            });
+        }else{
             sembr.start(options);
-        //}catch(err){
-          //  console.error("Fail.", err);
-        //}
+        }
 
         if(options.global && window){
             window.sembr = sembr;

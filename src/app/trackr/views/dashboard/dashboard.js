@@ -1,12 +1,13 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 
-'trackr/views/places/treeview', 'trackr/views/plantings/calendar',
+'trackr/views/places/treeview', 'trackr/views/plantings/timeline/timeline',
 'hbs!./dashboard.tpl'],
 function(sembr, Backbone, Marionette, $, 
-PlacesTreeView, PlantingsCalendarView,
+PlacesTreeView, PlantingsTimelineView,
 template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.Layout.extend( {
-    tagName: 'div',
+    //el: '#trackr-dashboard-view',
+    tagName: 'section',
     template: template,
 
     regions:{
@@ -33,13 +34,13 @@ template) {
     	this.placesListView = new PlacesTreeView({collection: topLevelPlaces});
 
     	this.plantingsCollection = opts.plantings;
-    	this.plantingsView = new PlantingsCalendarView({collection: this.plantingsCollection});
+    	this.plantingsView = new PlantingsTimelineView({collection: this.plantingsCollection, });
 
     },
 
     onRender: function(){
-    	this.places.show( this.placesListView.render() );
-    	this.plantings.show( this.plantingsView.render() );
+    	this.places.show( this.placesListView );
+    	this.plantings.show( this.plantingsView );
     }
   });
 });
