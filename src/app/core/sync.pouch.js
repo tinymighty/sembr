@@ -232,23 +232,29 @@ function(_, $, Backbone ) {
 					Sync._log('Removed ids from rel_ids: %o', rel_ids);
 
 					Sync._log('Fetching docs with rel_ids', rel_ids);
-
-					Sync.getDocs(rel_ids)
-						.done(function(relatedDocs){
-							docs = docs.concat(relatedDocs);
-							Sync._log('Got relatedDocs', relatedDocs);
-							Sync._log('Combined relatedDocs with docs', docs);
-							var data = Sync.structureDocs(docs, model, modelObj);
-							//if we're dealing with a Model sync, return an object not an array
-							if( data.length === 1 && !(model instanceof Backbone.Collection) ){
-								data = data[0];
+						if(rel_ids.length){
+							Sync.getDocs(rel_ids)
+								.done(function(relatedDocs){
+									docs = docs.concat(relatedDocs);
+									Sync._log('Got relatedDocs', relatedDocs);
+									Sync._log('Combined relatedDocs with docs', docs);
+									var data = Sync.structureDocs(docs, model, modelObj);
+									//if we're dealing with a Model sync, return an object not an array
+									if( data.length === 1 && !(model instanceof Backbone.Collection) ){
+										data = data[0];
+									}
+									deferred.resolve( data );
+								})
+								//if getDocs fails, pass on the error
+								.fail(function(err){
+									deferred.reject(err);
+								});
+						}else{
+							if( docs.length === 1 && !(model instanceof Backbone.Collection) ){
+								docs = docs[0];
 							}
-							deferred.resolve( data );
-						})
-						//if getDocs fails, pass on the error
-						.fail(function(err){
-							deferred.reject(err);
-						});
+							deferred.resolve(docs);
+						}
 					})
 					//if one of the deferredQueries fails, pass on the error
 					.fail(function(err){
