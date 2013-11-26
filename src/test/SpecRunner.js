@@ -7,11 +7,12 @@ require(['underscore', 'jquery', 'jasmine-html', 'init'], function(_, $, jasmine
   
  
   var specs = [
-    '/test/spec/helpers.js',
-    '/test/spec/core.js',
+    '/test/helpers.js',
     '/test/spec/core/sync.pouch.js',
-    '/test/spec/modules/trackr/places.js',
-    '/test/spec/modules/trackr/plantings.js'
+    '/test/spec/trackr/collections/plantings.js',
+    '/test/spec/trackr/models/planting.js',
+    '/test/spec/trackr/collections/plants.js',
+    '/test/spec/trackr/models/plant.js',
     ]; 
  
   $(function(){

@@ -1,7 +1,7 @@
 define(['sembr', 'backbone'],
 function(sembr, Backbone) {
 
-	describe('PlantingModel', function() {
+	describe('Planting Model', function() {
     var planting, mock_data, 
         PlantingModel = sembr.trackr.models.Planting,
         sync_spy, mock_sync_deferred;
