@@ -12,6 +12,9 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
     
 
     initialize: function(){
+      if(!this._type){
+        throw new Error('Model constructor must specify a type');
+      }
       sembr.log('Initializing model ', this.name, arguments);
       //array of active association names on this model instance
       this._associations = [];

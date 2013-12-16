@@ -2,7 +2,7 @@ define(["sembr", 'sembr.model'],
 function(sembr, Model) {
     // Creates a new Backbone Model class object
     var Action = Model.extend({
-        name: 'action',
+        _type: 'action',
 
         // Default values for all of the Model attributes
         defaults: {
@@ -28,10 +28,7 @@ function(sembr, Model) {
             if(!attrs.subject_id){
                 throw {error: 'subject_id property must be set'};
             }
-        },
-
-        docType: 'action'
-
+        }
     });
 
     // Returns the Model class

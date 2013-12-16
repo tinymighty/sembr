@@ -23,23 +23,53 @@ var Trackr = sembr.module("trackr", function(module){
   //load the nested collection here and make it available at the module level
   module.addAsyncInitializer(function(){
     sembr.log('Running async initializer for places collection...');
-  	var deferred = new $.Deferred();
-    sembr.log('Querying for user places...');
   	return new module.collections.Places()
   		.fetchWhere( {'user': sembr.user.get('_id')} )
   		.done(function(places, data){
-        sembr.log('Sweet cheese the places have been fetched yall', places);
-  			Trackr.places = places;
-  			deferred.resolve(places)
+  			Trackr.allPlaces = places;
+
+        //only show top level places, the rest are accessed via the tree
+        Trackr.places = new module.collections.Places( 
+          places.filter(function(place){
+            if(place.has('in_place'))
+              return false;
+            return true;
+          })
+        );
+
   		})
-  		.fail(function(err){
-  			deferred.reject(err);
-  		});
+    ;
+  });
+
+  module.addAsyncInitializer(function(){
+    sembr.log('Running async initializer for plants collection...');
+    return new module.collections.Plants()
+      .fetchWhere( {'user': sembr.user.get('_id')} )
+      .done(function(plants, data){
+        Trackr.plants = plants;
+      })
+    ;
   });
 
 
-  module.on('start', function(){
+  /*module.addAsyncInitializer(function(){
+    sembr.log('Running async initializer for plants collection...');
+    return new module.collections.Plants()
+      .fetchWhere( {'user': sembr.user.get('_id')} )
+      .done(function(plants, data){
+        sembr.log('Sweet cheese the plants have been fetched yall', plants);
+        Trackr.plants = plants;
+        deferred.resolve(plants)
+      })
+      .fail(function(err){
+        deferred.reject(err);
+      });
+  });*/
 
+
+
+  module.ready.then(function(){
+    console.log("TRACKR MODULE READY!");
   });
   
   //bubble router events (adding a module parameter)

@@ -13,7 +13,7 @@ define(['sembr', 'jquery', 'backbone', 'marionette', 'hbs!../templates/header'],
             initialize:function(){
                 this.listenTo(sembr.vent, 'route', function(name, params, module){
                     this.currentModule = module;
-                    this.setActiveItem(module);
+                    this.setActiveItem(name);
                 });
             },
 
@@ -21,9 +21,9 @@ define(['sembr', 'jquery', 'backbone', 'marionette', 'hbs!../templates/header'],
 
             },
 
-            setActiveItem: function(module){
-                sembr.log('Setting menu item', module);
-                this.$('#main-menu li').removeClass('active').filter('[data-activate='+module+']').addClass('active');
+            setActiveItem: function(route_name){
+                sembr.log('Setting menu item', name, window.location.pathname, this.$('.item').filter('[href="'+window.location.pathname+'"]'));
+                this.$('.item').removeClass('active').filter('[href="'+window.location.pathname+'"]').addClass('active');
             },
 
 

@@ -1,5 +1,5 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 
- 'trackr/views/places/quick-add', 'hbs!./sidebar.tpl', 'bootstrap'],
+ 'trackr/views/places/quick-add', 'hbs!./sidebar.tpl'],
 function(sembr, Backbone, Marionette, $, QuickAddPlaceView, template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.ItemView.extend( {
@@ -23,8 +23,8 @@ function(sembr, Backbone, Marionette, $, QuickAddPlaceView, template) {
     },
 
     onRender: function(){
-        this.ui.addPlaceButton.popover({trigger:'manual', content:this.addPlace.render().$el, placement:'left', html:true });
-        this.ui.addPlaceButton.on('cancel', _(function(){ this.ui.addPlaceButton.popover('hide') }).bind(this));
+        this.ui.addPlace.popover({trigger:'manual', content:this.addPlace.render().$el, placement:'left', html:true });
+        this.ui.addPlace.on('cancel', _(function(){ this.ui.addPlaceButton.popover('hide') }).bind(this));
     }
 
   });

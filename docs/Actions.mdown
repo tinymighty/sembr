@@ -1,0 +1,25 @@
+#PLANT Actions
+  plant
+  sow
+  transplant
+
+#HARVEST Actions
+	harvest
+	dig in
+	remove
+	coppice
+	dehead
+
+#TEND Actions
+	dig in
+	fertilize
+	spray
+	prune
+	lime
+	fertilize
+
+#OBSERVE Actions
+	note
+	photo
+	ph measurement
+	weather

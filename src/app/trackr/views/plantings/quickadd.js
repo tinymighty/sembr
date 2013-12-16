@@ -1,6 +1,5 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 
-'hbs!./quickadd.tpl', 
-'bootstrap-select'],
+'hbs!./quickadd.tpl'],
 function(sembr, Backbone, Marionette, $, template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.ItemView.extend( {
@@ -36,7 +35,7 @@ function(sembr, Backbone, Marionette, $, template) {
 
     onRender: function(){
         this.bindForm();
-        this.$('.selectpicker').selectpicker({style: 'btn-info', menuStyle: 'dropdown-inverse'});
+        //this.$('.selectpicker').selectpicker({style: 'btn-info', menuStyle: 'dropdown-inverse'});
     },
 
     serializeData: function(){

@@ -1,11 +1,23 @@
 <div id="show-planting">
-	<h3 data-model="plant">{{plant.use_name}}</h3>
-	<h4 data-model="place">{{place.name}}</h4>
+	<h2 class="ui dividing header">
+		<a class="plant name link">{{plant.use_name}}</a> 
+		{{#if place.name}}
+			<span class="ui preposition">in</span> 
+			<a class="place name link">{{place.name}}</a>
+		{{/if}}
+	</h2>
 
 
-		<div data-role="view" data-view="actions">
+	<div class="ui inverted page segment">
 
+		<div class="ui timeline">
+		Timeline for this planting goes here...
 		</div>
 
+	</div>
+
+	<div data-role="view" data-view="actions">
+
+	</div>
 
 </div>

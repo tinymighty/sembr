@@ -3,7 +3,7 @@ function(sembr, Model) {
 	// Creates a new Backbone Model class object
 
 	var Planting = Model.extend({
-		name: 'planting',
+		_type: 'planting',
 
 		defaults: {
 			type: 'planting',
@@ -97,10 +97,7 @@ function(sembr, Model) {
 					}
 				}
 			}
-		],
-
-
-		docType: 'planting'
+		]
 
 	});
 

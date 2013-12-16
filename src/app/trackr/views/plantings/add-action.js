@@ -1,5 +1,4 @@
-    define( ['sembr', 'backbone', 'marionette', 'jquery', 'hbs!./add-action.tpl',
-'jqueryui'],
+    define( ['sembr', 'backbone', 'marionette', 'jquery', 'hbs!./add-action.tpl'],
 function(sembr, Backbone, Marionette, $, template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.ItemView.extend( {
@@ -10,11 +9,11 @@ function(sembr, Backbone, Marionette, $, template) {
     // View Event Handlers
     events: {
         'click [data-action="save"]': 'createAction',
-        'change select[data-model=action_type]': 'actionTypeChange'
+        'change [data-model=action_type]': 'actionTypeChange'
     },
 
     ui:{
-        actionSelect: 'select[data-model=action_type]',
+        actionSelect: '.action.selection',
         actionFields: '.action_fields'
     },
 
@@ -63,15 +62,21 @@ function(sembr, Backbone, Marionette, $, template) {
         this.ui.actionFields.hide().removeAttr('hidden');
 
         _(this.model.action_types).each(function(type){
-            this.ui.actionSelect.append('<option value="'+type+'">'+type+'</option>');
+            this.ui.actionSelect.find('.menu').append('<div class="item" data-value="'+type+'">'+type+'</div>');
         }, this);
         
         this.bind();
-        this.$('.selectpicker').selectpicker({style: 'btn-info', menuStyle: 'dropdown-inverse'});
+        this.$('.ui.selection.dropdown')
+            .dropdown({onChange: function(){ $(this).find('input').trigger('change'); } })
+        ;
+        console.log('Setting selected to: ', this.ui.actionSelect.find('input').val());
+        this.ui.actionSelect
+            .dropdown('set selected', this.ui.actionSelect.find('input').val())
+        ;
 
         //sembr.log(this.$('#add-action-date'));
         // jQuery UI Datepicker JS init
-        var datepickerSelector = '#add-action-date';
+        /*var datepickerSelector = '#add-action-date';
         this.$(datepickerSelector).datepicker({
           showOtherMonths: true,
           selectOtherMonths: true,
@@ -84,12 +89,17 @@ function(sembr, Backbone, Marionette, $, template) {
 
         // Now let's align datepicker with the prepend button
         $(datepickerSelector).datepicker('widget').css({'margin-left': -$(datepickerSelector).prev('.btn').outerWidth() - 2});
-    
+        */
     },
 
     bind: function () {
         var bindings = Backbone.ModelBinder.createDefaultBindings(this.el, 'data-model');
         this.modelBinder.bind(this.model, this.$el, bindings);
+    },
+
+    serializeData: function(){
+        var data = this.model.toJSON();
+        return data;
     }
 
   });

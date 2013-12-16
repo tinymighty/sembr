@@ -22,6 +22,7 @@ function (sembr, Controller, Backbone, CB, Marionette,
 			//sembr.log('Setting plantings layout!');
 			sembr.log(sembr);
 			this.places = sembr.trackr.places;
+			this.plants = sembr.trackr.plants;
 			sembr.log('beforeModuleRoute... places...', sembr.trackr.places);
 			sembr.base.setContent( this.layout );
 			//this.layout.sidebar.show( new Sidebar({collection: this.collection}) );
@@ -40,7 +41,7 @@ function (sembr, Controller, Backbone, CB, Marionette,
 				})
 				.done(function(plantings){
 					sembr.log('Loaded plantings. Showing dashboard view.');
-					this.layout.main.show( new DashboardView({places: this.places, plantings: plantings}) );
+					this.layout.main.show( new DashboardView({collections: {places: this.places, plants: this.plants, plantings: plantings}}) );
 				}.bind(this));
 
 		}

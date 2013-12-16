@@ -1,0 +1,50 @@
+<h4 class="ui header">{{name}}</h4>
+{{#if isPlanted}}
+<div class="ui red ribbon label">
+	<i class="warning icon"></i> This place is already planted with {{currentPlantings}}!
+</div>
+<div class="ui small yellow message">
+  <div class="header">
+    What would you like to do with the existing planting?
+  </div>
+	<div class="field">
+		<div class="ui radio checkbox">
+			<input type="radio" name="existing_planting" value="leave">
+			<label>Leave it.</label>
+		</div>
+	</div>
+	<div class="field">
+		<div class="ui radio checkbox">
+			<input type="radio" name="existing_planting" value="remove">
+    	<label>Remove it.</label>
+  	</div>
+  </div>
+</div>
+{{else}}
+<div class="ui green ribbon label">
+	<i class="ok sign icon"></i> This place is empty.
+</div>
+{{/if}}
+<div class="ui plantings timeline segment">
+	Planting timeline for this place here...
+</div>
+<div class="ui actions list">
+{{#each activity}}
+<div class="action item">
+  <div class="label">
+    <img src="/images/demo/avatar2.jpg">
+  </div>
+  <div class="content">
+    <div class="date">
+      {{date}}
+    </div>
+    <div class="description">
+       {{description}}
+    </div>
+  </div>
+</div>
+{{else}}
+<div class="">
+No activity.
+</div>
+{{/each}}

@@ -1,7 +1,51 @@
-.planting-timeline .track{
+html,
+body {
+  font-size: 15px;
+  height: 100%;
+}
+
+body {
+  font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  background: #FFFFFF;
+  margin: 0px;
+  padding: 0px;
+  color: #555555;
+  text-rendering: optimizeLegibility;
+  min-width: 320px;
+}
+
+.ui.button{
+	text-transform: none;
+	font-weight:normal;
+}
+
+.ui.header {
+  font-family: 'Source Sans Pro', "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+}
+
+.places.list{
+	list-style-type:none;
+}
+.places.list .item{
+
+}
+.places.list .item.active > .place.name{
+	color:Red;
+}
+.places.list .list{
+	margin:0;
+	padding:0 0 0 0.9rem;
+	border:1px solid #ccc;
+	border-width: 0 0 1px 1px;
+}
+.places.list .list .item{
+
+}
+
+.planting.timeline .track{
 	position: relative;
 }
-.planting-timeline .track .track-item{
+.planting.timeline .track .item{
 	display: block;
 	position:absolute;
 	opacity: 1;
@@ -15,4 +59,17 @@
 
 .planting-timeline .plantings .planting{
 	
+}
+
+.planting.timeline .planting{
+	position:relative; 
+	height:50px;
+}
+.planting.timeline .planting .name{
+	display: none;
+}
+.planting.timeline .planting .bar{
+	height:20px;
+	background:#A1CF64;
+	position:absolute;
 }

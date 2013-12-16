@@ -3,9 +3,7 @@ define(['sembr', 'sembr.model'],
         //first we have to define Place so we can reference it within its own relation property
         //to set up a self-nested hierarchy 
         Place = Model.extend({
-            name: 'place',
-
-            docType: 'place',
+            _type: 'place',
 
             // Model Constructor
             initialize: function() {
@@ -55,6 +53,33 @@ define(['sembr', 'sembr.model'],
                     throw {error: 'name property must be set'};
                 }
             },
+
+            /**
+             * Returns true if there is a planting currently assigned to this place
+             * ie. it has a start date before the current time, and end date after...
+             */
+            isPlanted: function(){
+                var d = new Date();
+                //why the hell does date.getMonth start at 0?
+                var today = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+
+                //we have to assume all relevant plantings are currently loaded.
+                return this.plantings().filter(function(planting){
+                    return planting.from < d.getFullYear() && planting.until > today;
+                }).length > 0;
+
+            },
+
+            loadPlantings: function(){
+                var plantings = new sembr.trackr.collections.Plantings();
+                //plantings.fetchWhere
+            },
+
+            toJSON: function(){
+                var json = Model.prototype.toJSON.apply(this, arguments);
+                json.isPlanted = this.isPlanted();
+                return json;
+            }
             
         });
 

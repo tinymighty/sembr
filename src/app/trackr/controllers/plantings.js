@@ -29,7 +29,7 @@ function (sembr, Controller, Backbone, CB, Marionette,
 		},
 
 		add: function(){
-			this.layout.main.show( this.loader.render() );
+			//this.layout.main.show( this.loader.render() );
 			this.layout.main.show( new AddPlantingView( {places: this.places} ) );
 		},
 
@@ -82,7 +82,7 @@ function (sembr, Controller, Backbone, CB, Marionette,
 			}
 			sembr.log('Getting planting', id);
 			this.layout.main.show(new LoaderView() );
-			this.layout.sidebar.show(new LoaderView() );
+			//this.layout.sidebar.show(new LoaderView() );
 
 			//load a planting, fetch it's actions
 			sembr.trackr.models.Planting.findOrFetchById(id)
@@ -98,7 +98,7 @@ function (sembr, Controller, Backbone, CB, Marionette,
 
 		showPlanting: function(planting){
 			this.layout.main.show( new ShowPlantingView({model: planting}) );
-			this.layout.sidebar.show( new AddActionView({collection: planting.actions(), planting: planting }) );
+			//this.layout.sidebar.show( new AddActionView({collection: planting.actions(), planting: planting }) );
 		}
 
 

@@ -1,17 +1,19 @@
-	define(['backbone', 'sembr.modulerouter', 'trackr/controllers/dashboard', 'trackr/controllers/plantings', 'trackr/controllers/places'], 
-function(Backbone, ModuleRouter, DashboardController, PlantingsController, PlacesController ) {
+	define(['backbone', 'sembr.modulerouter', 'trackr/controllers/_init'], 
+function(Backbone, ModuleRouter, controllers ) {
    return ModuleRouter.extend({
-			//"index" must be a method in AppRouter's controller
+			//'index' must be a method in AppRouter's controller
 
-			urlPrefix: "track",
+			urlPrefix: 'track',
 
 			moduleRoutes: {
-				"": {controller: 'Dashboard', method: 'dashboard'},
-			  "plantings": {controller: 'Plantings', method: 'list'},
-			  "planting/new": {controller: 'Plantings', method: 'add'},
-			  "planting/:planting_id": {controller: 'Plantings', method: 'show'},
+				'': 'Dashboard.dashboard',
+			  'plantings': 'Plantings.list',
+			  'planting/new': 'Plantings.add',
+			  'planting/:planting_id': 'Plantings.show',
 
-			  "places": {controller: 'Places', method: 'dashboard'}
+			  'places': 'Places.dashboard',
+
+			  'record': 'Record.record',
 			}
 
    });

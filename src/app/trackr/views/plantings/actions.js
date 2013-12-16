@@ -1,22 +1,36 @@
-define( ['sembr', 'backbone', 'marionette', 'jquery', 'trackr/views/plantings/action', 'hbs!./action.tpl'],
-function(sembr, Backbone, Marionette, $, PlantingActionView, template) {
+define( ['sembr', 'backbone', 'marionette', 'jquery', 
+'trackr/views/plantings/action', 'trackr/views/plantings/add-action',
+'hbs!./actions.tpl'],
+function(sembr, Backbone, Marionette, $, 
+PlantingActionView, AddAction,
+template) {
   //ItemView provides some default rendering logic
-  return Backbone.Marionette.CollectionView.extend( {
+  return Backbone.Marionette.CompositeView.extend( {
     template: template,
     itemView: PlantingActionView,
-
+    itemViewContainer: '.items',
+    attributes:{
+        class: 'ui feed segment'
+    },
+    ui:{
+        addActionForm: '.add.action.form'
+    },
     // View Event Handlers
     events: {
         
     },
 
-    initialize: function  () {
-        sembr.log('Planting actions init', this.collection);
+    initialize: function(options) {
+        if(this.model && !this.collection){
+            this.collection = this.model.actions();
+        }
+        this.views = {
+            addAction: new AddAction({planting:this.model, collection:this.collection})
+        }
     },
 
     onRender: function(){
-        sembr.log("Rendered Planting Actions", this.collection);
-        sembr.log()
+        this.ui.addActionForm.append( this.views.addAction.render().$el );
     }
 
   });

@@ -2,30 +2,47 @@ define( ['sembr', 'backbone', 'marionette', 'jquery', 'hbs!./planting.tpl'],
 function(sembr, Backbone, Marionette, $, template) {
   //ItemView provides some default rendering logic
   return Backbone.Marionette.ItemView.extend( {
-    attributes:{
-        class: 'planting'
-    },
-    template: template,
+	attributes:{
+		class: 'planting'
+	},
+	template: template,
 
-    // View Event Handlers
-    events: {
-        'click a': 'click'
-    },
+	// View Event Handlers
+	events: {
+		'click .bar': 'barClick'
+	},
 
-    initialize: function(options){
-        this.options = options;
-    },
+	ui:{
+		bar: '.bar',
+		plant_name: '.plant.name',
+		place_name: '.place.name'
+	},
+
+	initialize: function(options){
+		this.options = options;
+	},
 
 
-    click: function($ev){
-        sembr.log('Plant click!')
-        $ev.preventDefault();
-        //sembr.navigate( $($ev.target).attr('href'), {trigger: true});
-    },
+	barClick: function($ev){
+		sembr.log('Bar click!')
+		$ev.preventDefault();
+		sembr.navigate( '/track/planting/'+this.model.get('_id'), {trigger: true});
+	},
 
-    serializeData: function(){
-        var data = this.model.toJSON({include_associations:true});
-    }
+	onRender: function(){
+		var width = Math.floor(Math.random()*1000);
+		var left = Math.floor(Math.random()*100);
+		this.ui.bar
+			.width(width)
+			.offset({left: left})
+			.css({'background-color': this.model.plant().get('presentation').color});
+		;
+	},
+
+	serializeData: function(){
+		var data = this.model.toJSON({include_associations:true});
+		return data;
+	}
 
   });
 });

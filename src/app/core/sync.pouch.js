@@ -115,10 +115,10 @@ function(_, $, Backbone ) {
 				modelObj = model;
 			}
 
-			Sync._log('modelObj is %o', modelObj);
+			Sync._log(modelObj._type+':modelObj is %o', modelObj);
 
 			//if it's got a model instance grab the relatedDocs property, else
-			Sync._log('relatedDocs: %o', modelObj.relatedDocs, modelObj);
+			Sync._log(modelObj._type+':relatedDocs: %o', modelObj.relatedDocs, modelObj);
 			if(modelObj.relatedDocs){
 				relatedIdFields = _(modelObj.relatedDocs)
 					.chain()
@@ -232,7 +232,8 @@ function(_, $, Backbone ) {
 					Sync._log('Removed ids from rel_ids: %o', rel_ids);
 
 					Sync._log('Fetching docs with rel_ids', rel_ids);
-						if(rel_ids.length){
+
+						if(relatedIdFields.length || relatedQueries.length){
 							Sync.getDocs(rel_ids)
 								.done(function(relatedDocs){
 									docs = docs.concat(relatedDocs);
@@ -333,14 +334,14 @@ function(_, $, Backbone ) {
 		},
 
 		structureDocs: function(docs, model, modelObj){
-			if(!modelObj.docType){
-				throw new Error('No docType exists on modelObj prototype %o', modelObj, model);
+			if(!modelObj._type){
+				throw new Error('No _type exists on modelObj prototype %o', modelObj, model);
 				//return docs;
 			}
 			Sync._log('structing docs', docs, model, modelObj);
 			//pull out the top-level documents; ie. the data used for the model or models in this collection
 			var primary = _(docs).filter(function(doc){
-				return doc.type === modelObj.docType;
+				return doc._type === modelObj._type;
 			});
 			//loop through the primary documents
 			_(primary).each(function(p){

@@ -6,7 +6,7 @@ function(sembr, Backbone, Marionette, template) {
         
         regions:{
             main: '#layout-main',
-            sidebar: '#layout-sidebar'
+            //sidebar: '#layout-sidebar'
         },
 
         onBeforeClose: function(){

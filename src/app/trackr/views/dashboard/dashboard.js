@@ -15,31 +15,22 @@ template) {
       plantings: '#plantings'
     },
 
-    initialize: function(opts){
-    	if(!opts || !opts.places || !opts.plantings){
-    		throw 'No places collection was passed to DashboardView';
+    initialize: function(options){
+    	if(!options.collections || _(['plants', 'places', 'plantings']).difference(_(options.collections).keys()).length  ){
+        throw 'Plantings, places and plants collections must be passed to dashboard view.';
     	}
+      this.collections = options.collections;
 
     	sembr.log('Dashboard layout init.');
 
+      //this.placesListView = new PlacesTreeView({collection: topLevelPlaces});
 
-    	this.placesCollection = opts.places;
-      var topLevelPlaces = new sembr.trackr.collections.Places( this.placesCollection.filter(function(place){
-          if(place.has('in_place'))
-            return false;
-          return true;
-        })
-      );
-      sembr.log('TopLevelPlaces %o', topLevelPlaces);
-    	this.placesListView = new PlacesTreeView({collection: topLevelPlaces});
-
-    	this.plantingsCollection = opts.plantings;
-    	this.plantingsView = new PlantingsTimelineView({collection: this.plantingsCollection, });
+    	this.plantingsView = new PlantingsTimelineView({collections: this.collections});
 
     },
 
     onRender: function(){
-    	this.places.show( this.placesListView );
+    	//this.places.show( this.placesListView );
     	this.plantings.show( this.plantingsView );
     }
   });

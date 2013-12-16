@@ -3,7 +3,7 @@ function(sembr, Model) {
     // Creates a new Backbone Model class object
 
     var Plant = Model.extend({
-        name: 'plant',
+        _type: 'plant',
 
         plantingsCollectionOptions: function(){
             return { plant_id: this.get('_id') };
@@ -24,7 +24,7 @@ function(sembr, Model) {
 
         relatedDocs:[
 
-            {
+            /*{
                 target: 'plantings',
                 key: 'plant_id',
                 source: 'remote',
@@ -40,12 +40,8 @@ function(sembr, Model) {
                         }
                     }
                 }
-            }
-        ],
-
-
-        docType: 'plant'
-
+            }*/
+        ]
     });
 
     // Returns the Model class

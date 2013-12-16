@@ -44,6 +44,8 @@ require.config({
         "backbone.relational":"../libs/backbone/backbone.relational",
         "backbone.supermodel":"../libs/backbone/backbone.supermodel",
 
+        "hoodie": "/_api/_files/hoodie",
+
         "pouchdb": "../libs/pouchdb",
 
         "underscore": "../libs/lodash",
@@ -55,24 +57,14 @@ require.config({
         "jasmine": "../test/lib/jasmine-1.3.1/jasmine",
         "jasmine-html": "../test/lib/jasmine-1.3.1/jasmine-html",
 
-        "bootstrap": "../libs/bootstrap/js/bootstrap",
-        "bootstrap-select": "../libs/bootstrap/bootstrap-select",
-        "bootstrap-switch": "../libs/bootstrap/bootstrap-switch",
-        "flatui-checkbox": "../libs/flat-ui/js/flatui-checkbox",
-        "flatui-radio": "../libs/flat-ui/js/flatui-radio",
+        "semantic-ui": "../libs/semantic-ui/javascript/semantic",
+        
+        //search
+        "lunr":"../libs/lunr/lunr",
 
-
-        "jqueryui":"../libs/jquery/jquery-ui",
-
-        "timelinejs": "../libs/timelinejs/js/storyjs-embed",
-
-
-        //AMD jqueryui is borked right now :/
-        /*"jquery-ui": '../libs/jqueryui',
-        "jquery-ui.datepicker": "../libs/jqueryui/datepicker",
-        "jquery-ui.datepicker.enGB": "../libs/jqueryui/datepicker-en-GB",*/
-
-
+        //language processing libraries
+        "natural":"../libs/natural/natural",
+        "snowball":"../libs/snowball/snowball",
 
         // Plugins
         //"bootstrap":"../libs/require/bootstrap",
@@ -83,14 +75,7 @@ require.config({
     },
     // Sets the configuration for your third party scripts that are not AMD compatible
     shim:{
-        "bootstrap":{"deps": ["jquery"]},
-        "bootstrap-select": {"deps": ["jquery", "bootstrap"]},
-        "bootstrap-switch": {"deps": ["jquery", "bootstrap"]},
-        "flatui-checkbox": {"deps": ["jquery", "bootstrap"]},
-        "flatui-radio": {"deps": ["jquery", "bootstrap"]},
-
-        //"jqueryui":{"deps": ["jquery"]},
-        "jquerymobile":{"deps": ["jqueryui"]},
+        "semantic-ui":{ "deps": ["jquery"] },
 
         "backbone":{
             // Depends on underscore/lodash and jQuery
@@ -125,9 +110,13 @@ require.config({
             "exports":"Handlebars"
         },
         // Backbone.validateAll plugin that depends on Backbone
-        "backbone.validateAll":["backbone"],
+        //"backbone.validateAll":["backbone"],
+
+        "hoodie":{
+            "exports": "Hoodie"
+        },
         "pouchdb":{
-            "exports":"PouchDB"
+            "exports": "PouchDB"
         },
 
         "jasmine": {
@@ -146,6 +135,15 @@ require.config({
 
         "puton":{
             "exports": "Puton"
+        },
+        "lunr": {
+            "exports": "lunr"
+        },
+        "natural": {
+            "exports": "natural"
+        },
+        "snowball": {
+            "exports": "Snowball"
         }
     },
     // hbs config - must duplicate in Gruntfile.js Require build

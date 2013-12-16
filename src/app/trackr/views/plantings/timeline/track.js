@@ -5,7 +5,7 @@ define( ['sembr', 'backbone', 'marionette', 'jquery',
 		return Backbone.Marionette.CollectionView.extend( {
 			itemView: ListItem,
 			attributes:{
-				class: 'track-markers'
+				class: 'track'
 			},
 			// View Event Handlers
 			events: {

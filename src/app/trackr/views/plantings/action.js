@@ -6,14 +6,19 @@ function(sembr, Backbone, Marionette, $, template) {
     className: 'planting-action',*/
     template: template,
 
+    attributes:{
+        class: 'planting event'
+    },
 
     // View Event Handlers
     events: {
         'click [data-action="destroy"]': 'confirmDestroy',
-        'click [data-action="destroy_confirm"]': 'destroy',
+        'click [data-action="confirm-destroy"]': 'destroy',
+        'click [data-action="cancel-destroy"]': 'cancelDestroy'
     },
 
     ui:{
+        'deleteShape': '.delete.shape',
         'destroy': '[data-action="destroy"]'
     },
 
@@ -34,21 +39,27 @@ function(sembr, Backbone, Marionette, $, template) {
 
     onRender: function(){
         this.bindModel();
-
+        this.ui.deleteShape
+          .shape()
+        ;
     },
 
     confirmDestroy: function(){
-        sembr.log('Destroy');
-        this.ui.destroy.tooltip({title: 'Are you sure? Click again to confirm.', trigger:'manual'}).tooltip('show');
-        this.ui.destroy.addClass('btn-warning')
-            .attr('data-action', 'destroy_confirm')
-            .mouseout(function(){ 
-                $(this).attr('data-action','destroy').removeClass('btn-warning').tooltip('hide');
-            });
+        this.ui.deleteShape
+          .shape('flip up')
+        ;
     },
 
     destroy: function(){
-        this.model.destroy();
+        this.$el.transition('vertical flip', 700, _(function(){
+            this.model.destroy();
+        }).bind(this));
+    },
+
+    cancelDestroy: function(){
+        this.ui.deleteShape
+          .shape('flip')
+        ;
     },
 
     bindModel: function () {

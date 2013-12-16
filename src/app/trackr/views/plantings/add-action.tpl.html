@@ -1,56 +1,61 @@
-			<div class="" data-popover="addAction">
-				<div class="control-group">
-					<select name="action" data-model="action_type" class="selectpicker">
-					</select>
-				</div>
 
-				<div class="control-group">
-				  <div class="input-prepend input-datepicker">
-				    <button type="button" class="btn">
-				      <span class="fui-calendar"></span>
-				    </button>
-				    <input type="text" class="span2 hasDatepicker" value="{{date}}" data-model="date" id="add-action-date" />
-				  </div>
-				</div>
-
-				<div class="action_fields plant_fields" hidden>
-					<div class="control-group">
-						<select data-model="plantling_state" class="selectpicker">
-						</select>
-					</div>
-					<div class="control-group">
-						<input placeholder="Notes..." value="" data-model="type">
-					</div>
-				</div>
-
-				<div class="action_fields transplant_fields" hidden>
-					to
-					<div class="control-group">
-						<select name="action" data-model="to_place_id" class="selectpicker">
-						</select>
-					</div>
-				</div>
-
-				<div class="action_fields harvest_fields" hidden>
-					<input type="text" class="span2" value="" data-model="quantity" />
-				</div>
-				
-				<div class="action_fields observe_fields" hidden>
-					
-				</div>
-
-
-				<div class="control-group">
-					<textarea placeholder="Notes..." value="" name="notes" data-model="notes"></textarea>
-				</div>
-
-				<a href="#" class="btn btn-primary btn-block btn-large" data-action="save"><i class="icon icon-white icon-ok"></i> Save</a>
+	<div class="ui form" data-popover="addAction">
+		<h4 class="ui header">Add Action</h4>
+		<div class="field">
+			<div class="ui action selection dropdown">
+			  <div class="text">Action</div>
+			  <input type="hidden" name="action_type" data-model="action_type">
+			  <i class="dropdown icon"></i>
+			  <div class="menu">
+			  	{{#each action_types}}
+				  <div class="item" data-value="{{this}}">{{this}}</div>
+				  {{/each}}
+			  </div>
 			</div>
-
-			<div class="" data-model="action_type"></div>
-			<div class="" data-model="date"></div>
-			<div class="" data-model="notes"></div>
-
 		</div>
 
-		<!--<a class="btn btn-primary" href="" data-action="" data-contentProvider="addAction"><i class="icon icon-white icon-plus-sign"></i> Add Action</a>-->
+		<div class="field">
+		    <input type="text" class="span2 hasDatepicker" value="{{date}}" data-model="date" id="add-action-date" />
+		</div>
+
+		<div class="action_fields plant_fields" hidden>
+			<div class="field">
+				<select data-model="plantling_state" class="">
+				</select>
+			</div>
+			<div class="field">
+				<input placeholder="Notes..." value="" data-model="type">
+			</div>
+		</div>
+
+		<div class="action_fields transplant_fields" hidden>
+			to
+			<div class="field">
+				<select name="action" data-model="to_place_id" class="">
+				</select>
+			</div>
+		</div>
+
+		<div class="action_fields harvest_fields" hidden>
+			<input type="text" class="span2" value="" data-model="quantity" />
+		</div>
+		
+		<div class="action_fields observe_fields" hidden>
+			
+		</div>
+
+
+		<div class="field">
+			<textarea placeholder="Notes..." value="" name="notes" data-model="notes"></textarea>
+		</div>
+
+		<a href="#" class="ui green submit button" data-action="save"><i class="large save icon"></i> Save</a>
+	</div>
+
+	<div class="" data-model="action_type"></div>
+	<div class="" data-model="date"></div>
+	<div class="" data-model="notes"></div>
+
+</div>
+
+<!--<a class="btn btn-primary" href="" data-action="" data-contentProvider="addAction"><i class="icon icon-white icon-plus-sign"></i> Add Action</a>-->

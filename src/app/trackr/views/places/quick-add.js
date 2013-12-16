@@ -1,6 +1,5 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 
-'hbs!./quick-add.tpl', 
-'bootstrap-select', 'flatui-checkbox'],
+'hbs!./quick-add.tpl'],
 function(sembr, Backbone, Marionette, $, 
 template) {
   //ItemView provides some default rendering logic
@@ -43,7 +42,6 @@ template) {
 
     onRender: function(){
         this.bindForm();
-        this.$('.selectpicker').selectpicker({style: 'btn-info', menuStyle: 'dropdown-inverse'});
 
         this.$('#subplace-of').removeAttr('hidden').hide();
         this.ui.successView.removeAttr('hidden').hide()

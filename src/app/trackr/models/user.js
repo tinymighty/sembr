@@ -4,19 +4,16 @@ function(sembr, base, Model, User) {
 
     _(base.models.User).extend({
 
-
-        plantingsCollectionOptions: function(){
-            return { plant_id: this.get('_id') };
-        },
+        _type: 'user',
 
         // Default values for all of the Model attributes
         defaults: {
-            type: 'plant'
+            type: 'user'
         },
 
         // Get's called automatically by Backbone when the set and/or save methods are called (Add your own logic)
         validate: function(attrs) {
-            if(attrs.type!=='plant'){
+            if(attrs.type!=='user'){
                 throw {error: 'type property must be plant'};
             }
         },
@@ -28,6 +25,7 @@ function(sembr, base, Model, User) {
                 target: 'plantings',
                 key: 'plant_id',
                 source: 'remote',
+                autoFetch: false,
                 query: {
                     map: function(doc){
                         if(doc.type==='planting'){
@@ -41,10 +39,7 @@ function(sembr, base, Model, User) {
                     }
                 }
             }
-        ],
-
-
-        docType: 'plant'
+        ]
 
     });
     

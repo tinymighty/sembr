@@ -62,8 +62,8 @@ function(sembr, $, Backbone, Marionette, Promises, ReadyPromise){
 		addRouter: function(router){
 			this.router = router;
 			this.navigate = router.navigate; //convenience method
-			this.listenTo(router, 'route', function( route, params){
-          this.vent.trigger('route', route, this.moduleName, params);
+			this.listenTo(router, 'route', function( name, params){
+          this.vent.trigger('route', name, params);
 	    }.bind(this));
 		},
 

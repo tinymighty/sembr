@@ -13,10 +13,10 @@
  *
  * Returns an init function which, when called, starts the application.
  */
-define(['jquery', 'underscore', 
+define(['jquery', 'underscore', 'hoodie',
         'sembr', 'sembr.module',
         'sembr.base', 'sembr.default', 'sembr.trackr'], 
-function($, _, 
+function($, _, hoodie,
         sembr, monkey_patch_module,
         layoutModule, defaultModule, trackrModule){
 	

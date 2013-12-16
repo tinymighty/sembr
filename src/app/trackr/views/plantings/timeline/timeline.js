@@ -1,56 +1,118 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 'underscore',
-'trackr/views/plantings/timeline/plantings', 'trackr/views/plantings/timeline/track',
+'trackr/views/plantings/timeline/groups', 'trackr/views/plantings/timeline/plantings', 'trackr/views/plantings/timeline/track',
 'hbs!./timeline.tpl'],
 function( sembr, Backbone, Marionette, $, _,
-Plantings, Track,
+Groups, Plantings, Track,
 template ){
   //ItemView provides some default rendering logic
-  return Backbone.Marionette.Layout.extend( {
+  return Backbone.Marionette.ItemView.extend( {
     template: template,
     attributes: {
       id: 'dashboard-planting-timeline',
-      class: 'planting-timeline'
+      class: 'planting timeline'
     },
 
-    regions:{
+    /*regions:{
       controls: '.controls',
       plantings: '.plantings',
       track: '.track'
-    },
+    },*/
 
     // View Event Handlers
     events: {
 
     },
 
-    views: {
-
-    },
-
     initialize: function(options){
-      if(!this.collection){
-        throw 'No collection passed to view.';
+      console.log('Timeline init', options);
+      if(!options.collections || _(['plants', 'places', 'plantings']).difference(_(options.collections).keys()).length  ){
+        throw 'Plantings, places and plants collections must be passed to plantings/timeline view.';
       }
-
+      this.collections = options.collections;
+      this.collections.groups = new Backbone.Collection();
       this.options = _(options).defaults({
         groupBy: 'plant'
       });
 
-      this.views.plantings = new Plantings({collection: this.collection, group_by:this.options.groupBy});
-
-      this.views.track = new Track();
+      this.views = {
+        groups: new Groups({timeline:this}),
+        //plantings: new Plantings({timeline: this}),
+        track: new Track({timeline: this})
+      }
 
       $(window).resize(this.onResize.bind(this));
+
+      this._group();
+    },
+
+    _groupableBy: ['plant', 'place'],
+
+    groupBy: function(by){
+      if(this._groupableBy.indexOf(by)){
+        this.options.groupBy = by;
+        this.views.groups
+          .hide()
+            .done(function(){
+              this.groups.reset();
+              this._group();
+              this.views.groups.show();
+            }.bind(this))
+        ;
+        return true;
+      }else{
+        return false;
+      }
+    },
+
+    //update the UI without re-rendering everything
+    update: function(){
+      this._group();
+    },
+
+    _group: function(){
+      
+      grouped = this.collections.plantings.groupBy(function(model){
+        var group;
+        switch(this.options.groupBy){
+          case 'plant':
+            return model.plant().get('_id');
+          case 'place':
+            return (model.plant()) ? model.plant().get('_id') : null; //place can be undefined
+            break;
+        }
+      }.bind(this));
+
+      var getGroupName = _(function(_id){
+        switch(this.options.groupBy){
+          case 'plant':
+            return this.collections.plants.get(_id).get('use_name');
+          case 'place':
+            return _id ? this.collections.places.get(_id).get('name') : 'Unspecified'
+        }
+      }).bind(this);
+
+      _(grouped).each(function(models, _id){
+        this.collections.groups.add( new Backbone.Model({ name:getGroupName(_id), plantings: models }) );
+      }.bind(this));
+
     },
 
     onRender: function(){
-    	this.plantings.show(this.views.plantings);
-      this.track.show(this.views.track);
-      this.renderTrack();
+      this.$el.append(this.views.groups.render().$el);
+      //this.$el.append(this.views.plantings.render().$el);
+      this.$el.append(this.views.track.render().$el);
+      this.update();
+    },
+
+    update: function(){
+      //iterate through groups and assign the right sizing by number of children
+      _(this.grouped).each(function(){
+
+      });
     },
 
     onResize: function(){
-      //this.trackView.
+
     },
 
     renderTrack: function(){

@@ -18,10 +18,10 @@ define(["sembr", "underscore", "sembr.collection"],
 	    	fetch_where: {
 	    		map: function(doc){
 	    			if(doc.type==='plant'){
-	    				emit([doc.use_name], null);
+	    				emit([doc.user, doc.use_name], null);
 	    			}
 	    		},
-  	    	keys: ['use_name']
+  	    	keys: ['user', 'use_name']
   	    }
 	    }
 

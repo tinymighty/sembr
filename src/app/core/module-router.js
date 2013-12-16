@@ -26,11 +26,18 @@ define(['sembr', 'jquery', 'backbone', 'marionette'], function(sembr, $, Backbon
     // router, and turn them in to routes that trigger the
     // specified method on the specified `controller`.
     processAppRoutes: function(moduleRoutes){
-      var methodName, controllerOpts, func, controllerInst;
-      var route, routesLength, i;
-      var routes = [];
-      var router = this;
-      var module = this.module;
+      var 
+        controllerOpts, 
+        func, 
+        controllerInst,
+        route, 
+        routeName,
+        routesLength, 
+        i,
+        routes = [],
+        router = this,
+        module = this.module
+      ;
 
       //keeping in mind the prefix can be an empty string for the base module
       var prefix = this.urlPrefix || this.module.moduleName;
@@ -41,22 +48,32 @@ define(['sembr', 'jquery', 'backbone', 'marionette'], function(sembr, $, Backbon
       }
 
       for(route in moduleRoutes){
+        var routeVal = prefix;
+        //cut off any trailing slashes...
         if (moduleRoutes.hasOwnProperty(route)){
-          //sembr.log(router);
-          routes.unshift([prefix+route, moduleRoutes[route] ]);
+          routeVal+=route;
+          if(routeVal[routeVal.length-1]==='/'){
+            routeVal = routeVal.slice(0,routeVal.length-1);
+          }
+          console.log("Processing route", routeVal, moduleRoutes[route]);
+          routes.unshift([routeVal, moduleRoutes[route] ]);
         }
       }
 
       routesLength = routes.length;
+
       for (i = 0; i < routesLength; i++){
         sembr.log('Adding route', routes[i], i, routesLength);
-
+        //convert ControllerName.methodName into {controller:ControllerName, method:methodName}
+        if(_(routes[i][1]).isString()){
+          var parts = routes[i][1].split('.');
+          routes[i][1] = {controller: parts[0], method: parts[1]};
+        }
         func = function(route){
           return function(){
             var ci,   //controller instance
-                controller; //controller object
-
-
+                controller //controller object
+            ;
             sembr.log("Matched route!", route,  arguments);
             var route_args = Array.prototype.slice.call(arguments);
             controller = module.controllers[route[1].controller];
@@ -87,8 +104,12 @@ define(['sembr', 'jquery', 'backbone', 'marionette'], function(sembr, $, Backbon
 
           }
         }(routes[i]);
-
-        router.route(routes[i][0], (routes[i][1].controller||'')+'.'+methodName, func);
+        if(routes[i][1].name){
+          routeName = [module.name,routes[i][1].name].join('.');
+        }else{
+          routeName = _([module.name, routes[i][1].controller.toLowerCase(), routes[i][1].method]).compact().join('.');
+        }
+        router.route(routes[i][0], routeName, func);
       }
     }
 

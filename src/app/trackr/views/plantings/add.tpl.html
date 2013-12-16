@@ -1,40 +1,59 @@
-<div class="">
-	<h3>New Planting</h3>
-	<form name="form">
-		<legend>Planting</legend>
-		<div class="row-fluid">
-
-			<div class="control-group">
-				<label>What?</label>
-				<input type="text" name="plant" data-model="plant" required autofocus class="span3" id="plant-picker">
-			</div>
-
-			<div class="control-group">
-				<label>Where?</label>
-				<select id="places-picker" class="selectpicker" name="place select-block" data-model="place" required>
-					{{#each places}}
-				  <option value="{{this._id}}">{{this.name}}</option>
-				  {{/each}}
-				</select>
-			</div>
-
-			<div class="control-group">
-				<label>When?</label>
-				<input type="text" name="date" data-model="date" required value="2012-07-17" class="span1">
-			</div>
-
-			<div class="control-group">
-				<label>From</label>
-				<select name="from" data-model="from" class="selectpicker">
-					<option value="seed">Seed</option>
-					<option value="plantlet">Plantlet</option>
-					<option value="cutting">Cutting</option>
-				</select>
+<div class="ui form">
+<h3 class="ui header">New Planting</h3>
+		<div class="field">
+			<label>Plant</label>
+    	<div class="ui plant search">
+    		<div class="ui input">
+					<input type="text" name="plant" required class="prompt">
+				</div>
+				<div class="search results">
+					<div class="search category">
+						<div class="search result"></div>
+					</div>
+				</div>
 			</div>
 		</div>
+
+		<div class="field">
+			<label>Where would you like to plant?</label>
+			<div class="ui two column grid">
+				<div class="column">
+					<div class="place selection">
+						<input type="hidden" class="place id">
+					</div>
+				</div>
+				<div class="column">
+					<div class="place summary">
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="field">
+			<div class="two fields">
+        <div class="field">
+          <label>From...</label>
+          <input type="text" name="date" data-model="present_from" required class="date planted">
+        </div>
+        <div class="field">
+          <label>Until...</label>
+          <input type="text" name="date" data-model="present_until" required class="date removed">
+        </div>
+      </div>			
+		</div>
+
+		<div class="field">
+			<label>From</label>
+			<select name="from" data-model="from" class="selectpicker">
+				<option value="seed">Seed</option>
+				<option value="plantlet">Plantlet</option>
+				<option value="cutting">Cutting</option>
+			</select>
+		</div>
+
 		<div class="row-fluid">
 			<hr>
-			<a class="btn btn-primary btn-block save-button" data-action="save"><i class="icon icon-white icon-ok"></i> Save</a>
+			<a class="ui large green labelled icon save button" data-action="save"><i class="icon ok sign"></i> Save</a>
 		</div>
-	</form>
 </div>

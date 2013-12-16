@@ -1,5 +1,7 @@
-define(['sembr', 'jquery', 'backbone', 'marionette', 'base/views/header', 'hbs!../templates/responsive'],
-function (sembr, $, Backbone, Marionette, HeaderView, template) {
+define(['sembr', 'jquery', 'backbone', 'marionette', 'base/views/header', 
+'semantic-ui',
+'hbs!../templates/responsive'],
+function (sembr, $, Backbone, Marionette, HeaderView, SemanticUI, template) {
     //ItemView provides some default rendering logic
     return Backbone.Marionette.Layout.extend({
         template:template,

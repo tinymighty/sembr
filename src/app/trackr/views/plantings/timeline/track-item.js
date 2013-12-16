@@ -4,7 +4,7 @@ function(sembr, Backbone, Marionette, $, template) {
   return Backbone.Marionette.ItemView.extend( {
     tagName: 'div',
     attributes:{
-      class: 'track-item'
+      class: 'item'
     },
     template: template,
 
