@@ -1,5 +1,5 @@
-	define(['backbone', 'sembr.modulerouter', 'trackr/controllers/_init'], 
-function(Backbone, ModuleRouter, controllers ) {
+	define(['backbone', 'sembr.modulerouter'], 
+function(Backbone, ModuleRouter) {
    return ModuleRouter.extend({
 			//'index' must be a method in AppRouter's controller
 

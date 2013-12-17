@@ -1,9 +1,13 @@
 define(["sembr", "underscore", "sembr.collection"],
   function(sembr, _, Collection) {
+
     var PlantingActions = Collection.extend({
 		  
 		  model: function(attrs, options) {
-		    return sembr.trackr.models.Action.create(attrs, options);
+		    if(!attrs){
+		  		return sembr.trackr.models.Action;
+		  	}
+		  	return sembr.trackr.models.Action.create(attrs, options);
 		  },
 
 	    initialize: function(options){

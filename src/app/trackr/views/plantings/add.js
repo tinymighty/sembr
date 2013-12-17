@@ -62,7 +62,7 @@ template, searchMessageTemplate) {
 		plants = _(this.plants.toJSON())
 			.chain()
 			.map(function(p){
-				return {label: p.use_name, value:p._id};
+				return {label: p.use_name, value:p.id};
 			})
 			.value()
 		;

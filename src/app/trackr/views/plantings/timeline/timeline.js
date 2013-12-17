@@ -75,24 +75,24 @@ template ){
         var group;
         switch(this.options.groupBy){
           case 'plant':
-            return model.plant().get('_id');
+            return model.plant().get('id');
           case 'place':
-            return (model.plant()) ? model.plant().get('_id') : null; //place can be undefined
+            return (model.plant()) ? model.plant().get('id') : null; //place can be undefined
             break;
         }
       }.bind(this));
 
-      var getGroupName = _(function(_id){
+      var getGroupName = _(function(id){
         switch(this.options.groupBy){
           case 'plant':
-            return this.collections.plants.get(_id).get('use_name');
+            return this.collections.plants.get(id).get('use_name');
           case 'place':
-            return _id ? this.collections.places.get(_id).get('name') : 'Unspecified'
+            return id ? this.collections.places.get(id).get('name') : 'Unspecified'
         }
       }).bind(this);
 
-      _(grouped).each(function(models, _id){
-        this.collections.groups.add( new Backbone.Model({ name:getGroupName(_id), plantings: models }) );
+      _(grouped).each(function(models, id){
+        this.collections.groups.add( new Backbone.Model({ name:getGroupName(id), plantings: models }) );
       }.bind(this));
 
     },

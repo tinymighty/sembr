@@ -1,9 +1,7 @@
 define(['sembr', 'sembr.controller', 'backbone', 'backbone.collectionbinder','marionette', 
-	'trackr/collections/places',
 	'trackr/views/layout', 'trackr/views/dashboard/dashboard', 'trackr/views/places/treeview',
 	"components/loader/loader"],
 function (sembr, Controller, Backbone, CB, Marionette, 
-	PlacesCollection,
 	Layout, DashboardView, TreeView,
 	LoaderView) {
 	var DashboardController = Controller.extend({
@@ -21,7 +19,7 @@ function (sembr, Controller, Backbone, CB, Marionette,
 
 		dashboard: function(){
 			this.layout.main.show( this.loaderView );
-			new PlacesCollection().fetch().then(function(places){
+			new sembr.trackr.collections.Places().fetch().then(function(places){
 				sembr.log('Places...', places);
 				this.layout.main.show( new TreeView({collection:places}) );
 			}.bind(this));

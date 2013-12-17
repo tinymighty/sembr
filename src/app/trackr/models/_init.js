@@ -21,7 +21,7 @@ function(
 	PlantingAction,
 	User
 ){
-	
+
 	var models = {
 		Action: Action,
 		Place: Place,
@@ -45,6 +45,7 @@ function(
 			models.Plant.has()
 				.one('user', {
 					model: models.User,
+					collection: collections.Users,
 					inverse: 'plants'
 				})
 				.many('plantings', {
@@ -57,11 +58,15 @@ function(
 			models.Planting.has()
 				.one('place', {
 					model: models.Place,
+					collection: collections.Places,
 					inverse: 'plantings',
+					source: 'place_id'
 				})
 				.one('plant', {
 					model: models.Plant,
-					inverse: 'plantings'
+					inverse: 'plantings',
+					collection: collections.Plants,
+					source: 'plant_id'
 				})
 				.many('actions', {
 					inverse: 'planting',
@@ -80,12 +85,16 @@ function(
 				})
 				.one('place', {
 					inverse: 'places',
-					model: models.Place
+					source: 'in_place',
+					id: 'in_place',
+					model: models.Place,
+					collection: collections.Places
 				})
-				.one('owner', {
+				/*.one('owner', {
 					inverse: 'places',
-					model: models.User
-				})
+					model: models.User,
+					collection: collections.Users
+				})*/
 			;
 		},
 		user: function(){

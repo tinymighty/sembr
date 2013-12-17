@@ -3,7 +3,7 @@ function(sembr, Model) {
 	// Creates a new Backbone Model class object
 
 	var Planting = Model.extend({
-		_type: 'planting',
+		type: 'planting',
 
 		defaults: {
 			type: 'planting',
@@ -19,7 +19,7 @@ function(sembr, Model) {
 		initialize: function(attrs, options){
 			if(attrs){
 				//attrs = _(attrs).defaults(this.defaults);
-				if(!attrs._id){
+				if(!attrs.id){
 					this.created = new Date().toString();
 				}
 			}
@@ -44,13 +44,6 @@ function(sembr, Model) {
 			}
 		},
 
-		_afterSync: function(method, model, options, res){
-			//if the place json wasn't loaded, try to find the place in the user's places
-			if(!res.place && sembr.trackr.places){
-				res.place = sembr.trackr.places.where({_id: res.place_id}).shift() || undefined;
-			}
-		},
-
 		serialized: {
 			planted_on: 'date',
 			removed_on: 'date',
@@ -66,45 +59,9 @@ function(sembr, Model) {
 			}
 			//place_id: ['association', {name: 'place'}],
 			//plant_id: ['association', {name: 'plant'}]
-		},
-
-		relatedDocs:[
-			{
-				target: 'place',
-				key: 'place_id',
-				autoload: false, //all user places are, by default, loaded before trackr init so places should already be availble
-			},
-			{
-				target: 'plant',
-				key: 'plant_id'
-			},
-			{
-				target: 'actions',
-				key: 'subject_id',
-				source: 'remote',
-				query: {
-					map: function(doc){
-						if(doc.type==='action' && doc.subject_type==='planting'){
-							emit([doc.subject_id], null);
-						}
-					},
-					//options will be passed an array of planting documents before they have been used to initialize
-					//models on this collection
-					options: function( docs, collection ){
-						return {
-							keys: _(docs).pluck('_id')
-						}
-					}
-				}
-			}
-		]
+		}
 
 	});
-
-	/*Planting
-		.has()
-			.one('place', {inverse: 'planting', key: 'place_id'})
-			.many('actions', {inverse: 'planting', key: 'subject_id'});*/
 
 	// Returns the Model class
 	return Planting;

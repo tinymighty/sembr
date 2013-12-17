@@ -37,6 +37,9 @@ function (sembr, Controller, Backbone, CB, Marionette,
 			sembr.log('Plantings list view...');
 			var self = this;
 
+			this.showSidebar();
+			this.layout.main.show( new LoaderView() );
+
 			var plantingListView = new PlantingsListView({collection: this.plantings});
 			this.listenTo(this.plantings,'all', function(name){
 				sembr.log('PlantingsCollection: ', name);
@@ -45,26 +48,20 @@ function (sembr, Controller, Backbone, CB, Marionette,
 				sembr.log('PlantingListView:', name);
 			})
 			sembr.log('Fetching plantings', this.plantings, this.plantings.model());
-			this.plantings.fetchWhere({user: sembr.user.get('_id')})
+			this.plantings.fetch( )
 				.done( function(){
 					sembr.log("Got plantings", this.plantings); 
 					sembr.log("Planting associations", this.plantings.at(0));
 					sembr.log("Planting to JSON", this.plantings.at(0).toJSON() );
 
-					this.layout.main.show( plantingListView.render() );
+					this.layout.main.show( plantingListView );
 				}.bind(this))
 				.fail(function(err){
 					console.error(err);
 				});
-
-			//, success: _(this.showPlantingListView).bind(this) });
 			
-			/*this.plantingListView.on('load', function(){
-				this.layout.list.show( plantingListView );
-			});*/
 
-			this.showSidebar();
-			this.layout.main.show( new LoaderView() );
+			
 		}, 
 
 		showSidebar: function(){

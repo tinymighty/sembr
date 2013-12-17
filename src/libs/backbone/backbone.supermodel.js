@@ -1,19 +1,31 @@
-(function(Backbone){
+(function (root, factory) {
 
-  // The global object.
-  var root = this;
+  'use strict';
 
-  // Expose Supermodel to the global object.
-  var Supermodel = root.Supermodel = {};
+  //commonjs
+  if (typeof exports === 'object') {
+
+    var backbone = require('backbone');
+    var underscore = require('underscore');
+    module.exports = factory(backbone, underscore);
+
+  //amd
+  } else if (typeof define === 'function' && define.amd) {
+    define(['backbone', 'underscore'], factory);
+
+  //global scope
+  } else {
+    root.Supermodel = factory(root.Backbone, root._);
+  }
+
+}(this, function (Backbone, _) {
+
+  'use strict'
+
+  var Supermodel = {};
 
   // Current version.
   Supermodel.VERSION = '0.0.4';
-
-  // Local reference to Collection.
-  var Collection = Backbone.Collection;
-
-  // Use Backbone's `extend` for sugar.
-  var extend = Backbone.Model.extend;
 
   // # Association
   //
@@ -43,8 +55,6 @@
     if (this.destroy) model.all().on('destroy', this.destroy, this);
     if (this.create) model.all().on('add', this.create, this);
   };
-
-  Association.extend = extend;
 
   _.extend(Association.prototype, {
 
@@ -87,19 +97,19 @@
   // ## One
   //
   // One side of a one-to-one or one-to-many association.
-  var One = Association.extend({
+  var One = function(model, options) {
+    this.required(options, 'inverse', 'model');
+    Association.apply(this, arguments);
+    _.extend(this, _.pick(options, 'inverse', 'model', 'id'));
+    _.defaults(this, {
+      id: this.name + '_id'
+    });
+    model.all()
+      .on('associate:' + this.name, this.replace, this)
+      .on('dissociate:' + this.name, this.remove, this);
+  };
 
-    constructor: function(model, options) {
-      this.required(options, 'inverse', 'model');
-      Association.apply(this, arguments);
-      _.extend(this, _.pick(options, 'inverse', 'model'));
-      _.defaults(this, {
-        id: this.name + '_id'
-      });
-      model.all()
-        .on('associate:' + this.name, this.replace, this)
-        .on('dissociate:' + this.name, this.remove, this);
-    },
+  _.extend(One.prototype, Association.prototype, {
 
     // Assign the getter/setter when a model is created.
     create: function(model) {
@@ -123,7 +133,7 @@
     // If `source` is provided, use it to initialize the association after
     // removing it from the response object.
     parse: function(model, resp) {
-      if (!_.has(resp, this.source)) return;
+      if (!resp || !_.has(resp, this.source)) return;
       var attrs = resp[this.source];
       delete resp[this.source];
       this.replace(model, attrs);
@@ -185,16 +195,16 @@
 
   // # ManyToOne
   // The many side of a one-to-many association.
-  var ManyToOne = Association.extend({
+  var ManyToOne = function(model, options) {
+    this.required(options, 'inverse', 'collection');
+    Association.apply(this, arguments);
+    _.extend(this, _.pick(options, 'collection', 'inverse'));
+    model.all()
+      .on('associate:' + this.name, this._associate, this)
+      .on('dissociate:' + this.name, this._dissociate, this);
+  };
 
-    constructor: function(model, options) {
-      this.required(options, 'inverse', 'collection');
-      Association.apply(this, arguments);
-      _.extend(this, _.pick(options, 'collection', 'inverse'));
-      model.all()
-        .on('associate:' + this.name, this._associate, this)
-        .on('dissociate:' + this.name, this._dissociate, this);
-    },
+  _.extend(ManyToOne.prototype, Association.prototype, {
 
     // When a model is created, instantiate the associated collection and
     // assign it using `store`.
@@ -224,6 +234,7 @@
     // Use the `source` property to reset the collection with the given models
     // after removing it from the response object.
     parse: function(model, resp) {
+      if (!resp) return;
       var attrs = resp[this.source];
       if (!attrs) return;
       delete resp[this.source];
@@ -295,15 +306,15 @@
   // # ManyToMany
   //
   // One side of a many-to-many association.
-  var ManyToMany = Association.extend({
+  var ManyToMany = function(model, options) {
+    this.required(options, 'collection', 'through', 'source');
+    Association.apply(this, arguments);
+    _.extend(this, _.pick(options, 'collection', 'through'));
+    this._associate = this.andThis(this._associate);
+    this._dissociate = this.andThis(this._dissociate);
+  };
 
-    constructor: function(model, options) {
-      this.required(options, 'collection', 'through', 'source');
-      Association.apply(this, arguments);
-      _.extend(this, _.pick(options, 'collection', 'through'));
-      this._associate = this.andThis(this._associate);
-      this._dissociate = this.andThis(this._dissociate);
-    },
+  _.extend(ManyToMany.prototype, Association.prototype, {
 
     // When a new model is created, assign the getter.
     create: function(model) {
@@ -400,7 +411,10 @@
     //   Defaults to '_' + `name`.
     one: function(name, options) {
       options.name = name;
-      new One(this.model, options);
+      var assoc = new One(this.model, options);
+      if(options.chain===false){
+        return assoc;
+      }
       return this;
     },
 
@@ -421,7 +435,10 @@
     many: function(name, options) {
       options.name = name;
       var Association = options.through ? ManyToMany : ManyToOne;
-      new Association(this.model, options);
+      var assoc = new Association(this.model, options);
+      if(options.chain===false){
+        return assoc;
+      }
       return this;
     }
 
@@ -486,6 +503,8 @@
       return new this(attrs, options);
     },
 
+    // ## find
+    // Attempt to find an existing model matching the provided attrs
     find: function(attrs, merge){
       var model;
       var all = this.all();
@@ -516,7 +535,7 @@
 
     // Return a collection of all models for a particular constructor.
     all: function() {
-      return this._all || (this._all = new Collection());
+      return this._all || (this._all = new Backbone.Collection());
     },
 
     // Return a hash of all associations for a particular constructor.
@@ -528,10 +547,13 @@
     // respectively.  `reset` removes all model references to allow garbage
     // collection.
     reset: function() {
-      this._all = new Collection();
+      this._all = new Backbone.Collection();
       this._associations = {};
     }
 
   });
+  
 
-}).call(this, Backbone);
+  return Supermodel;
+
+}));

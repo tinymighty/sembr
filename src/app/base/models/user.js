@@ -3,11 +3,7 @@ function(sembr, Model) {
 
     var User = Model.extend({
 
-        defaults: {
-            type: 'user'
-        },
-
-        docType: 'user'
+        type:'user'
 
     });
 

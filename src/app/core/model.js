@@ -9,10 +9,9 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
 
   // INSTANCE METHODS 
   {
-    
 
     initialize: function(){
-      if(!this._type){
+      if(!this.type){
         throw new Error('Model constructor must specify a type');
       }
       sembr.log('Initializing model ', this.name, arguments);
@@ -20,7 +19,6 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
       this._associations = [];
 
       this._processSerializers();
-      this._processRelatedDocs();
 
       //keep an array of active association names so we can know the getter names to use.
       //without this there is no way to access associations programatically
@@ -104,18 +102,6 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
       return this.attributes;
     },
 
-    _processRelatedDocs: function(){
-      if(this.relatedDocs){
-        _(this.relatedDocs).each(function(rel){
-          _(rel).defaults({
-            source: 'local',
-            autoload: true
-          });
-        });
-      }
-    },
-
-
     toJSON: function(options){
       var json;
       options = _(options || {}).defaults({
@@ -127,7 +113,7 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
       //defer to previous implementation for this objects attributes
       json = Supermodel.Model.prototype.toJSON.apply(this, arguments);
       if(options.include_associations){
-        //one include associations to one level deep to prevent recursion
+        //only include associations to one level deep to prevent recursion
         options.include_associations = false;
         _(this._associations).each(function(name){
           json[name] = this[name]().toJSON(options);
@@ -145,13 +131,13 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
   	findOrFetchById: function(id){
     	var model, deferred;
     	deferred = new $.Deferred();
-    	model = this.find({_id: id});
+    	model = this.find({id: id});
     	if(model){
         sembr.log('findOrFetch: Found model instance for id %o', id);
     		deferred.resolve(model);
     	}else{
         sembr.log('findOrFetch: Instantiating new model %o with _id %o', this, id);
-	    	model = new this({_id: id})
+	    	model = new this({id: id})
 	      model.fetch()
 	    		.done(function(new_model, data){
 	    			deferred.resolve(new_model, data);
@@ -163,6 +149,60 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
     	}
     	return deferred.promise();
     },
+
+    /* Wrap the Associations has chain to set up
+    loading the relevant data from Hoodie.store */
+    has: function(){
+      var has = Supermodel.Model.has.apply(this, arguments);
+      var model = this;
+      if ( !this._hoodie_relations ) {
+        this._hoodie_relations = [];
+      }
+      return {
+
+        one: function(name, options){ 
+          options.chain = false;
+          var assoc = has.one(name, options);
+
+          model._hoodie_relations.push({
+            association: assoc,
+            type: 'one',
+            model: options.model,
+            collection: options.collection,
+            id: options.id || name+'_id', 
+            destination: options.destination || name
+          });
+          return this;
+        },
+
+        many: function(name, options){
+          options.chain = false;
+          var assoc = has.many(name, options, false);
+
+          var fetcher = {
+            association: assoc,
+            collection: options.collection,
+            destination: options.destination || name 
+          };
+
+          if( options.source ){
+            //assume source refers to an array of ids...
+            fetcher.type = 'many.list';
+            fetcher.source = options.source;
+            fetcher.id = options.id || 'id';
+          }
+          else{
+            //
+            fetcher.type = 'many';
+            fetcher.id = options.id || options.inverse+'_id';
+          }
+
+          model._hoodie_relations.push( fetcher );
+          return this;
+        }
+
+      };
+    }
 
   });
 

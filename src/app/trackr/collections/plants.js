@@ -1,29 +1,14 @@
 define(["sembr", "underscore", "sembr.collection"],
   function(sembr, _, Collection) {
+
     var Plants = Collection.extend({
+
 		  model: function(attrs, options) {
+		  	if(!attrs){
+		  		return sembr.trackr.models.Plant;
+		  	}
 		    return sembr.trackr.models.Plant.create(attrs, options);
-		  },
-
-
-	    views: {
-	    	fetch_all: {
-	    		map: function(doc){
-	    			if(doc.type==='plant'){
-	    				emit(doc.use_name, null);
-	    			}
-	    		},
-	    		keys: ['use_name']
-	    	},
-	    	fetch_where: {
-	    		map: function(doc){
-	    			if(doc.type==='plant'){
-	    				emit([doc.user, doc.use_name], null);
-	    			}
-	    		},
-  	    	keys: ['user', 'use_name']
-  	    }
-	    }
+		  }
 
 		});
     return Plants;

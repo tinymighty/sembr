@@ -21,6 +21,7 @@ require.config({
         "sembr.collection": 'core/collection',
         "sembr.model": 'core/model',
         "sembr.sync.pouch": 'core/sync.pouch',
+        "sembr.hoodup": 'core/hoodup',
 
         "sembr.mixins.readypromise": 'core/mixins/readypromise',
 
@@ -45,6 +46,7 @@ require.config({
         "backbone.supermodel":"../libs/backbone/backbone.supermodel",
 
         "hoodie": "/_api/_files/hoodie",
+        "backbone-hoodie": "../libs/backbone/backbone-hoodie",
 
         "pouchdb": "../libs/pouchdb",
 

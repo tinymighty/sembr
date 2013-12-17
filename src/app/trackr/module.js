@@ -24,8 +24,9 @@ var Trackr = sembr.module("trackr", function(module){
   module.addAsyncInitializer(function(){
     sembr.log('Running async initializer for places collection...');
   	return new module.collections.Places()
-  		.fetchWhere( {'user': sembr.user.get('_id')} )
+  		.fetch( )
   		.done(function(places, data){
+        console.warn("Places loaded", places, data);
   			Trackr.allPlaces = places;
 
         //only show top level places, the rest are accessed via the tree
@@ -44,8 +45,9 @@ var Trackr = sembr.module("trackr", function(module){
   module.addAsyncInitializer(function(){
     sembr.log('Running async initializer for plants collection...');
     return new module.collections.Plants()
-      .fetchWhere( {'user': sembr.user.get('_id')} )
+      .fetch( )
       .done(function(plants, data){
+        console.warn("Plants loaded", plants, data);
         Trackr.plants = plants;
       })
     ;

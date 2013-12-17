@@ -4,7 +4,7 @@ function(sembr, base, Model, User) {
 
     _(base.models.User).extend({
 
-        _type: 'user',
+        type: 'user',
 
         // Default values for all of the Model attributes
         defaults: {

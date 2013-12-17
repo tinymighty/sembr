@@ -1,7 +1,12 @@
 define(["sembr", "underscore", "sembr.collection"],
   function(sembr, _, Collection) {
+
     var Users = Collection.extend({
+    	
 		  model: function(attrs, options) {
+		  	if(!attrs){
+		  		return sembr.base.models.User;
+		  	}
 		    return sembr.base.models.User.create(attrs, options);
 		  },
 
@@ -18,4 +23,5 @@ define(["sembr", "underscore", "sembr.collection"],
 
 		});
     return Users;
+
   });

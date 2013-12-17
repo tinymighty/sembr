@@ -32,10 +32,11 @@ function(sembr, Backbone, Marionette, $, template) {
 	onRender: function(){
 		var width = Math.floor(Math.random()*1000);
 		var left = Math.floor(Math.random()*100);
+		presentation = {}; presentation.color = 'red'; 
 		this.ui.bar
 			.width(width)
 			.offset({left: left})
-			.css({'background-color': this.model.plant().get('presentation').color});
+			.css({'background-color': presentation.color});
 		;
 	},
 

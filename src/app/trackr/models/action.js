@@ -2,7 +2,7 @@ define(["sembr", 'sembr.model'],
 function(sembr, Model) {
     // Creates a new Backbone Model class object
     var Action = Model.extend({
-        _type: 'action',
+        type: 'action',
 
         // Default values for all of the Model attributes
         defaults: {

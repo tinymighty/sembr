@@ -3,40 +3,13 @@ define(['sembr', 'sembr.model'],
         //first we have to define Place so we can reference it within its own relation property
         //to set up a self-nested hierarchy 
         Place = Model.extend({
-            _type: 'place',
+            type: 'place',
 
             // Model Constructor
             initialize: function() {
                 Model.prototype.initialize.apply(this, arguments);
             },
 
-
-            relatedDocs:[
-                {
-                    target: 'place',
-                    key: 'in_place'
-                },
-                {
-                    target: 'places',
-                    key: 'in_place',
-                    source: 'remote',
-                    query: {
-                        map: function(doc){
-                            if(doc.type==='place' && doc.in_place){
-                                emit([doc.in_place], null);
-                            }
-                        },
-                        //options will be passed an array of place documents before they have been used to initialize
-                        //models on this collection
-                        options: function( docs, collection ){
-                            sembr.log('Building options', docs, collection);
-                            return {
-                                keys: _(docs).pluck('_id')
-                            }
-                        }
-                    }
-                }
-            ],
 
             // Default values for all of the Model attributes
             defaults: {

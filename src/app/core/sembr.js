@@ -1,11 +1,17 @@
-define(['backbone', 'jquery', 'pouchdb', 'sembr.module', 'underscore', 'handlebars', 
-	'sembr.error', 'sembr.sync.pouch', 'sembr.mixins.readypromise'],
-function (Backbone, $, PouchDB, Marionette, _, Handlebars, 
-	Error, PouchSync, ReadyPromise) {
+define(['backbone', 'jquery', 'sembr.module', 'underscore', 'handlebars', 
+	'sembr.error', 'sembr.hoodup', 'sembr.mixins.readypromise'],
+function (Backbone, $, Marionette, _, Handlebars, 
+	Error, Hoodup, ReadyPromise) {
 
-	Backbone.Model.prototype.idAttribute = '_id';
 
 	var sembr = new Backbone.Marionette.Application();
+
+
+	Hoodup.connect().attach();
+	//dev convenience for testing...
+	sembr.hoodup = Hoodup;
+	Hoodup.hoodie.account.signIn('andru', 'andru');
+
 
 	var settings = {
 		container: 'body'
@@ -33,14 +39,8 @@ function (Backbone, $, PouchDB, Marionette, _, Handlebars,
 	}
 
 	sembr.addInitializer(function(options){
-	
 		//check for mobile user agents...
 		sembr.mobile = sembr.isMobile();
-
-		//setup PouchDB adapter as the default sync method
-		sembr.db = PouchDB('sembr');
-		PouchSync.db = sembr.db;
-		Backbone.sync =  PouchSync;
 	});
 
 	sembr.on("initialize:before", function(options){
@@ -54,7 +54,7 @@ function (Backbone, $, PouchDB, Marionette, _, Handlebars,
 	//load current user for the whole application...
 	sembr.addInitializer(function(options){
 		//temporary demo user!
-		sembr.user = new Backbone.Model({'_id': 'sembr.es/user/andru', 'username': 'andru', 'email':'andru@sembr.es'});
+		sembr.user = {};//new Backbone.Model({'_id': 'sembr.es/user/andru', 'username': 'andru', 'email':'andru@sembr.es'});
 	});
 
 	sembr.addInitializer(function (options) {

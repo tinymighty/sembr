@@ -35,11 +35,12 @@ function (sembr, Controller, Backbone, CB, Marionette,
 			//@todo: restrict to plantings based on criteria
 			plantings = new sembr.trackr.collections.Plantings();
 			plantings
-				.fetchWhere({user: sembr.user.get("_id")})
+				.fetch()
 				.fail(function(err){
+					sembr.log('Faled to load plantings.');
 					sembr.showError('Failed to load user plantings.');
 				})
-				.done(function(plantings){
+				.done(function( plantings ){
 					sembr.log('Loaded plantings. Showing dashboard view.');
 					this.layout.main.show( new DashboardView({collections: {places: this.places, plants: this.plants, plantings: plantings}}) );
 				}.bind(this));
