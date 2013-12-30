@@ -36,13 +36,16 @@ function(sembr, Backbone, Marionette, $, template) {
     },
 
     plantingClick: function($ev){
-        sembr.log('Plant click!')
-        $ev.preventDefault();
-        sembr.navigate( $($ev.target).attr('href'), {trigger: true});
+      $ev.preventDefault();
+        sembr.log('Plant click!');
+      console.log('srsly??');
+      /*
+
+        sembr.navigate( $($ev.target).attr('href'), {trigger: true});*/
     },
 
     serializeData: function(){
-        return this.model.toJSON({include_associations:true})
+        return this.model.toJSON({include_associations:true});
     }
 
   });

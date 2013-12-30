@@ -1,25 +1,19 @@
-define( ['sembr', 'backbone', 'marionette', 'jquery', 
-'./list-item', 'hbs!./list.tpl'],
-  function(sembr, Backbone, Marionette, $, ListItem, template) {
-    //ItemView provides some default rendering logic
-    return Backbone.Marionette.CollectionView.extend( {
-      template: template,
-      itemView: ListItem,
+define( [
+  'sembr', 'sembr.ractiveview', 
+  'text!./list.tpl.html'],
+function(
+  sembr, RactiveView, 
+  template
+){
 
-      // View Event Handlers
-      events: {
+  return RactiveView.extend({
 
-      },
+    template: template,
 
-      initialize: function(opts){
-        if(!this.collection){
-          throw 'No collection passed to view.';
-        }
-      },
+    initialize: function( options ){
+      this.set('plantings', options.plantings );
+    }
 
-      onClose: function(){
-        //sembr.log('plantings list view closed.');
-      }
-
-    });
   });
+
+});

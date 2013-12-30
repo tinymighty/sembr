@@ -1,7 +1,7 @@
-define(['sembr', 'sembr.controller', 'backbone', 'backbone.collectionbinder','marionette', 
+define(['sembr', 'sembr.controller', 'backbone', 'marionette',
 	'trackr/views/layout', 'trackr/views/dashboard/dashboard', 'trackr/views/places/treeview',
 	"components/loader/loader"],
-function (sembr, Controller, Backbone, CB, Marionette, 
+function (sembr, Controller, Backbone, Marionette,
 	Layout, DashboardView, TreeView,
 	LoaderView) {
 	var DashboardController = Controller.extend({

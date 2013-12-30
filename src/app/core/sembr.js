@@ -1,6 +1,6 @@
-define(['backbone', 'jquery', 'sembr.module', 'underscore', 'handlebars', 
+define(['backbone', 'jquery', 'sembr.module', 'underscore', 'ractive', 'ractive.backbone',
 	'sembr.error', 'sembr.hoodup', 'sembr.mixins.readypromise'],
-function (Backbone, $, Marionette, _, Handlebars, 
+function (Backbone, $, Marionette, _, Ractive, Rb,
 	Error, Hoodup, ReadyPromise) {
 
 
@@ -30,7 +30,7 @@ function (Backbone, $, Marionette, _, Handlebars,
 	}
 	//mixin readypromise properties...
 	_(sembr).extend( new ReadyPromise() );
-	
+
 	//sembr.log = (options.log && console) ? sembr.log : function(){};
 	sembr.log = _(console.log).bind(console);
 
@@ -102,4 +102,4 @@ function (Backbone, $, Marionette, _, Handlebars,
 	});
 
 	return sembr;
-});
+});

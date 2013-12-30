@@ -1,0 +1,31 @@
+<div class="controls">
+	<div class="ui text menu">
+	  <div class="header item">Group By</div>
+	  <a class="active item">
+	    <i class="home icon"></i> Plant
+	  </a>
+	  <a class="item">
+	    <i class="mail icon"></i> Place
+	  </a>
+	  <a class="item">
+	    <i class="user icon"></i> Most Popular
+	  </a>
+	</div>
+</div>
+
+{{#plantings}}
+	{{#(group_by === place)}}<div class="plant name">{{plant.use_name}}</div>{{/()}}
+	{{#(group_by === plant)}}<div class="place name">{{place.name}}</div>{{/()}}
+<div class="bar" style="width:{{planted_at}};left:{{left}};"></div>
+{{/plantings}}
+
+<div class="horizontal time axis">
+	{{#intervals}}
+	<div class="time interval">{{( formatInterval(this) )}}</div>
+	{{/intervals}}
+</div>
+<div class="vertical group axis">
+	{{#groups}}
+	<div class="group name">{{name}}</div>
+	{{/groups}}
+</div>

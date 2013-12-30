@@ -1,13 +1,13 @@
-/** 
+/**
  * SembrModel class
  *
- * Defines a model class which can autoload it's dependencies. 
+ * Defines a model class which can autoload it's dependencies.
  **/
-define(['sembr', "underscore", "backbone", 'pouchdb', 'backbone.supermodel'],
+define(['sembr', "underscore", "backbone", 'pouchdb', 'supermodel'],
 function(sembr, _, Backbone, Pouch, Supermodel ) {
-  var SembrModel = Supermodel.Model.extend( 
+  var SembrModel = Supermodel.Model.extend(
 
-  // INSTANCE METHODS 
+  // INSTANCE METHODS
   {
 
     initialize: function(){
@@ -52,14 +52,14 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
       //or it has already been defined as an actual object property
       if(!this.hasOwnProperty(key)){
         Object.defineProperty(model, key, {
-          get: function () { 
+          get: function () {
             if(this['__'+key]){
               return this['__'+key]();
             }else{
               return model.get(key);
             }
           },
-          set: function (value) { 
+          set: function (value) {
             if(this['__'+key]){
               return this['__'+key]();
             }else{
@@ -125,7 +125,7 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
 
   },
 
-  // STATIC METHODS 
+  // STATIC METHODS
   {
 
   	findOrFetchById: function(id){
@@ -148,60 +148,6 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
 	    		});
     	}
     	return deferred.promise();
-    },
-
-    /* Wrap the Associations has chain to set up
-    loading the relevant data from Hoodie.store */
-    has: function(){
-      var has = Supermodel.Model.has.apply(this, arguments);
-      var model = this;
-      if ( !this._hoodie_relations ) {
-        this._hoodie_relations = [];
-      }
-      return {
-
-        one: function(name, options){ 
-          options.chain = false;
-          var assoc = has.one(name, options);
-
-          model._hoodie_relations.push({
-            association: assoc,
-            type: 'one',
-            model: options.model,
-            collection: options.collection,
-            id: options.id || name+'_id', 
-            destination: options.destination || name
-          });
-          return this;
-        },
-
-        many: function(name, options){
-          options.chain = false;
-          var assoc = has.many(name, options, false);
-
-          var fetcher = {
-            association: assoc,
-            collection: options.collection,
-            destination: options.destination || name 
-          };
-
-          if( options.source ){
-            //assume source refers to an array of ids...
-            fetcher.type = 'many.list';
-            fetcher.source = options.source;
-            fetcher.id = options.id || 'id';
-          }
-          else{
-            //
-            fetcher.type = 'many';
-            fetcher.id = options.id || options.inverse+'_id';
-          }
-
-          model._hoodie_relations.push( fetcher );
-          return this;
-        }
-
-      };
     }
 
   });

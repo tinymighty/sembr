@@ -2,11 +2,11 @@
 		Marionette = require('marionette'),
 		Layout = require('view/plantings/layout'),
 		Collection = require('../collections/plantings');*/
-define(['sembr', 'sembr.controller', 'backbone', 'backbone.collectionbinder','marionette', 
-	'trackr/views/layout', 
+define(['sembr', 'sembr.controller', 'backbone', 'marionette', 'ractive',
+	'trackr/views/layout',
 	'trackr/views/plantings/add', 'trackr/views/sidebar', 'trackr/views/plantings/list', 'trackr/views/plantings/show', "trackr/views/plantings/add-action",
 	"components/loader/loader"],
-function (sembr, Controller, Backbone, CB, Marionette, 
+function (sembr, Controller, Backbone, Marionette, Ractive,
 	Layout,
 	AddPlantingView, Sidebar, PlantingsListView,	ShowPlantingView, AddActionView,
 	LoaderView) {
@@ -40,32 +40,44 @@ function (sembr, Controller, Backbone, CB, Marionette,
 			this.showSidebar();
 			this.layout.main.show( new LoaderView() );
 
-			var plantingListView = new PlantingsListView({collection: this.plantings});
-			this.listenTo(this.plantings,'all', function(name){
+
+
+      /*this.listenTo(this.plantings,'all', function(name){
 				sembr.log('PlantingsCollection: ', name);
 			})
 			this.listenTo(plantingListView,'all', function(name){
 				sembr.log('PlantingListView:', name);
 			})
-			sembr.log('Fetching plantings', this.plantings, this.plantings.model());
+      */
+      /*var plantingListView = new PlantingsListView({
+        el: 'body'
+      });*/
+
+			sembr.log('Fetching plantings', this.plantings);
+
 			this.plantings.fetch( )
 				.done( function(){
-					sembr.log("Got plantings", this.plantings); 
-					sembr.log("Planting associations", this.plantings.at(0));
-					sembr.log("Planting to JSON", this.plantings.at(0).toJSON() );
+					//sembr.log("Got plantings", this.plantings);
+					//sembr.log("Planting associations", this.plantings.at(0));
+					//sembr.log("Planting to JSON", this.plantings.at(0).toJSON() );
 
-					this.layout.main.show( plantingListView );
+          var plantingListView = new PlantingsListView({
+          	plantings: this.plantings
+          });
+
+          this.layout.main.show( plantingListView );
+
 				}.bind(this))
 				.fail(function(err){
 					console.error(err);
 				});
-			
 
-			
-		}, 
+
+
+		},
 
 		showSidebar: function(){
-			
+
 		},
 
 		error: function(err){

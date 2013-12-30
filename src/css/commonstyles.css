@@ -42,10 +42,10 @@ body {
 
 }
 
-.planting.timeline .track{
+.planting.timeline .time.axis{
 	position: relative;
 }
-.planting.timeline .track .item{
+.planting.timeline .time.axis .interval{
 	display: block;
 	position:absolute;
 	opacity: 1;

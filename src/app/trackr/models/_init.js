@@ -77,15 +77,16 @@ function(
 			models.Place.has()
 				.many('plantings', {
 					inverse: 'place',
-					collection: collections.Plantings
+					collection: collections.Plantings,
+					id: 'place_id'
 				})
 				.many('places', {
 					inverse: 'place',
-					collection: collections.Places
+					collection: collections.Places,
+					id: 'in_place'
 				})
 				.one('place', {
 					inverse: 'places',
-					source: 'in_place',
 					id: 'in_place',
 					model: models.Place,
 					collection: collections.Places
