@@ -14,5 +14,5 @@ Built on the shoulders of these giants
 * Hoodie
 * CouchDB
 
-This app is under heavy development, so there's no instructions on getting up and running with it yet. I'll add more info as the app matures to a level where it's usable.
 
+We're preparing a prototype release shortly.  Until then if you want to hack around; create a new _Hoodie_ project, symlink the sembr `src` directory as `www` in the hoodie project, and run `hoodie start`. 
