@@ -8,7 +8,7 @@
 // See http://requirejs.org/docs/api.html#config-paths for more info about
 // the paths config
 
-define([ 'text', 'Ractive' ], function ( text, Ractive ) {
+define([ 'text', 'ractive' ], function ( text, Ractive ) {
 
 	'use strict';
 

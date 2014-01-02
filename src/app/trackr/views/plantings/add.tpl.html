@@ -4,7 +4,7 @@
 			<label>Plant</label>
     	<div class="ui plant search">
     		<div class="ui input">
-					<input type="text" name="plant" required class="prompt">
+					<input type="text" name="plant" required class="prompt" value="{{planting.plant_id}}">
 				</div>
 				<div class="search results">
 					<div class="search category">
@@ -19,7 +19,7 @@
 			<div class="ui two column grid">
 				<div class="column">
 					<div class="place selection">
-						<input type="hidden" class="place id">
+						<input type="text" class="place id" value="{{planting.place_id}}">
 					</div>
 				</div>
 				<div class="column">
@@ -34,18 +34,18 @@
 			<div class="two fields">
         <div class="field">
           <label>From...</label>
-          <input type="text" name="date" data-model="present_from" required class="date planted">
+          <input type="text" name="date" required class="planted from date" value="{{planting.planted_from}}">
         </div>
         <div class="field">
           <label>Until...</label>
-          <input type="text" name="date" data-model="present_until" required class="date removed">
+          <input type="text" name="date" required class="planted until date" value="{{planting.planted_until}}">
         </div>
       </div>			
 		</div>
 
 		<div class="field">
 			<label>From</label>
-			<select name="from" data-model="from" class="selectpicker">
+			<select name="from" class="selectpicker" value="{{planted.from}}">
 				<option value="seed">Seed</option>
 				<option value="plantlet">Plantlet</option>
 				<option value="cutting">Cutting</option>

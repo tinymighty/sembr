@@ -1,11 +1,11 @@
-define( ['sembr', 'backbone', 'marionette', 'jquery',
+define( ['sembr', 'backbone', 'sembr.ractiveview', 'jquery',
 'trackr/views/places/treeview', 'trackr/views/plantings/add/place-summary',
-'hbs!./add.tpl', 'hbs!./add/search_message.tpl'],
-function(sembr, Backbone, Marionette, $, 
+'rv!./add.tpl', 'rv!./add/search_message.tpl'],
+function(sembr, Backbone, RactiveView, $, 
 PlacesTree, PlaceSummary,
 template, searchMessageTemplate) {
   //ItemView provides some default rendering logic
-  return Backbone.Marionette.ItemView.extend( {
+  return RactiveView.extend( {
 	template: template,
 
 	// View Event Handlers
@@ -25,34 +25,31 @@ template, searchMessageTemplate) {
 	},
 
 	initialize: function(opts){
-		this.model = new sembr.trackr.models.Planting();
-		this._modelBinder = new Backbone.ModelBinder();
+		var 
+			ractive = this.ractive,
+			model = this.newModel()
+		;
+
+		this.model.on('change', function(mdl){ console.log( model.toJSON() ) });
+
+		this.set('planting', this.model);
+
 		if(!this.collection){
 		  this.collection = (opts && opts.collection) ? opts.collection : new sembr.trackr.collections.Plantings();
 		}
-		//can we come up with more decoupled dependency management than this? RequestReponse maybe?
-		if(!opts.places){
-			throw 'No places collection was provided to add.js';
-		}
-		this.places = sembr.trackr.places; //the cached user places collection
-		this.plants = sembr.trackr.plants;
-		this.plantsPromise = this.plants.fetch();
-		//this.listenTo(this.places, 'change', this.render);
-		sembr.log('Places: ',opts.places);
 
-		if(!this.model.get('date')){
-			this.model.set('date', new Date().toString());
-		}
+		this.set('places', sembr.trackr.places);
+		this.set('plants', sembr.trackr.plants);
 
-		this.views = {
+		/*this.views = {
 			placesTree: new PlacesTree({collection: this.places}),
 			placeSummary: new PlaceSummary()
-		}
+		}*/
 	},
 
 	onRender: function(){
-		this.bindForm();
 		var ids, names, plants;
+
 		ids = _(this.plants.toJSON())
 			.pluck('_id')
 		;
@@ -145,32 +142,18 @@ template, searchMessageTemplate) {
 		this.views.placeSummary.render();
 	},
 
-	serializeData: function(){
-	  var data = {};
-	  data.model = this.model.toJSON();
-	  data.places = this.places.toJSON();
-	  return data;
-	},
-
 	save: function(){
 		sembr.log('Save the model: ', this.model.toJSON());
-		this.collection.create(this.model.toJSON(), {wait: true, success:_(this.newModel).bind(this)});
+		this.model.save();
+		this.collection.add(this.model);
 	},
 
 	newModel: function(planting){
-		this.model.clear();
+		return this.model = new sembr.trackr.models.Planting();
 	},
 
 	clear: function(){
 		this.model.clear();
-	},
-
-	bindForm: function () {
-		sembr.log('Render QuickAdd view: ',this);
-
-		var bindings = Backbone.ModelBinder.createDefaultBindings(this.el, 'data-model');
-		sembr.log(bindings);
-		this._modelBinder.bind(this.model, this.el, bindings);
 	}
 
   });

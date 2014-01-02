@@ -43,27 +43,39 @@ body {
 }
 
 .planting.timeline .time.axis{
-	position: relative;
+	position: absolute;
+	left:0;
+	width:100%;
+	bottom:0;
 }
-.planting.timeline .time.axis .interval{
-	display: block;
-	position:absolute;
-	opacity: 1;
-	top:0;
-	height:300px;
-	border:1px solid #ccc;
-	border-width:1px 1px 0 0;
-
+.planting.timeline .time.axis .interval text{
 	text-align:center;
+}
+.planting.timeline .time.axis .interval line{
+	stroke-width:1;
+	stroke:#eee;
 }
 
 .planting-timeline .plantings .planting{
 	
 }
 
-.planting.timeline .planting{
-	position:relative; 
-	height:50px;
+.planting.timeline .planting.period{
+	
+}
+.planting.timeline .planting.period line{
+	stroke: #ccc;
+	stroke-width: 6;
+}
+.planting.timeline .harvest.period line{
+	stroke: green;
+	stroke-width: 9;
+	stroke-endcap: round;
+}
+.planting.timeline .planting.period circle{
+	fill:#fff;
+	stroke-width:1px;
+	stroke:#ccc;
 }
 .planting.timeline .planting .name{
 	display: none;

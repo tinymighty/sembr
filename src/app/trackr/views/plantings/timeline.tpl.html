@@ -13,19 +13,48 @@
 	</div>
 </div>
 
-{{#plantings}}
-	{{#(group_by === place)}}<div class="plant name">{{plant.use_name}}</div>{{/()}}
-	{{#(group_by === plant)}}<div class="place name">{{place.name}}</div>{{/()}}
-<div class="bar" style="width:{{planted_at}};left:{{left}};"></div>
-{{/plantings}}
+<div id="plantings_svg_wrapper">
+<svg>
 
-<div class="horizontal time axis">
-	{{#intervals}}
-	<div class="time interval">{{( formatInterval(this) )}}</div>
+
+
+<g class="horizontal time axis" transform="translate( {{xScale(0)}}, -100)">
+	{{#intervals : i }}
+	<g class="time interval" transform="translate({{ width / intervals.length * i}})">
+		<line y1="0" y2="{{height}}"  />
+		<text width="{{ width / intervals.length }}" y="{{height-50}}">{{( formatInterval( . ) )}}</text>
+	</g>
 	{{/intervals}}
-</div>
-<div class="vertical group axis">
-	{{#groups}}
-	<div class="group name">{{name}}</div>
+</g>
+
+{{#plantings:i}}
+ 	<!-- plot a line for the entire planting, bookended by circles -->
+ 	<g class="planting line" transform="translate( {{ xScale(0) }},{{ i*30+30 }})">
+	 	
+	 	<g class="planting period" transform="translate( {{ xScale( dayIndex( days, planted_from ) ) }}, 0)">
+	 		<line x2="{{ xScale( dayIndex( days, planted_until ) ) }}" />
+	 		{{# dayIndex( days, planted_from ) > -1 }}<circle r="4" />{{/}}
+	 		<circle r="4" y="0" cx="{{ xScale( dayIndex( days, planted_until ) ) }}" />
+	 		<!--<text>{{planted_from}} / {{planted_until}} / {{ dayIndex( days, planted_until ) }} / {{ xScale( dayIndex( days, planted_until ) ) }}</text>-->
+	 		{{#( group_by == place )}}<text class="plant name">PLANT {{plant.use_name}}</text>{{/()}}
+			{{#( group_by == plant )}}<text class="place name">PLACE {{place.name}}</text>{{/()}}
+	 	</g>
+
+	{{#harvest_from}}
+	<g class="harvest period" transform="translate( {{ xScale( dayIndex( days, planted_from ) ) }}, 0)">
+		<line x1="{{ xScale( dayIndex( days, harvest_from ) ) }}" x2="{{ xScale( dayIndex( days, harvest_until ) ) }}" />
+	</g>
+	{{/harvest_from}}
+	</g>
+{{/plantings}}
+<!--<g class="vertical group axis">
+	{{#groups: i}}
+	<text class="group name" transform="translate(0, {{ yScale( i ) }})">{{name}}</text>
 	{{/groups}}
+</g>-->
+
+
+
+</svg>
 </div>
+
