@@ -105,8 +105,8 @@
       <p>We’re gearing up to release an early prototype for your feedback. You can keep an eye on the blog for updates, and if you enter your email address below we’ll give you a shout when we’re ready!</p>
       <div class="mailchimp signup form">
       <a name="notify"></a>
+      
         <!-- Begin MailChimp Signup Form -->
-        <link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
         <div id="mc_embed_signup">
         <form action="http://tinymighty.us3.list-manage.com/subscribe/post?u=d4293bd4bd6fbdf74a08952c3&amp;id=0a9dcbe2e0" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
         
@@ -167,6 +167,13 @@
 		 http://chromium.org/developers/how-tos/chrome-frame-getting-started -->
 <!--[if lt IE 9]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
 
+<!-- Grab Google CDN's jQuery. fall back to local if necessary -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>window.jQuery || document.write("<script src='js/jquery-1.10.2.min.js'>\x3C/script>")</script>
+
+<!-- this is where we put our custom functions -->
+<!-- don't forget to concatenate and minify if needed -->
+<script src="js/functions.js"></script>
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
