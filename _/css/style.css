@@ -1,3 +1,4 @@
+@import url(fonts/museo/stylesheet.css);
 /* Apply a natural box layout model to all elements: http://paulirish.com/2012/box-sizing-border-box-ftw/ */
 * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
 
@@ -31,6 +32,283 @@ mark {background-color: #fcd700; color: #000; font-style: italic; font-weight: b
 input:-moz-placeholder { color:#a9a9a9; }
 textarea:-moz-placeholder { color:#a9a9a9; }
 
+
+body{
+  background:  #fffcee;
+  
+  font-family: "Museo 300", Rockwell, sans-serif;
+  
+  font-size: 1.2em;
+}
+h6, h5, h4, h3, h2, h1{
+  color: #009e0f;
+}
+h2, h1{
+  font-weight: normal;
+  font-family: "Museo 700", Rockwell, sans-serif;
+}
+h6, h5, h4, h3{
+  font-weight: normal;
+  font-family: "Museo 500", Rockwell, sans-serif;
+}
+h6 em, h5 em, h4 em, h3 em{
+  font-weight: normal;
+  font-style: normal;
+  font-family: "Museo 900";
+}
+h1{
+  font-size: 3em;
+}
+h2{
+  font-size: 1.8em;
+}
+h3{
+  font-size: 1.3em;
+}
+h4{
+  font-size: 1.2em;
+}
+h5{
+  font-size: 1.1em;
+}
+h6{
+  font-size: 1em;
+}
+
+header.main.header{
+  position: relative;
+  background: url(../../img/field-tile.png);
+  margin:  10px;
+  padding: 1px;
+  
+  box-shadow: inset 0px 0px 1000px rgba(0,0,0,0.5);
+}
+
+header.main.header .sembr.logo.image{
+  position: relative;
+  z-index: 3;
+  width: 238px;
+  height: 229px;
+  margin:  60px auto 10px auto;
+}
+header.main.header .sembr.logo.shadow{
+  position: absolute;
+  z-index: 1;
+  
+  top: 150px;
+  left: 50%;
+  margin-left: -50px;
+}
+header.main.header .plantlet{
+  position: absolute;
+  z-index: 1;
+  left: 80px;
+  top: 300px;
+}
+
+@keyframes animatedBackground {
+	from { background-position: 0 0; }
+	to { background-position: 100% 0; }
+}
+
+header.main.header .sky{
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 150px;
+  
+  background: url(../../img/cloud-tile.png);
+  
+  animation: animatedBackground 60s linear infinite;
+}
+
+header.main.header h1, h2{
+  color: #fff;
+  text-align: center;
+  font-family: "Museo 700";
+}
+header.main.header h1, h2{
+  font-family: "Museo 500";
+}
+header.main.header h2{
+  font-size: 1.4em;
+}
+header.main.header .links{
+  text-align: center;
+  padding: 10px;
+}
+header.main.header .links .link{
+  display: inline-block;
+  text-decoration: none;
+  color: white;
+  font-size: 1.1em;
+  
+  font-family: "Museo 500", square-serif, sans-serif;
+  line-height:35px;
+  vertical-align: middle;
+  
+  margin: 5px 10px;
+}
+.icon{
+  display: inline-block;
+  width: 35px;
+  height: 35px;
+  vertical-align: middle;
+  margin-right: 0.4em;
+}
+.blog.icon{
+  margin-top: -2px;
+  background: url(../../img/blog-icon.png) no-repeat center;
+}
+.github.icon{
+  margin-top: -5px;
+  background: url(../../img/github-icon.png) no-repeat center;
+}
+.twitter.icon{
+  background: url(../../img/twitter-icon.png) no-repeat center;
+}
+
+
+
+section.summary{
+  text-align: center;
+  padding:  20px;
+}
+section.summary h3{
+  margin-bottom: 20px;
+}
+section.summary p{
+  margin: 10px 0;
+}
+
+
+#mc_embed_signup{
+  font-family: "Museo 300";
+  
+  margin: 50px 0 20px 0;
+}
+#mc_embed_signup input[type=email]{
+  display: inline-block;
+  width: 50%;
+  padding: 10px;
+  height: 2.5em;
+  
+  font-family: "Museo 700";
+  
+  border: 1px solid #ccc;
+  border-radius: 3px 0 0 3px;
+}
+#mc_embed_signup .button{
+  display: inline-block;
+  width: 20%;
+  
+  height: 2.5em;
+  background: url(../../img/cloud-tile.png);
+  outline: none;
+  margin-left: -10px;
+  
+  border: none;
+  border-radius: 0 3px 3px 0;
+  
+  font-family: "Museo 700";
+  color: white;
+   
+  box-shadow:  inset 0 0 30px rgba(0,100,200,1);
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+}
+
+.features{
+  text-align: center;
+}
+
+.features header.intro{
+  max-width: 660px;
+  margin: 20px auto;
+  text-align: right;
+}
+.features header.intro h3:first-child{
+  text-align: left;
+}
+
+
+
+section.feature{
+  display: inline-block;
+  width: 900px;
+  margin: 40px auto;
+  
+  text-align: left;
+}
+
+section.feature h3{
+  color: #dd0000;
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+section.feature p{
+  margin-bottom: 10px;
+}
+
+
+.visualise.feature{
+  position: relative;
+}
+.visualise.feature .trackr.screenshot{
+  float: left;
+  margin: 20px;
+}
+.visualise.feature .trackr.bar{
+  position: absolute;
+  bottom: 0px;
+}
+.visualise.feature .blurb{
+  position: relative;
+  z-index: 1;
+  top: 50px;
+}
+
+
+
+.record.feature{
+  position: relative;
+}
+.record.feature .record.screenshot{
+  position: absolute;
+  top: 0;
+  left: 180px
+}
+.record.feature .record.examples{
+  position: absolute;
+  top: 120px;
+  right: 0;
+}
+.record.feature .blurb{
+  position: relative;
+  z-index: 1;
+  margin-top: 130px;
+  width: 50%;
+}
+.record.feature .blurb h3:first-child + p{
+  width:300px;
+}
+
+
+h3.nomore{
+  text-align: center;
+  margin: 50px 0;
+}
+
+footer{
+  margin: 50px 0 0 0;
+  background: url(../../img/field-tile.png) repeat;
+  padding: 30px 0;
+}
+footer .copyright{
+  color: #fff;
+  text-align: center;
+}
 
 
 /* Print styles!

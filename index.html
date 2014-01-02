@@ -86,30 +86,35 @@
 <body>
 
   <header class="main header">
-    <div class="sembr icon"></div>
+    <div class="sembr logo image"><img src="img/logo.png" width="238" height="229"></div>
+    <div class="sembr logo shadow"><img src="img/logo-shadow.png" width="270" height="171"></div>
+    <div class="sky"></div>
+    <div class="plantlet"><img src="img/plantlet.png"></div>
     <h1>sembr</h1>
     <h2>Beautifully simple crop tracking</h2>
+    <div class="links">
+      <a class="blog link" href="http://sembrilliant.tumblr.com/"><i class="blog icon"></i> Blog</a>
+      <a class="github link" href="http://github.com/tinymighty/sembr"><i class="github icon"></i> GitHub</a>
+      <!--<a class="twitter link"><i class="twitter icon"></i> Twitter</a>-->
+    </div>
   </header>
   <div class="main content">
     
     <section class="summary">
-      <h3>Sembr is a tool to help farmers and gardeners plan crops and track yields.</h3>
+      <h3>Sembr is a tool to help farmers and gardeners <em>plan crops</em> and <em>track yields</em>.</h3>
       <p>We’re gearing up to release an early prototype for your feedback. You can keep an eye on the blog for updates, and if you enter your email address below we’ll give you a shout when we’re ready!</p>
       <div class="mailchimp signup form">
+      <a name="notify"></a>
         <!-- Begin MailChimp Signup Form -->
         <link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
-        <style type="text/css">
-        	#mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
-        	/* Add your own MailChimp form style overrides in your site stylesheet or in this style block.
-        	   We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
-        </style>
         <div id="mc_embed_signup">
         <form action="http://tinymighty.us3.list-manage.com/subscribe/post?u=d4293bd4bd6fbdf74a08952c3&amp;id=0a9dcbe2e0" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-        	
-        	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
-            <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-            <div style="position: absolute; left: -5000px;"><input type="text" name="b_d4293bd4bd6fbdf74a08952c3_0a9dcbe2e0" value=""></div>
-        	<div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+        
+          <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+          <div style="position: absolute; left: -5000px;"><input type="text" name="b_d4293bd4bd6fbdf74a08952c3_0a9dcbe2e0" value=""></div>
+        	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email@address.com" required>
+
+        	<input type="submit" value="Tell Me!" name="subscribe" id="mc-embedded-subscribe" class="button">
         </form>
         </div>
         
@@ -117,24 +122,42 @@
       </div>
     </section>
   
-    <header class="features intro">
-      <h3>White you're waiting...</h3>
-      <h3>...here's a micro-tour of what's germinating</h3>
-    </header>
+    <div class="features">
     
-    <section class="feature visualise">
-      <div class="image ">
-    </section>
+      <header class="features intro">
+        <h3>White you're waiting...</h3>
+        <h3>...here's a micro-tour of what's germinating</h3>
+      </header>
+      
+      <section class="visualise feature">
+        <div class="trackr screenshot"><img src="img/visualise-1.png"></div>
+        <div class="blurb">
+          <h3>Visualise your crops in style</h3>
+          <p>Goodbye spreadsheets, we shalln’t miss you.</p>
+          <p>Sembr gives you a visual overview of all your crops so you always know what’s coming up.</p>
+        </div>
+        <div class="trackr bar"><img src="img/visualise-2.png"></div>
+      </section>
+      
+      <section class="record feature">
+        <div class="record screenshot"><img src="img/record-1.png"></div>
+        <div class="record examples"><img src="img/record-2.png"></div>
+        <div class="blurb">
+          <h3>Update quickly and naturally</h3>
+          <p>Make notes of your actions, and let <strong>sembr</strong> crunch it into crop data.</p>
+          <p>With intelligent autocompletion and blueprints for your common planting schemes, you can spend less time getting data into sembr, and more time getting plants in the ground.</p>
+        </div>
+      </section>
     
-    <section class="feature record">
-    
-    </section>
+    </div>
     
   </div>
+  
+  <h3 class="nomore">...that's all we've got to show off for now.</h3>
 	
 	<footer>
 		
-		<p><small>&copy; Copyright Your Name Here 2013. All Rights Reserved.</small></p>
+		<p class="copyright"><small>&copy; Copyright Andru Vallance 2013. Some Rights Reserved.</small></p>
 		
 	</footer>
 
