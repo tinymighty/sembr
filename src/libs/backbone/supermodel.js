@@ -512,7 +512,7 @@
       var id = attrs && attrs[this.prototype.idAttribute];
 
       // If a model already exists for `id`, return it.
-      if (cid && (model = all.getByCid(cid))) {
+      if (cid && (model = all.get(cid))) {
         return model;
       }
       // If `attrs` belongs to an existing model, return it.
