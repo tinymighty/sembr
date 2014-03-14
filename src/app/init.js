@@ -13,14 +13,17 @@
  *
  * Returns an init function which, when called, starts the application.
  */
-define(['jquery', 'underscore', 'hoodie',
+define(['jquery', 'underscore', 
         'sembr', 'sembr.module',
         'sembr.base', 'sembr.default', 'sembr.trackr'], 
-function($, _, hoodie,
+function($, _, 
         sembr, monkey_patch_module,
         layoutModule, defaultModule, trackrModule){
+
+    "use strict";
 	
     function init(options){
+        options = options || {};
         var envDefaults = {
             development:{
                 log: true,
