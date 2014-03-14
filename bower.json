@@ -1,0 +1,25 @@
+{
+  "name": "sembr",
+  "version": "0.0.1",
+  "authors": [
+    "Andru Vallance <andru@tinymighty.com>"
+  ],
+  "description": "Beautifully simple crop tracking",
+  "main": "?",
+  "keywords": [
+    "?"
+  ],
+  "license": "none",
+  "homepage": "http://tinymighty.github.io/sembr",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "require-less": "~0.1.1"
+  }
+}
