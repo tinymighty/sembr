@@ -25,7 +25,6 @@ function(sembr, Backbone, Marionette, $, template) {
             throw 'add-action view requires a PlantingAction collection'
         }
         this.planting = opts.planting;
-        this.modelBinder = new Backbone.ModelBinder();
         this.prefillModelData = {
             'date': new Date().toString(),
             'subject_id': this.planting.get('_id')
@@ -65,7 +64,6 @@ function(sembr, Backbone, Marionette, $, template) {
             this.ui.actionSelect.find('.menu').append('<div class="item" data-value="'+type+'">'+type+'</div>');
         }, this);
         
-        this.bind();
         this.$('.ui.selection.dropdown')
             .dropdown({onChange: function(){ $(this).find('input').trigger('change'); } })
         ;
@@ -90,11 +88,6 @@ function(sembr, Backbone, Marionette, $, template) {
         // Now let's align datepicker with the prepend button
         $(datepickerSelector).datepicker('widget').css({'margin-left': -$(datepickerSelector).prev('.btn').outerWidth() - 2});
         */
-    },
-
-    bind: function () {
-        var bindings = Backbone.ModelBinder.createDefaultBindings(this.el, 'data-model');
-        this.modelBinder.bind(this.model, this.$el, bindings);
     },
 
     serializeData: function(){

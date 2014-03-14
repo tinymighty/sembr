@@ -1,12 +1,19 @@
-define(['sembr', 'jquery', 'underscore', 'backbone', 'marionette', 'natural', //'snowball',
-'hbs!./record.tpl'
-],function(sembr, $, _, Backbone, Marionette, natural, //Snowball,
+define(['sembr', 'jquery', 'underscore',  'sembr.ractiveview', 
+'rv!./record.tpl'
+],function(sembr, $, _, RactiveView, 
 template){
-	var view = Marionette.ItemView.extend({
+
+	'use strict';
+
+	var view = RactiveView.extend({
 		template: template,
 
 		events:{
-			'keyup .action.description.entry': 'quickEntryKeyup'
+		},
+
+		observers: {
+			'verb': '_verbSelect',
+			'what': '_whatSelect'
 		},
 
 		ui:{
@@ -19,66 +26,162 @@ template){
 			'transplant': ['transplanted']
 		},
 
+		verb_category:{
+			'plant': [ 'plant', 'sow', 'transplant' ],
+			'remove': [ 'harvest', 'remove', 'dig in' ],
+			'feed': [ 'fertilize', 'water', 'dust', 'mulch', 'dig in', 'apply' ],
+			'antipest': [ 'spray', 'dust', 'apply' ],
+			//generally, plants are tended
+			'tend': [ 'prune', 'dehead' ],
+			//land is maintained.. but there will be cross over
+			'maintain': [ 'weed', 'mulch' ],
+			'propagate': [ 'pollinate', 'seed save', '' ]
+		},
+
+		/* A map of verb categories to Sembr object types
+		eg. 
+		You _plant_ a _plant_ in a _place_, 
+		you _remove_ a _planting_ from a _place_ */
+		category_object_map: {
+			'plant': [ 'plant', 'place' ],
+			'remove': [ 'planting', 'place' ],
+			'feed': [ 'planting', 'place' ],
+			'antipest':[ 'planting', 'place' ],
+			'tend': [ 'planting', 'place' ],
+			'maintain': [ 'planting', 'place' ],
+			'breed': [ 'planting' ]
+		},
+
+		object_plurals: {
+			'planting': 'plantings',
+			'place': 'places',
+			'plant': 'plants'
+		},
+
 		initialize: function(options){
-			if(!options.collections || _(['plants', 'places', 'plantings']).difference(_(options.collections).keys()).length  ){
-        throw 'Plantings, places and plants collections must be passed to dashboard view.';
-    	}
-      this.collections = options.collections;
+			var all_verbs;
+			all_verbs = _(this.verb_category).chain()
+				.values()
+				.flatten()
+				.unique()
+				.value();
 
-			this.actionRegex = {};
-			_(this.actionToPastTest).each(function(tenses, action){
-				this.actionRegex[action] = new RegExp('('+tenses.join('|')+')');
-			}, this);
+			//verb objects entered by the user
+			this.enteredObjects = [];
+
+			this.set('when', 'Yesterday');
+			this.set('verbs', all_verbs);
+			this.set('objects', new Backbone.Collection);
 		},
 
-		patterns: function(sentence){
-			return sentence;
-			
- 
-			this.$('.parsed').html(parsed);
-		},
-
-		interpret: function(sentence){
-			//break the sentence down into chunks, processing from the start to the end
-			_(this.startPatterns).each(function(pattern){
-
+		/* Given a verb, returns the general category (ie: sow > plant, fertilize > feed) */
+		getVerbCategories: function(verb){
+			var categories = [];
+			_( this.verb_category ).each( function(verbs, cat){
+				if( verbs.indexOf(verb) > -1 ){
+					categories.push(cat);
+				}
 			});
+			return categories;
 		},
 
-		quickEntryKeyup: function(ev){
-			var val = this.ui.quickEntry.val();
-			this.patterns(val);
-			console.log(val);
-		},
-
-		serializeData: function(){
-			var data = {
-				actions: ['plant', 'sow', 'transplant']
+		verbInCategory: function(verb, category){
+			var categories = this.getVerbCategories(verb);
+			if( categories.indexOf(category) > -1 ){
+				return true;
 			}
+			return false;
+		},
 
-			return data;
+		//find relevant verb objects (gramatical objects, that is)
+		//ie. if the verb is 'harvest', then...
+		//we can only harvest from existing plantings
+		//we can approach it via a plant & place OR the place
+		//ie. I harvested Field 7 (assumed to mean harvested EVERYTHING)
+		//or. I harvested Carrots from The Garden
+		getVerbObjects: function( verb ){
+			var 
+				categories,
+				object_types = [],
+				results = []
+			;
+
+			//get verb categories, and map this back to the Sembr object type
+			categories = this.getVerbCategories(verb);
+			if(categories.length){
+				object_types = _( categories )
+					.chain()
+					.map( function(category){
+						return this.category_object_map[category];
+					}, this)
+					.flatten()
+					.unique()
+				;
+				results = [];
+				_( object_types ).each( function(type){
+					console.log("getting models for type", type, this.object_plurals[type]);
+					results = results.concat( sembr.trackr[ this.object_plurals[type] ].models );
+				}, this);
+
+			}
+			return results;
+		},
+
+		getRelevantObjects: function( verb, object ){
+			if( this.verbInCategory(verb, 'plant') ){
+				//we're planting, so 
+			}
+		},
+
+		updateObjects: function(){
+			var 
+				objects = this.get('objects'),
+				results = this.getVerbObjects( this.verb )
+			;
+
+			this.enteredObjects.forEach( function( word ){
+				var re = new RegExp(word, 'i');
+
+				results = results.filter( function( obj ){
+
+					if( obj.get('type') === 'planting' ){
+						return !!obj.get('plant').get('use_name').match( re ) 
+									 || !!obj.get('place').get('name').match( re );
+					}
+					
+					if( obj.get('type') === 'plant' ){
+						return !!obj.get('use_name').match( re );
+					}
+					
+					if( obj.get('type') === 'place' ){
+						return !!obj.get('name').match( re );
+					}
+
+					return false;
+				} );
+
+			}, this);
+
+			console.log('Updating objects with results %o',results);
+
+			objects.set(results);
+			this.set('objects', objects);
+		},
+
+		_verbSelect: function( newValue, oldValue, keypath ){
+			this.verb = newValue;
+			this.updateObjects();
+		},
+
+		_whatSelect: function( newValue, oldValue, path ){
+			if( ~ this.enteredObjects.indexOf( oldValue ) ){
+				this.enteredObjects[ this.enteredObjects.indexOf(oldValue) ] = newValue;
+			}else{
+				this.enteredObjects.push( newValue );
+			}
+			this.updateObjects();
 		}
+
 	});
 	return view;
 });
-
-/*
-I sowed Bed 5 with carrots
-I sowed carrots in bed5
-I planted 
-
-I (actioned) ((plant)(,|and)?)+ in (place)
-I (actioned) (quantity) (plant) in (place)
-I (actioned) (place) with (plant)
-I (actioned) (place) with (quantity)(plant)
-
-I harvested 10 lettuces from bed 7
-
-I mulched bed 5 with 2cm of compost
-I sheet mulched bed 5 with cardboard
-
-I fetilized with a chicken tractor for 7 days
-
-(I\s)?
-
-*/

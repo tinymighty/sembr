@@ -8,12 +8,12 @@ function(sembr, Model) {
 		defaults: {
 			type: 'planting',
 			status: 'current', //past, current or future
-			from: 'seed', //seed, plant, cutting
-			from_planting_id: null,
+			propagated_from: 'seed', //seed, plant, cutting
+			derived_from_planting_id: null,
 			plant_id: null,
 			place_id: null,
-			planted_on:null,
-			removed_on:null
+			planted_from:null, //date it (will be|has been) planted
+			planted_until:null //date it (will be|has been) planted until
 		},
 
 		initialize: function(attrs, options){

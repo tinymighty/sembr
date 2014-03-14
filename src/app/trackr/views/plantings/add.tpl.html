@@ -12,6 +12,12 @@
 					</div>
 				</div>
 			</div>
+			<select value="{{planting.plant_id}}">
+				<option value="">Select a plant</option>
+				{{#plants:i}}
+				<option value="{{id}}">{{use_name}}</option>
+				{{/plants}}
+			</select>
 		</div>
 
 		<div class="field">
@@ -28,6 +34,12 @@
 					</div>
 				</div>
 			</div>
+			<select value="{{planting.place_id}}">
+				<option value="">Select a place</option>
+				{{#places:i}}
+				<option value="{{id}}">{{name}}</option>
+				{{/places}}
+			</select>
 		</div>
 
 		<div class="field">
@@ -54,6 +66,6 @@
 
 		<div class="row-fluid">
 			<hr>
-			<a class="ui large green labelled icon save button" data-action="save"><i class="icon ok sign"></i> Save</a>
+			<a class="ui large green labelled icon save button" on-click="save"><i class="icon ok sign"></i> Save</a>
 		</div>
 </div>

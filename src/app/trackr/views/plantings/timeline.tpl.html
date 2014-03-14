@@ -7,46 +7,73 @@
 	  <a class="item">
 	    <i class="mail icon"></i> Place
 	  </a>
-	  <a class="item">
-	    <i class="user icon"></i> Most Popular
-	  </a>
 	</div>
 </div>
+
+Group by: {{group_by}}
+Scale: <input value="{{viewScale}}" type="number" step="10">
+
 
 <div id="plantings_svg_wrapper">
 <svg>
 
-
-
-<g class="horizontal time axis" transform="translate( {{xScale(0)}}, -100)">
+<g class="horizontal time axis" transform="translate( 0, 0)">
 	{{#intervals : i }}
-	<g class="time interval" transform="translate({{ width / intervals.length * i}})">
+	{{# type === 'year' }}<g class="year time interval" transform="translate({{ xScale( startIndex ) }}, 20)">
 		<line y1="0" y2="{{height}}"  />
-		<text width="{{ width / intervals.length }}" y="{{height-50}}">{{( formatInterval( . ) )}}</text>
+		<text x="{{ xScale( intervalLength/2  ) }}" y="20">{{ label }}</text>
 	</g>
+	{{/ #type }}
+	{{# type === 'quarter' }}<g class="quarter time interval" transform="translate({{ xScale( startIndex ) }})" width="{{ xScale( intervalLength ) }}">
+		<line y1="0" y2="{{height}}"  />
+		<text x="{{ xScale( intervalLength/2  ) }}" y="20">{{ label }}</text>
+	</g>
+	{{/ #type }}
+	{{# type === 'month' }}<g class="month time interval" transform="translate({{ xScale( startIndex ) }})" width="{{ xScale( intervalLength ) }}">
+		<line y1="0" y2="{{height}}"  />
+		<text x="{{ xScale( intervalLength/2  ) }}" y="20">{{ label }}</text>
+	</g>
+	{{/ #type }}
+	{{# type === 'week' }}<g class="week time interval" transform="translate({{ xScale( startIndex ) }})" width="{{ xScale( intervalLength ) }}">
+		<line y1="0" y2="{{height}}" />
+	</g>
+	{{/ #type }}
+	{{# type === 'day' }}<g class="day time interval" transform="translate({{ xScale( startIndex ) }})" width="{{ xScale( intervalLength ) }}">
+		<line y1="0" y2="{{height}}"  />
+		<text x="{{ xScale( intervalLength/2  ) }}" y="20">{{ label }}</text>
+	</g>
+	{{/ #type }}
 	{{/intervals}}
 </g>
-
-{{#plantings:i}}
+{{#groups:i}}
+<g class="planting group" transform="translate( 0, {{ plantings.length*30 }})">
+	<g class="planting group label" transform="translate(0,0)">
+		<text class="plant group label {{( plantingGroupIcon(.) )}}">{{( plantingGroupLabel(.) )}}</text>
+	</g>
+	{{#plantings:i}}
  	<!-- plot a line for the entire planting, bookended by circles -->
- 	<g class="planting line" transform="translate( {{ xScale(0) }},{{ i*30+30 }})">
+ 	<g class="planting line" transform="translate( 0, {{ i*30 }})">
 	 	
-	 	<g class="planting period" transform="translate( {{ xScale( dayIndex( days, planted_from ) ) }}, 0)">
-	 		<line x2="{{ xScale( dayIndex( days, planted_until ) ) }}" />
-	 		{{# dayIndex( days, planted_from ) > -1 }}<circle r="4" />{{/}}
-	 		<circle r="4" y="0" cx="{{ xScale( dayIndex( days, planted_until ) ) }}" />
-	 		<!--<text>{{planted_from}} / {{planted_until}} / {{ dayIndex( days, planted_until ) }} / {{ xScale( dayIndex( days, planted_until ) ) }}</text>-->
-	 		{{#( group_by == place )}}<text class="plant name">PLANT {{plant.use_name}}</text>{{/()}}
-			{{#( group_by == plant )}}<text class="place name">PLACE {{place.name}}</text>{{/()}}
+	 	<g class="planting period" transform="">
+			<text x="{{ xScale( dayIndex( planted_from ) ) }}" y="-5">
+			{{# group_by === 'plant' }} PLANT {{/}} : {{plant.use_name}} : {{place.name}} : {{ formatDate(planted_from) }} - {{ formatDate(planted_until) }}
+			</text>
+
+	 		<line x1="{{ xScale( dayIndex( planted_from ) ) }}" x2="{{ xScale( dayIndex( planted_until ) ) }}" />
+	 		{{# dayIndex( planted_from ) > -1 }}<circle r="4" cx="{{ xScale( dayIndex( planted_from ) ) }}" />{{/}}
+	 		<circle r="4" y="0" cx="{{ xScale( dayIndex( planted_until ) ) }}" />
+	 		<!--<text>{{planted_from}} / {{planted_until}} / {{ dayIndex( planted_until ) }} / {{ xScale( dayIndex( planted_until ) ) }}</text>-->
 	 	</g>
 
-	{{#harvest_from}}
-	<g class="harvest period" transform="translate( {{ xScale( dayIndex( days, planted_from ) ) }}, 0)">
-		<line x1="{{ xScale( dayIndex( days, harvest_from ) ) }}" x2="{{ xScale( dayIndex( days, harvest_until ) ) }}" />
+		{{#harvest_from}}
+		<g class="harvest period" transform="">
+			<line x1="{{ xScale( dayIndex( harvest_from ) ) }}" x2="{{ xScale( dayIndex( harvest_until ) ) }}" />
+		</g>
+		{{/harvest_from}}
 	</g>
-	{{/harvest_from}}
-	</g>
-{{/plantings}}
+	{{/plantings}}
+</g>
+{{/groups}}
 <!--<g class="vertical group axis">
 	{{#groups: i}}
 	<text class="group name" transform="translate(0, {{ yScale( i ) }})">{{name}}</text>
