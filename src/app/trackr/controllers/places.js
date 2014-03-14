@@ -4,6 +4,9 @@ define(['sembr', 'sembr.controller', 'backbone', 'marionette',
 function (sembr, Controller, Backbone, Marionette,
 	Layout, DashboardView, TreeView,
 	LoaderView) {
+
+	"use strict";
+
 	var DashboardController = Controller.extend({
 
 		initialize:function (options) {

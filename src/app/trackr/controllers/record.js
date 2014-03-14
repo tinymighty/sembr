@@ -4,6 +4,9 @@ define(['sembr', 'sembr.controller', 'backbone', 'marionette',
 function (sembr, Controller, Backbone, Marionette, 
 	Layout, RecordView,
 	LoaderView) {
+
+	"use strict";
+
 	var Record = Controller.extend({
 
 		initialize:function (options) {
@@ -19,6 +22,7 @@ function (sembr, Controller, Backbone, Marionette,
 		},
 
 		record: function(){
+			var plantings;
 			//show loading view until places have been fetched
 			this.layout.main.show( this.loader );
 

@@ -11,6 +11,8 @@ function (sembr, Controller, Backbone, Marionette, Ractive,
 	AddPlantingView, Sidebar, PlantingsListView,	ShowPlantingView, AddActionView,
 	LoaderView) {
 
+	"use strict";
+	
 	var PlantingsController = Controller.extend({
 
 		initialize:function (options) {

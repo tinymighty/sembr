@@ -2,12 +2,15 @@
 		Marionette = require('marionette'),
 		Layout = require('view/plantings/layout'),
 		Collection = require('../collections/plantings');*/
-define(['sembr', 'sembr.controller', 'backbone','marionette',
+define(['sembr', 'sembr.controller', 'backbone', 'marionette',
 	'trackr/views/layout', 'trackr/views/dashboard/dashboard',
 	"components/loader/loader"],
 function (sembr, Controller, Backbone, Marionette,
 	Layout, DashboardView,
 	LoaderView) {
+
+	"use strict";
+
 	var DashboardController = Controller.extend({
 
 		initialize:function (options) {
@@ -33,7 +36,7 @@ function (sembr, Controller, Backbone, Marionette,
 			this.layout.main.show( this.loader );
 
 			//@todo: restrict to plantings based on criteria
-			plantings = new sembr.trackr.collections.Plantings();
+			var plantings = new sembr.trackr.collections.Plantings();
 			plantings
 				.fetch()
 				.fail(function(err){

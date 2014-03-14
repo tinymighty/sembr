@@ -4,6 +4,9 @@ define( ['sembr', 'backbone', 'marionette', 'jquery',
 function(sembr, Backbone, Marionette, $, 
 PlacesTreeView, PlantingsTimelineView,
 template) {
+
+  "use strict";
+  
   //ItemView provides some default rendering logic
   return Backbone.Marionette.Layout.extend( {
     //el: '#trackr-dashboard-view',

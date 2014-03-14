@@ -5,6 +5,7 @@
  **/
 define(['sembr', "underscore", "backbone", 'pouchdb', 'supermodel'],
 function(sembr, _, Backbone, Pouch, Supermodel ) {
+  "use strict";
   var SembrModel = Supermodel.Model.extend(
 
   // INSTANCE METHODS
@@ -30,7 +31,7 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
         //add the association to the associated model instance
         _(this._associations).contains(inverse_property) || this._associations.push(inverse_property)
       }.bind(this));
-      this.on('disassociate', function(property, inverse_property, inverse_model, inverse_model){
+      this.on('disassociate', function(property, inverse_property, inverse_model){
         //model._associations = _(model._associations).without(inverse_property);
         inverse_model._associations = _(inverse_model._associations).without(property);
         this._assocations = _(this._assocations).without(inverse_property);

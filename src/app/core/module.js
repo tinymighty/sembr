@@ -1,7 +1,7 @@
 define(['sembr', 'jquery', 'backbone', 'marionette', 'sembr.promises', 'sembr.mixins.readypromise'], 
 function(sembr, $, Backbone, Marionette, Promises, ReadyPromise){
-	
-	MarionetteModule = Marionette.Module;
+  "use strict";
+	var MarionetteModule = Marionette.Module;
 
 	//create new Marionette constructor
 	Marionette.Module = function(name, app){

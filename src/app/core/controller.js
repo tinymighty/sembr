@@ -4,6 +4,7 @@
  * Defines a controller class with a unique id for each class 
  **/
 define(['sembr', "jquery", "backbone", "marionette"], function(sembr, $, Backbone, Marionette ) {
+  "use strict";
   var Controller = Marionette.Controller.extend({});//, {idIncrement:0});
   Controller.idIncrement = 0;
   Controller.extend = function(){

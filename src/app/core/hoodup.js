@@ -35,7 +35,7 @@
   ;
   _idattr_ = Backbone.Model.prototype.idAttribute || 'id';
 
-  enable_logging = false;
+  enable_logging = true;
 
   if (enable_logging) {
     if (Function.prototype.bind) {
@@ -94,10 +94,10 @@
       if(modelOrCollection instanceof Backbone.Collection){
         return false; //can't sync a collection which doesn't have a default model
       }
-      modelConstructor = modelOrCollection;
+      modelConstructor = modelOrCollection.constructor;
     }
 
-    type = type || (type = modelConstructor.prototype.type);
+    type = type || modelConstructor.prototype.type;
 
     log('Sync %o(%o): modelConstructor(%o) options(%o)', type, method, modelConstructor.prototype, options);
 
@@ -320,9 +320,9 @@
   /*
    * Overload Supermodel.Model.has to build association info
    */
-  var oldHas = Supermodel.Model.prototype.has;
+  var oldHas = Supermodel.Model.has;
 
-  Supermodel.Model.prototype.has = function(){
+  Supermodel.Model.has = function(){
     var has = oldHas.apply(this, arguments);
     var model = this;
     if ( !this._hoodie_relations ) {
