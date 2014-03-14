@@ -1,0 +1,13 @@
+{{#(previous_users.length) }}
+	<div class="previous user list">
+	{{#previous_users:i}}
+		<div class="medium user avatar"><img src="{{avatar}}"></div>
+	{{/previous_users}}
+	</div>
+{{/}}
+
+{{^previous_users}}
+<div class="">
+	There are no previous users.
+</div>
+{{/previous_users}}

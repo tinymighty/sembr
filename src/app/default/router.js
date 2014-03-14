@@ -1,5 +1,6 @@
 define(['backbone', 'sembr.modulerouter'], 
 function(Backbone, ModuleRouter, DashboardController) {
+   "use strict";
    return ModuleRouter.extend({
 			//"index" must be a method in AppRouter's controller
 
