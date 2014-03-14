@@ -2,20 +2,13 @@
 require.config({
     baseUrl:"/app",
 
-    /*packages: [
-        'core',
-        'layout'
-        'default',
-        'trackr'
-    ],
-*/
-    // 3rd party script alias names (Easier to type "jquery" than "libs/jquery, etc")
-    // probably a good idea to keep version numbers in the file names for updates checking
     paths:{
+        "normalize":"../libs/require/plugins/normalize",
         "text":"../libs/require/plugins/text",
         "hbs":"../libs/require/plugins/hbs",
         "rv": "../libs/require/plugins/rv",
         "css": "../libs/require/plugins/css",
+        "less": "../../bower_components/require-less/less",
 
         // Core Libraries
         'init': 'init',
@@ -41,11 +34,11 @@ require.config({
         "sembr.trackr": 'trackr/module',
 
         "jquery":"../libs/jquery/jquery",
-        "jquerymobile":"../libs/jquery/jquery.mobile",
         "underscore":"../libs/lodash",
         "backbone":"../libs/backbone/backbone",
         "marionette":"../libs/backbone/backbone.marionette",
 
+        "backbone-undo":"../libs/backbone/backbone.undo",
         "backbone.deep-model":"../libs/backbone/backbone.deep-model",
         "supermodel":"../libs/backbone/supermodel",
 
@@ -57,7 +50,8 @@ require.config({
 
         "pouchdb": "../libs/pouchdb",
 
-        "underscore": "../libs/lodash",
+        "moment": "../libs/moment",
+
         "handlebars":"../libs/handlebars",
 
         "i18nprecompile":"../libs/i18nprecompile",
@@ -88,6 +82,10 @@ require.config({
             // Exports the global window.Backbone object
             "exports":"Backbone"
         },
+
+        //"pickadate-picker": ["underscore"],
+        //"pickadate": ["pickerdate-picker"],
+        //"pickatime": ["pickerdate-picker"],
 
         "backbone.deep-model":{ "deps":["backbone"] },
 
@@ -137,4 +135,8 @@ require.config({
 
         compileOptions: {}        // options object which is passed to Handlebars compiler
     }
+});
+
+require(['init'], function(init){
+    init({environment: 'development'});
 });
