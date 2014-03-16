@@ -3,12 +3,13 @@ require.config({
     baseUrl:"/app",
 
     paths:{
-        "normalize":"../libs/require/plugins/normalize",
-        "text":"../libs/require/plugins/text",
-        "hbs":"../libs/require/plugins/hbs",
+        "normalize": "../../bower_components/require-less/normalize",
+        "text": "../libs/require/plugins/text",
+        "hbs": "../libs/require/plugins/hbs",
         "rv": "../libs/require/plugins/rv",
         "css": "../libs/require/plugins/css",
         "less": "../../bower_components/require-less/less",
+        "lessc": "../../bower_components/require-less/lessc",
 
         // Core Libraries
         'init': 'init',

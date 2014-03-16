@@ -5,14 +5,33 @@
 		left:0;
 		width:100%;
 		bottom:0;
-	}
-	.time.axis .interval text{
-		text-align:center;
-		text-anchor: middle;
-	}
-	.time.axis .interval line{
-		stroke-width:1;
-		stroke:rgba(0,0,0,0.05);
+
+		transition-property: all;
+    transition-duration: 0.5s;
+
+		.interval{
+			line{
+				stroke-width:1;
+				stroke:rgba(0,0,0,0.05);
+			}
+			text{
+				text-align:center;
+				text-anchor: middle;
+			}
+		}
+
+		.month.interval{
+			line{
+				stroke: red;	
+			}
+		}
+
+		.year.interval{
+			line{
+				stroke-width:3;
+				stroke:green;
+			}
+		}
 	}
 
 	.plantings .planting{

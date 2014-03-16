@@ -9,6 +9,7 @@ function(Backbone, ModuleRouter) {
 		moduleRoutes: {
 			'': 'Dashboard.dashboard',
 		  'plantings': 'Plantings.list',
+		  'timeline': 'Plantings.timeline',
 		  'planting/new': 'Plantings.add',
 		  'planting/:planting_id': 'Plantings.show',
 

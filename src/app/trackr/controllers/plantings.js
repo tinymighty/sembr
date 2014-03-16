@@ -4,11 +4,11 @@
 		Collection = require('../collections/plantings');*/
 define(['sembr', 'sembr.controller', 'backbone', 'marionette', 'ractive',
 	'trackr/views/layout',
-	'trackr/views/plantings/add', 'trackr/views/sidebar', 'trackr/views/plantings/list', 'trackr/views/plantings/show', "trackr/views/plantings/add-action",
+	'trackr/views/plantings/add', 'trackr/views/sidebar', 'trackr/views/plantings/list', 'trackr/views/plantings/show', "trackr/views/plantings/add-action", 'trackr/views/plantings/timeline',
 	"components/loader/loader"],
 function (sembr, Controller, Backbone, Marionette, Ractive,
 	Layout,
-	AddPlantingView, Sidebar, PlantingsListView,	ShowPlantingView, AddActionView,
+	AddPlantingView, Sidebar, PlantingsListView,	ShowPlantingView, AddActionView, TimelineView,
 	LoaderView) {
 
 	"use strict";
@@ -76,6 +76,22 @@ function (sembr, Controller, Backbone, Marionette, Ractive,
 
 
 
+		},
+
+
+		timeline: function(){
+
+			var plantings = new sembr.trackr.collections.Plantings();
+			plantings
+				.fetch()
+				.fail(function(err){
+					sembr.log('Faled to load plantings.');
+					sembr.showError('Failed to load user plantings.');
+				})
+				.done(function( plantings ){
+					sembr.log('Loaded plantings. Showing dashboard view.');
+					this.layout.main.show( new TimelineView({collections: {places: this.places, plants: this.plants, plantings: plantings}}) );
+				}.bind(this));
 		},
 
 		showSidebar: function(){
