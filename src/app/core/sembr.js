@@ -11,8 +11,8 @@ function (Backbone, $, Marionette, _, Ractive, Rb, moment,
 	Hoodup.connect().attach();
 	//dev convenience for testing...
 	sembr.hoodup = Hoodup;
-	//sembr.hoodie = Hoodup.hoo
-	Hoodup.hoodie.account.signIn('andru', 'andru');
+	sembr.hoodie = Hoodup.hoodie;
+	//Hoodup.hoodie.account.signIn('andru', 'andru');
 
 	var settings = {
 		container: 'body'

@@ -31,14 +31,13 @@ function(sembr, Backbone, Marionette, $, template) {
         editableContent:'[name=editableContent]',
         graduated:[{selector: '[name=graduated]'}, {selector: '[name=driversLicense],[name=motorcycleLicense]', elAttribute: 'enabled', converter: function(direction, value){return value === 'yes';}}],
         eyeColor: [{selector: '[name=eyeColor]'}, {selector: 'span.label', elAttribute: 'style', converter: function(direction, value){return 'color:' + value}}]
-    };*/
+    },*/
 
     initialize: function(opts){
-        this.modelBinder = new Backbone.ModelBinder();
+
     },
 
     onRender: function(){
-        this.bindModel();
         this.ui.deleteShape
           .shape()
         ;
@@ -60,11 +59,6 @@ function(sembr, Backbone, Marionette, $, template) {
         this.ui.deleteShape
           .shape('flip')
         ;
-    },
-
-    bindModel: function () {
-        var bindings = Backbone.ModelBinder.createDefaultBindings(this.el, 'data-model');
-        this.modelBinder.bind(this.model, this.$el, bindings);
     }
 
   });

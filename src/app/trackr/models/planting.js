@@ -1,6 +1,11 @@
-define(['sembr', 'sembr.model'],
-function(sembr, Model) {
+define(['sembr', 'sembr.model', 'moment'],
+function(sembr, Model, moment) {
 	// Creates a new Backbone Model class object
+	var parent = Model.prototype;
+
+	var normalize_date = function( value ){
+  	return moment(value).isValid() ? moment(value).toISOString() : value;
+  }
 
 	var Planting = Model.extend({
 		type: 'planting',
@@ -16,32 +21,65 @@ function(sembr, Model) {
 			planted_until:null //date it (will be|has been) planted until
 		},
 
-		initialize: function(attrs, options){
-			if(attrs){
-				//attrs = _(attrs).defaults(this.defaults);
-				if(!attrs.id){
-					this.created = new Date().toString();
+	  validation: {
+	    type: {
+	      oneOf: ['planting']
+	    },
+	    plant_id: function( value, attr, computedState ){
+				if( !value || !sembr.trackr.models.Plant.find({'id': value}) ){
+					return 'Invalid Plant ID';
 				}
-			}
-			Model.prototype.initialize.apply(this, arguments);
+			},
+	    place_id: function( value, attr, computedState ){
+				if( !value || !sembr.trackr.models.Place.find({'id': value}) ){
+					return 'Invalid Place ID';
+				}
+			},
+	    planted_from: function( value, attr, computedState ){
+	    	if( !value || !moment(value).isValid() ){
+	    		return 'Invalid start date: '+moment(value).format();
+	    	}
+	    },
+	    planted_until: function( value, attr, computedState ){
+	    	if( !value || !this.get('planted_from') || !moment(value).isValid() || new Date(value) < new Date(computedState.planted_from) ){
+	    		return 'Invalid end date';
+	    	}
+	    },
+	    harvest: function( value, attr, computedState ){
+	    	/*var err = _(value).any(function(h){ 
+	    		if 
+	    	}); 
+	    	if( err ){
+	    		return 'Invalid harvest!';
+	    	} */
+	    }
+	  },
+
+		initialize: function(attrs, options){
+			parent.initialize.apply(this, arguments);
 		},
 
-		__set_created: function(value){
-			return this.attributes.created = (value instanceof Date) ? Date.toString() : value;
-		},
-		__get_created: function(){
-			return new Date(this.attributes.created);
+		/* Filter functions to ensure attribute consistency */
+	  filters:{
+	  	planted_from: function( value ){
+		  	return normalize_date( value );
+		  },
+
+		  planted_until: function( value ){
+		  	return normalize_date( value );
+		  },
 		},
 
-		// Get's called automatically by Backbone when the set and/or save methods are called (Add your own logic)
-		validate: function(attrs) {
-			sembr.log("VALIDATING ATTRS", attrs);
-			if(attrs.type!=='planting'){
-				throw sembr.error('type property must be planting');
-			}
-			if(!attrs.plant_id){
-				throw sembr.error('plant_id is not defined');
-			}
+
+		addAction: function( type, data ){
+			data = data || {};
+			var id = this.id || this.cid;
+			var action = sembr.trackr.models.PlantingAction.create({
+				action_type: type,
+				subject_id: id
+			});
+			//this.actions().add( action );
+			return action;
 		},
 
 		serialized: {

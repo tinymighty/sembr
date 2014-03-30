@@ -11,6 +11,7 @@ function(Backbone, ModuleRouter) {
 		  'plantings': 'Plantings.list',
 		  'timeline': 'Plantings.timeline',
 		  'planting/new': 'Plantings.add',
+		  'planting/:planting_id/edit': 'Plantings.edit',
 		  'planting/:planting_id': 'Plantings.show',
 
 		  'places': 'Places.dashboard',

@@ -1,0 +1,21 @@
+<div id="add_planting-create_plant_form">
+
+	<label>Place name</label>
+	<input name="name" type="text" value="{{place.name}}" />
+	
+	<label>Place type</label>
+	<select name="place_type" id="add_planting-create_place-types">
+		{{#default_place_types}}
+		<option value="{{.}}">{{.}}</option>
+		{{/default_place_types}}
+	</select>
+	
+
+	<label>Exists within an existing place?</label>
+	<select name="places" id="add_planting-create_place-places">
+		<option value="">None</option>
+	{{#places}}
+		<option value="{{id}}">{{name}}</option>	
+	{{/places}}
+	</select>	
+</div>

@@ -1,5 +1,5 @@
 define( ['sembr', 'backbone', 'marionette', 'jquery', 
-'trackr/views/places/treeview', 'trackr/views/plantings/timeline',
+'trackr/views/places/treeview', 'trackr/views/plantings/timeline/timeline',
 'hbs!./dashboard.tpl'],
 function(sembr, Backbone, Marionette, $, 
 PlacesTreeView, PlantingsTimelineView,

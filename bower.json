@@ -20,6 +20,17 @@
     "tests"
   ],
   "dependencies": {
-    "require-less": "~0.1.1"
+    "requirejs": "2.1.11",
+    "require-less": "~0.1.1",
+    "requirejs-hbs": "",
+    "requirejs-i18n": "2.0.4",
+    "jquery": "2.1.0",
+    "backbone": "1.1.2",
+    "marionette": "1.6.4",
+    "semantic-ui": "0.15.1",
+    "ractive": "0.3.9"
+  },
+  "resolutions": {
+    "jquery": "2.1.0"
   }
 }

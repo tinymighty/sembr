@@ -3,21 +3,25 @@
  *
  * Defines a model class which can autoload it's dependencies.
  **/
-define(['sembr', "underscore", "backbone", 'pouchdb', 'supermodel'],
-function(sembr, _, Backbone, Pouch, Supermodel ) {
+define(['sembr', "underscore", "backbone", 'pouchdb', 'supermodel', 'backbone-validation'],
+function(sembr, _, Backbone, Pouch, Supermodel, BackboneValidation ) {
   "use strict";
+  var parent = Supermodel.Model.prototype;
   var SembrModel = Supermodel.Model.extend(
 
   // INSTANCE METHODS
   {
+    filters: {},
 
     initialize: function(){
       if(!this.type){
         throw new Error('Model constructor must specify a type');
       }
-      sembr.log('Initializing model ', this.name, arguments);
+      sembr.log('Initializing %o model (%s/%s) ', this.type, this.id, this.cid, arguments);
       //array of active association names on this model instance
       this._associations = [];
+
+      _( this.filters ).bindAll( this );
 
       this._processSerializers();
 
@@ -25,7 +29,8 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
       //without this there is no way to access associations programatically
 
       this.on('associate', function(property, inverse_property, model, inverse_model){
-        sembr.log('Model %s (%s): received associate event %o with inverse_property %o; model %o; inverse_model:%o', this.name, this.cid, property, inverse_property, model, inverse_model);
+        sembr.log('associate %s.%s (%s/%s : %o)  -> %s.%s (%s : %o)', 
+          this.type, inverse_property, this.id, this.cid, model, inverse_model.type, property, inverse_model.cid, inverse_model);
         //add the association to this model instance
         _(inverse_model._associations).contains(property) || inverse_model._associations.push(property);
         //add the association to the associated model instance
@@ -35,13 +40,42 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
         //model._associations = _(model._associations).without(inverse_property);
         inverse_model._associations = _(inverse_model._associations).without(property);
         this._assocations = _(this._assocations).without(inverse_property);
-        sembr.log('Model %s (%s): received associate event %o with inverse_property %o; model %o; inverse_model:%o', this.name, this.cid, property, inverse_property, model, inverse_model);
-      }.bind(this));
+        sembr.log('disassociate %s.%s (%s/%s : %o) / %s.%s (%s : %o)', 
+          this.type, inverse_property, this.id, this.cid, model, inverse_model.type, property, inverse_model.cid, inverse_model);      }.bind(this));
       this.on('all', function(){
         //sembr.log('Model event: ', arguments);
       });
 
       Supermodel.Model.prototype.initialize.apply(this, arguments);
+
+    },
+
+    save: function(){
+      delete this.attributes.cid;
+      return parent.save.apply(this, arguments);
+    },
+
+    set: function(key, val, options){
+      var attr, attrs;
+      if (key == null) return this;
+
+      // Handle both `"key", value` and `{key: value}` -style arguments.
+      if (typeof key === 'object') {
+        attrs = key;
+        options = val;
+      } else {
+        (attrs = {})[key] = val;
+      }
+
+      //if there is a _set_[attr name] filter defined then pass the 
+      //attribute through it 
+      options || (options = {});
+      
+      _(attrs).each( function( value, name ){
+        attrs[name] = this.filters[name] ? this.filters[name](value) : value;
+      }, this);
+
+      parent.set.call(this, attrs, options);
 
     },
 
@@ -123,13 +157,22 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
       return json;
     },
 
-
+    /**
+     * Returns true if all possible associations have been loaded for this model.
+     * This does not guarantee those assocations are valid. Eg. a belongs-to association
+     * may reference a model which has not actually been instantiated, and exists only
+     * as an empty model, waiting to be sync'd.
+     * @return {Boolean}
+     */
+    hasAllAssociations: function(){
+      return (this._assocations.length === this.constructor.associations.length);
+    }
   },
 
   // STATIC METHODS
   {
 
-  	findOrFetchById: function(id){
+  	findOrFetchById: function(id, options){
     	var model, deferred;
     	deferred = new $.Deferred();
     	model = this.find({id: id});
@@ -139,7 +182,7 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
     	}else{
         sembr.log('findOrFetch: Instantiating new model %o with _id %o', this, id);
 	    	model = new this({id: id})
-	      model.fetch()
+	      model.fetch( options )
 	    		.done(function(new_model, data){
 	    			deferred.resolve(new_model, data);
 	    		})
@@ -153,7 +196,9 @@ function(sembr, _, Backbone, Pouch, Supermodel ) {
 
   });
 
-  return SembrModel;
+  _.extend(SembrModel.prototype, Backbone.Validation.mixin);
 
+  return SembrModel;
+  
 
 });

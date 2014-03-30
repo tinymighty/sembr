@@ -1,7 +1,10 @@
 define([
 	'require', 'sembr', 'backbone', 'marionette', 'base/views/navigation', 'semantic-ui',
 	'hbs!base/templates/responsive', 
-	'css!base/resources/css/reset', 'css!/../libs/semantic-ui/css/semantic', 'css!base/resources/css/commonstyles.css', 'css!base/resources/css/fonts/museo/stylesheet.css'
+	/* CSS Resources */
+	'css!/../libs/semantic-ui/css/semantic', 'css!base/resources/css/commonstyles.css', 'css!base/resources/css/fonts/museo/stylesheet.css',
+	/* LESS resources */ 
+	'less!base/resources/less/app-layout.less',	'less!base/resources/less/forms.less'
 ], function (
 	require, sembr, Backbone, Marionette, NavView, SemanticUI, 
 	template
@@ -17,7 +20,7 @@ define([
 		},
 		
 		regions:{
-			header: '[data-role="header"]',
+			appNav: 'nav[data-role="app-nav"]',
 			content: '[data-role="content"]',
 			footer: '[data-role="footer"]'
 		},
@@ -27,7 +30,7 @@ define([
 		},
 
 		onRender: function(){
-			this.header.show( this.navView );
+			this.appNav.show( this.navView );
 		},
 
 		preventDefault: function($ev){

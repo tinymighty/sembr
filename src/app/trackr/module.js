@@ -26,7 +26,7 @@ function(require, $, sembr, Backbone, Marionette,
     module.addAsyncInitializer(function(){
       sembr.log('Running async initializer for places collection...');
     	return new module.collections.Places()
-    		.fetch( )
+    		.fetch( {fetch_associations: false} )
     		.done(function(places, data){
           console.warn("Places loaded", places, data);
     			Trackr.places = places;
@@ -47,7 +47,7 @@ function(require, $, sembr, Backbone, Marionette,
     module.addAsyncInitializer(function(){
       sembr.log('Running async initializer for plantings collection...');
       return new module.collections.Plantings()
-        .fetch( )
+        .fetch( {fetch_associations:false} )
         .done(function(plantings, data){
           console.warn("Plantings loaded", plantings, data);
           Trackr.plantings = plantings;
@@ -58,7 +58,7 @@ function(require, $, sembr, Backbone, Marionette,
     module.addAsyncInitializer(function(){
       sembr.log('Running async initializer for plants collection...');
       return new module.collections.Plants()
-        .fetch( )
+        .fetch( {fetch_associations:false}  )
         .done(function(plants, data){
           console.warn("Plants loaded", plants, data);
           Trackr.plants = plants;
@@ -68,6 +68,10 @@ function(require, $, sembr, Backbone, Marionette,
 
     
   });
+
+  Trackr.editPlanting = function( id ){
+    sembr.navigate('/track/planting/'+id+'/edit', {trigger: true});
+  }
 
   return Trackr;
 

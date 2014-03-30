@@ -1,11 +1,18 @@
-define(['sembr', 'jquery', 'backbone', 'marionette', 'hbs!../templates/navigation'],
-    function (sembr, $, Backbone, Marionette, template) {
+define(['sembr', 'jquery', 'backbone', 'marionette', 'tooltip', 'hbs!../templates/navigation'],
+    function (sembr, $, Backbone, Marionette, Tooltip, template) {
         //ItemView provides some default rendering logic
         return Backbone.Marionette.ItemView.extend({
             template:template,
 
             events: {
-            	'click a': 'menuClick'
+            	'click .menu a': 'menuClick',
+                'click #sign-in': 'signIn',
+                'click #sign-out': 'signOut'
+            },
+
+            ui:{
+                'signIn': '#sign-in',
+                'signOut': '#sign-out'
             },
 
             currentModule: '',
@@ -18,7 +25,30 @@ define(['sembr', 'jquery', 'backbone', 'marionette', 'hbs!../templates/navigatio
             },
 
             onRender: function(){
-
+                if( sembr.hoodie.account.hasAccount() ){
+                    this.ui.signIn.hide();
+                    this.ui.signOut.show();
+                }else{
+                    this.ui.signIn.show();
+                    this.ui.signOut.hide();
+                }
+                //Tooltip.init();
+                this.$('.item').each(function(i, el){
+                    
+                    var tip = new Tooltip({
+                      target: el,
+                      position: 'right middle',
+                      content: $(el).text(),
+                      classes: 'sembr-menu'
+                    });
+                    $(el).mouseover(function(event) {
+                        tip.open();
+                    });
+                    $(el).mouseout(function(event) {
+                        tip.close();
+                    });
+                });
+                
             },
 
             setActiveItem: function(route_name){
@@ -28,8 +58,32 @@ define(['sembr', 'jquery', 'backbone', 'marionette', 'hbs!../templates/navigatio
 
 
             menuClick: function($ev){
+                console.log('Click!', $ev);
             	$ev.preventDefault();
-            	sembr.navigate($($ev.target).attr('href'), {trigger:true});
+                if( $($ev.currentTarget).attr('href')  ){
+            	   sembr.navigate($($ev.currentTarget).attr('href'), {trigger:true});
+                }
+            },
+
+            signIn: function(){
+                var that = this;
+                var credentials = prompt('Enter your login details (user:password)', 'andru:andru');
+
+                credentials = credentials.split(':');
+                console.log('Signing in with credentials', credentials);
+                sembr.hoodie.account.signIn(credentials[0], credentials[1])
+                .then(function(){
+                    console.log('Sign in returned.', arguments);
+                    that.ui.signOut.show();
+                    that.ui.signIn.hide();
+                });
+                    
+            },
+
+            signOut: function(){
+                sembr.hoodie.account.signOut();
+                this.ui.signIn.show();
+                this.ui.signOut.hide();
             }
         });
     });

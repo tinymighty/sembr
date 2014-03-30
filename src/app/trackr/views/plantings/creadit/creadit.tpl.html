@@ -1,0 +1,79 @@
+<div class="ui creadit planting form">
+<h3 class="ui header">{{#is_new}}New{{/is_new}}{{^is_new}}Edit{{/is_new}} Planting</h3>
+
+	<div class="two fields">
+		<div class="field" id="add_planting-select_plant">
+			<label>Plant</label>
+
+			<select value="{{planting.plant_id}}" required>
+				<option value="">Choose or Add a Plant</option>
+				{{#plants:i}}
+				<option value="{{id}}">{{use_name}}</option>
+				{{/plants}}
+			</select>
+
+		</div>
+
+		<div class="field" id="add_planting-select_place">
+			<label>Place</label>
+
+			<select value="{{planting.place_id}}" required>
+				<option value="">Choose or Add a Place</option>
+				{{#places:i}}
+				<option value="{{id}}">{{name}}</option>
+				{{/places}}
+			</select>
+
+		</div>
+	</div>
+	
+		<div class="field">
+			<div class="two fields">
+        <div class="field">
+          <label>Planting start date</label>
+          <input type="text" name="date" required class="planted from date" value="{{planting.planted_from}}">
+        </div>
+        <div class="field">
+          <label>Predicated end date</label>
+          <input type="text" name="date" required class="planted until date" value="{{planting.planted_until}}">
+        </div>
+      </div>			
+		</div>
+
+		<div class="field">
+			<label>Propagated from</label>
+			<select name="from" class="selectpicker" value="{{planted.from}}">
+				<option value="seed">Seed</option>
+				<option value="plantlet">Plantlet</option>
+				<option value="cutting">Cutting</option>
+			</select>
+		</div>
+
+		<div class="">
+			<h3>Predicted Harvest Dates</h3>
+			<div id="creadit_planting-actions">
+			{{#actions:i}}
+				<div class="harvest action item">
+
+					<select value="{{action_type}}" required>
+						<option value="">Action type</option>
+						{{#action_types:i}}
+						<option value="{{.}}">{{.}}</option>
+						{{/action_types}}
+					</select>
+
+					<input type="text" name="from_date" required class="harvest from date" value="{{from}}" placeholder="from">
+					<input type="text" name="until_date" required class="harvest until date" value="{{until}}" placeholder="until">
+					<input type="text" name="projected_quantity" class="projected harvest quantity" placeholder="Projected yield">
+					<input type="text" name="product_type" class="harvest product type" placeholder="Product type">
+				</div>
+			{{/actions}}
+			</div>
+			<a class="ui medium labelled icon button" on-click="addHarvest"><i class="add icon"></i> Add Action</a>
+		</div>
+
+		<div class="row-fluid">
+			<hr>
+			<a class="ui large green labelled icon save button" on-click="save"><i class="icon ok sign"></i> Save</a>
+		</div>
+</div>

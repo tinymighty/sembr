@@ -10,15 +10,17 @@ define(['marionette', 'ractive', 'ractive.backbone'], function(Marionette, Racti
   			throw new Error('Cannot instantiate RactiveView without a template.');
   		}
   		this._ensureElement();
-  		this.data = {};
+      if(!this.data){
+  		  this.data = {};
+      }
 
   		//bind class methods or functions as Ractive invocation expressions
   		if( this.helpers !== undefined ){
   			_( this.helpers ).each(function( helper, name ){
   				if( _(helper).isFunction() ){
-  					this.data[name] = helper;
+  					this.data[name] = _(helper).bind(this);
   				}else if( _(this[helper]).isFunction() ){
-  					this.data[name] = this[helper];
+  					this.data[name] = _(this[helper]).bind(this);
   				}
   			}, this);
   		}
@@ -36,7 +38,7 @@ define(['marionette', 'ractive', 'ractive.backbone'], function(Marionette, Racti
       if( this.events !== undefined ){
         _( this.events ).each(function( method, name ){
           if( !_(method).isFunction() && _(this[method]).isFunction() ){
-            this.events[name] = this[method];
+            this.events[name] = _(this[method]).bind(this);
           }
           this.events[name] = _(this.events[name]).bind(this);
         }, this);
@@ -46,7 +48,7 @@ define(['marionette', 'ractive', 'ractive.backbone'], function(Marionette, Racti
       if( this.observers !== undefined ){
         _( this.observers ).each(function( method, name ){
           if( !_(method).isFunction() && _(this[method]).isFunction() ){
-            this.observers[name] = this[method];
+            this.observers[name] = _(this[method]).bind(this);
           }
           this.observers[name] = _(this.observers[name]).bind(this);
         }, this);
@@ -81,12 +83,7 @@ define(['marionette', 'ractive', 'ractive.backbone'], function(Marionette, Racti
       this.triggerMethod("before:render", this);
       this.triggerMethod("render", this);
       return this;
-  	},
-
-    onRender: function(){
-
-    }
-
+  	}
 
 
   });

@@ -38,41 +38,23 @@ function(
 		all: function(){
 			models._init.plant()
 			models._init.planting();
+			models._init.planting_action();
 			models._init.place();
 			models._init.user();
 		},
 		plant: function(){
 			models.Plant.has()
-				.one('user', {
+				/*.one('user', {
 					model: models.User,
 					collection: collections.Users,
 					inverse: 'plants'
-				})
+				})*/
 				.many('plantings', {
 					collection: collections.Plantings,
 					inverse: 'plant'
 				})
 			;
 		},
-		planting: function(){
-			models.Planting.has()
-				.one('place', {
-					model: models.Place,
-					collection: collections.Places,
-					inverse: 'plantings',
-					source: 'place_id'
-				})
-				.one('plant', {
-					model: models.Plant,
-					inverse: 'plantings',
-					collection: collections.Plants,
-					source: 'plant_id'
-				})
-				.many('actions', {
-					inverse: 'planting',
-					collection: collections.PlantingActions
-				});
-			},
 		place: function(){
 			models.Place.has()
 				.many('plantings', {
@@ -97,6 +79,40 @@ function(
 					collection: collections.Users
 				})*/
 			;
+		},
+		planting: function(){
+			models.Planting.has()
+				.one('place', {
+					model: models.Place,
+					collection: collections.Places,
+					inverse: 'plantings',
+					source: 'place_id'
+				})
+				.one('plant', {
+					model: models.Plant,
+					inverse: 'plantings',
+					collection: collections.Plants,
+					source: 'plant_id'
+				})
+				.many('actions', {
+					inverse: 'planting',
+					id: 'subject_id',
+					collection: collections.PlantingActions
+				})
+			;
+		},
+		planting_action: function(){
+			models.PlantingAction.has()
+				.one('planting', {
+					inverse: 'actions',
+					id: 'subject_id',
+					where: {
+						subject_type: 'planting'
+					},
+					collection: collections.Plantings,
+					model: models.Planting
+
+				});
 		},
 		user: function(){
 			models.User.has()

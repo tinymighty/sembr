@@ -42,12 +42,18 @@ require.config({
         "backbone-undo":"../libs/backbone/backbone.undo",
         "backbone.deep-model":"../libs/backbone/backbone.deep-model",
         "supermodel":"../libs/backbone/supermodel",
+        "backbone-validation": "../../bower_components/backbone-validation/dist/backbone-validation-amd",
 
         "hoodie": "/_api/_files/hoodie",
 
-        "ractive": "../libs/ractive/Ractive",
+        "ractive": "../../bower_components/ractive/build/Ractive",
         "ractive.backbone": "../libs/ractive/adaptors/Backbone",
         //"ractive.ractive": "../libs/ractive/adaptors/Ractive",
+
+        "picker": "../libs/pickadate.js-3.4.0/picker",
+        "pickadate": "../libs/pickadate.js-3.4.0/picker.date",
+        "pickatime": "../libs/pickadate.js-3.4.0/picker.time",
+
 
         "pouchdb": "../libs/pouchdb",
 
@@ -71,10 +77,38 @@ require.config({
         "snowball":"../libs/snowball/snowball",
 
         // Plugins        
-        "puton": "../libs/puton/puton"
+        "puton": "../libs/puton/puton",
+
+        //The various awesome Hubspot libs
+        //AMD support is flakey, custom wrappers in ../libs define dependencies
+        //and autoload CSS dependencies
+        "tether": "../libs/wrappers/tether",
+        "drop": "../libs/wrappers/drop", //a wrapper which also loads the css!
+        "tooltip": "../libs/wrappers/tether-tooltip",
+
+        "tether-main": "../../bower_components/tether/tether",
+        "drop-main": "../../bower_components/drop/js/drop", //a wrapper which also loads the css!
+        "tooltip-main": "../../bower_components/tether-tooltip/js/tooltip",
+        "vex": "../../bower_components/vex/js/vex",
+        "vex.dialog": "../../bower_components/vex/js/vex.dialog",
+
+        //An awesome type-down selector
+        "selectize": "../../bower_components/selectize/dist/js/standalone/selectize",
+        //"selectize-wrapper": "../libs/wrappers/selectize"
     },
     // Sets the configuration for your third party scripts that are not AMD compatible
     shim:{
+        "tether-main": {
+            "exports": "Tether"
+        },
+        "drop-main": {
+            "deps": ['tether-main'],
+            "exports": "Drop"
+        },
+        "tooltip-main": {
+            "deps": ['tether-main', 'drop-main'],
+            "exports": "Tooltip"
+        },
         "semantic-ui":{ "deps": ["jquery"] },
 
         "backbone":{
@@ -83,10 +117,6 @@ require.config({
             // Exports the global window.Backbone object
             "exports":"Backbone"
         },
-
-        //"pickadate-picker": ["underscore"],
-        //"pickadate": ["pickerdate-picker"],
-        //"pickatime": ["pickerdate-picker"],
 
         "backbone.deep-model":{ "deps":["backbone"] },
 
@@ -105,6 +135,19 @@ require.config({
         "hoodie":{
             "exports": "Hoodie"
         },
+
+        //CSS dependencies for pickadate
+        "pickadate": ["css!../libs/pickadate.js-3.4.0/themes/default", "css!../libs/pickadate.js-3.4.0/themes/default.date" ],
+        "pickatime": ["css!../libs/pickadate.js-3.4.0/themes/default", "css!../libs/pickadate.js-3.4.0/themes/default.time"],
+
+        //CSS dependencies for Vex
+        "vex": ['css!../../bower_components/vex/css/vex.css', 
+                'css!../../bower_components/vex/css/vex-theme-flat-attack.css'],
+
+        //CSS dependencies for selectize
+        "selectize": ['css!../bower_components/selectize/dist/css/selectize.css',
+                      'css!../bower_components/selectize/dist/css/selectize.default.css'],
+
 
         "jasmine": {
             "exports": "jasmine"
@@ -128,6 +171,16 @@ require.config({
             "exports": "Snowball"
         }
     },
+
+    map: {
+        /*'*': {
+            'selectize': 'selectize-wrapper'
+        },
+        'selectize': {
+            'selectize': 'selectize'
+        }*/
+    },
+
     // hbs config - must duplicate in Gruntfile.js Require build
     hbs: {
         templateExtension: "html",
