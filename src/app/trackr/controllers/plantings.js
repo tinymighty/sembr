@@ -4,33 +4,58 @@
 		Collection = require('../collections/plantings');*/
 define(['sembr', 'sembr.controller', 'backbone', 'marionette', 'ractive',
 	'trackr/views/layout',
-	'trackr/views/plantings/add', 'trackr/views/sidebar', 'trackr/views/plantings/list', 'trackr/views/plantings/show', "trackr/views/plantings/add-action",
+	'trackr/views/plantings/creadit/creadit', 'trackr/views/sidebar', 'trackr/views/plantings/list', 'trackr/views/plantings/show', "trackr/views/plantings/add-action", 'trackr/views/plantings/timeline/timeline',
 	"components/loader/loader"],
 function (sembr, Controller, Backbone, Marionette, Ractive,
 	Layout,
-	AddPlantingView, Sidebar, PlantingsListView,	ShowPlantingView, AddActionView,
+	CreateEditPlantingView, Sidebar, PlantingsListView,	ShowPlantingView, AddActionView, TimelineView,
 	LoaderView) {
 
+	"use strict";
+	
 	var PlantingsController = Controller.extend({
 
 		initialize:function (options) {
 				this.layout = new Layout();
-				this.plantings = new sembr.trackr.collections.Plantings();
 				this.loader  = new LoaderView();
+				
 				this.places = sembr.trackr.places;
+				this.plants = sembr.trackr.plants;
+				this.plantings = sembr.trackr.plantings;
+
+
 				//sembr.log('INIT PLANTINGS CONTROLLER', Math.random());
 		},
 
 		beforeModuleRoute: function(){
 			sembr.log('Controller ID: ', this.id);
 			sembr.base.setContent( this.layout );
-			this.places = sembr.trackr.places;
+
+
 			//this.layout.sidebar.show( new Sidebar({collection: this.plantings}) );
 		},
 
 		add: function(){
 			//this.layout.main.show( this.loader.render() );
-			this.layout.main.show( new AddPlantingView( {places: this.places} ) );
+			this.layout.main.show( new CreateEditPlantingView( {places: this.places} ) );
+		},
+
+		edit: function( planting_id ){
+
+			sembr.trackr.models.Planting.findOrFetchById( planting_id )
+
+				.done(function( planting ){
+					console.warn('PLANTING FOUND, FETCHING LATEST DATA.')
+					planting.fetch().done(function(){
+						this.layout.main.show( new CreateEditPlantingView( {model: planting, places: this.places} ) );
+					}.bind(this));
+					console.log("Planting loaded for edit view", planting);
+				}.bind(this))
+
+				.fail(function(){
+					sembr.error('Failed to load planting with id '+planting_id);
+				})
+			;
 		},
 
 		list: function(){
@@ -39,8 +64,6 @@ function (sembr, Controller, Backbone, Marionette, Ractive,
 
 			this.showSidebar();
 			this.layout.main.show( new LoaderView() );
-
-
 
       /*this.listenTo(this.plantings,'all', function(name){
 				sembr.log('PlantingsCollection: ', name);
@@ -52,11 +75,10 @@ function (sembr, Controller, Backbone, Marionette, Ractive,
       /*var plantingListView = new PlantingsListView({
         el: 'body'
       });*/
-
 			sembr.log('Fetching plantings', this.plantings);
-
-			this.plantings.fetch( )
-				.done( function(){
+			console.group('loading plantings.list');
+			//this.plantings.findOrFetch( )
+				//.done( function(){
 					//sembr.log("Got plantings", this.plantings);
 					//sembr.log("Planting associations", this.plantings.at(0));
 					//sembr.log("Planting to JSON", this.plantings.at(0).toJSON() );
@@ -66,13 +88,39 @@ function (sembr, Controller, Backbone, Marionette, Ractive,
           });
 
           this.layout.main.show( plantingListView );
-
-				}.bind(this))
+          console.groupEnd('loaded plantings.list');
+				/*}.bind(this))
 				.fail(function(err){
 					console.error(err);
 				});
+*/
 
 
+		},
+
+
+		timeline: function(){
+			console.group('Loading Timeline View');
+			console.warn("loading plantings for timeline view");
+			if(!this.timelineView){
+				var plantings = new sembr.trackr.collections.Plantings();
+				plantings
+					.fetch()
+					.fail(function(err){
+						sembr.log('Faled to load plantings.');
+						sembr.showError('Failed to load user plantings.');
+					})
+					.done(function( plantings ){
+						sembr.log('Loaded plantings. Showing dashboard view.');
+						this.timelineView = new TimelineView({collections: {places: this.places, plants: this.plants, plantings: plantings}});
+						this.layout.main.show( this.timelineView );
+					}.bind(this))
+					.then(function(){
+						console.groupEnd();
+					});
+			}else{
+				this.layout.main.show( this.timelineView );
+			}
 
 		},
 

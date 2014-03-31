@@ -1,8 +1,16 @@
-<div class="planting list">
+<div class="planting list container">
 {{#plantings}}
-    <div class="planting-list-item">
-        <h4><a href="/track/planting/{{id}}">{{plant.use_name}}</a></h4>
+    <div class="planting list item" data-id="{{id}}">
+        <h4><a href="/track/planting/{{id}}" on-click="navigate">{{plant.use_name}}</a> <a href="/track/planting/{{id}}/edit" on-click="navigate"><i class="pencil icon"></i> Edit</a></h4>
         <h6>{{place.name}}</h6>
+
+<div class="debug">
+CID: {{cid}}<br>
+ID: {{id}}<br>
+Plant ID: {{plant_id}}<br>
+Place ID: {{place_id}}
+</div>
+
     </div>
 {{/plantings}}
 

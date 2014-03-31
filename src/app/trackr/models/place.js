@@ -5,6 +5,17 @@ define(['sembr', 'sembr.model'],
         Place = Model.extend({
             type: 'place',
 
+            default_place_types:[
+                'garden',
+                'greenhouse',
+                'orchard',
+                'patio',
+                'plot',
+                'propagator',
+                'seedbed',
+                'terrace'
+            ],
+
             // Model Constructor
             initialize: function() {
                 Model.prototype.initialize.apply(this, arguments);

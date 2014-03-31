@@ -1,0 +1,36 @@
+{
+  "name": "Gnome",
+  "version": "0.0.1",
+  "authors": [
+    "Andru Vallance <andru@tinymighty.com>"
+  ],
+  "description": "Beautifully simple crop tracking",
+  "main": "?",
+  "keywords": [
+    "?"
+  ],
+  "license": "none",
+  "homepage": "http://tinymighty.github.io/sembr",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "requirejs": "2.1.11",
+    "require-less": "~0.1.1",
+    "requirejs-hbs": "",
+    "requirejs-i18n": "2.0.4",
+    "jquery": "2.1.0",
+    "backbone": "1.1.2",
+    "marionette": "1.6.4",
+    "semantic-ui": "0.15.1",
+    "ractive": "0.3.9"
+  },
+  "resolutions": {
+    "jquery": "2.1.0"
+  }
+}

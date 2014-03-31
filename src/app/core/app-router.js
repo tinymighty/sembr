@@ -1,4 +1,5 @@
 define(['backbone', 'marionette'], function(Backbone, Marionette){
+  "use strict";
   var AppRouter = Backbone.Router.extend({
 
 

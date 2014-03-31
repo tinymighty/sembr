@@ -1,14 +1,101 @@
 <div class="controls">
-<div class="ui text menu">
-  <div class="header item">Group By</div>
-  <a class="active item">
-    <i class="home icon"></i> Plant
-  </a>
-  <a class="item">
-    <i class="mail icon"></i> Place
-  </a>
-  <a class="item">
-    <i class="user icon"></i> Most Popular
-  </a>
+	<div class="ui text menu">
+	  <div class="header item">Group By</div>
+	  <a class="active item">
+	    <i class="home icon"></i> Plant
+	  </a>
+	  <a class="item">
+	    <i class="mail icon"></i> Place
+	  </a>
+	</div>
 </div>
+
+Group by: {{group_by}}
+Scale: <input value="{{zoomScale}}" type="number" step="0.05"> <button on-click="setScale" value="9">Week</button> <button on-click="setScale" value="40">Month</button> <button on-click="setScale" value="370">Year</button>  <button on-click="setScale" value="1825">5 Years</button>
+Offset: <input value="{{offset}}" type="number" step="10">
+
+
+
+<div id="plantings_svg_wrapper">
+<svg>
+
+<g class="planting group axis" transform="translate( 0, 0)">
+{{#groups:i}}
+	<g class="planting group label" transform="translate(0, {{ verticalGroupPos( i ) }})">
+		<text class="{{group_by}} group label {{( plantingGroupIcon(.) )}}">{{ name }}</text>
+	</g>
+{{/groups}}
+</g>
+
+<g class="draggable timeline view" transform="translate( {{timeline_x}}, 0 )">
+	<g class="horizontal time axis" transform="translate( 0, 0)" height={{height}}>
+	{{#intervals : i }}
+		{{# type === 'year' }}<g class="year time interval" transform="translate({{ xScale( startIndex ) }}, 0)">
+			<line y1="0" y2="{{height}}"  />
+			<text x="0" y="20">{{ labels[0] }}</text>
+		</g>
+		{{/ #type }}
+		{{# type === 'quarter' }}<g class="quarter time interval" transform="translate({{ xScale( startIndex ) }})" width="{{ xScale( intervalLength ) }}">
+			<line y1="0" y2="{{height}}"  />
+			<text x="{{ xScale( intervalLength/2  ) }}" y="20"></text>
+		</g>
+		{{/ #type }}
+		{{# type === 'month' }}<g class="month time interval" transform="translate({{ xScale( startIndex ) }}, 20)" width="{{ xScale( intervalLength ) }}">
+			<line y1="0" y2="{{height}}"  />
+			<text x="{{ xScale( intervalLength/2  ) }}" y="20">{{ formatMonth( moment, formattingBreakpoint ) }}</text>
+		</g>
+		{{/ #type }}
+		{{# type === 'week' }}<g class="week time interval" transform="translate({{ xScale( startIndex ) }})" width="{{ xScale( intervalLength ) }}">
+			<line y1="0" y2="{{height}}" />
+		</g>
+		{{/ #type }}
+		{{# showDays }}{{#[0,1,2,3,4,5,6]: i}}<g class="day time interval" transform="translate({{ xScale( startIndex+i )}}, 40)" width="{{ xScale( 1 ) }}">
+			<line y1="0" y2="{{height}}"  />
+			<text x="{{ xScale( 0.5  ) }}" y="20">{{ formatDay(  moment, i, formattingBreakpoint ) }}</text>
+		</g>
+		{{/}}
+		{{/ showDays }}
+	{{/intervals}}
+	</g>
+
+	{{#groups:i}}
+	<g class="planting group" transform="translate( 0, {{ verticalGroupPos( i ) }})">
+		{{#models:i2}}
+	 	<!-- plot a line for the entire planting, bookended by circles -->
+	 	<g class="planting line" transform="translate( 0, {{ i2*30 }})">
+		 	
+		 	<g class="planting period" transform="" on-click="plantingClick">
+				<text x="{{ xScale( dayIndex( planted_from ) ) }}" y="-5">
+				{{ formatDate(planted_from) }} - {{ formatDate(planted_until) }}
+				</text>
+
+		 		<line x1="{{ xScale( dayIndex( planted_from ) ) }}" x2="{{ xScale( dayIndex( planted_until ) ) }}" />
+		 		<circle r="4" cx="{{ xScale( dayIndex( planted_from ) ) }}" />
+		 		<circle r="4" y="0" cx="{{ xScale( dayIndex( planted_until ) ) }}" />
+		 		<!--<text>{{planted_from}} / {{planted_until}} / {{ dayIndex( planted_until ) }} / {{ xScale( dayIndex( planted_until ) ) }}</text>-->
+		 	</g>
+
+			<g class="harvest group">
+			{{#actions}}
+				<g class="harvest period" transform="">
+					<line x1="{{ xScale( dayIndex( from ) ) }}" x2="{{ xScale( dayIndex( until ) ) }}" />
+				</g>
+			{{/actions}}
+			</g>
+		</g>
+		{{/models}}
+
+	</g>
+	{{/groups}}
+	<!--<g class="vertical group axis">
+		{{#groups: i}}
+		<text class="group name" transform="translate(0, i}})">{{name}}</text>
+		{{/groups}}
+	</g>-->
+
+</g>
+
+
+</svg>
 </div>
+

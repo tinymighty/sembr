@@ -1,20 +1,23 @@
 	define(['backbone', 'sembr.modulerouter'], 
 function(Backbone, ModuleRouter) {
-   return ModuleRouter.extend({
-			//'index' must be a method in AppRouter's controller
+	"use strict";
+	return ModuleRouter.extend({
+		//'index' must be a method in AppRouter's controller
 
-			urlPrefix: 'track',
+		urlPrefix: 'track',
 
-			moduleRoutes: {
-				'': 'Dashboard.dashboard',
-			  'plantings': 'Plantings.list',
-			  'planting/new': 'Plantings.add',
-			  'planting/:planting_id': 'Plantings.show',
+		moduleRoutes: {
+			'': 'Dashboard.dashboard',
+		  'plantings': 'Plantings.list',
+		  'timeline': 'Plantings.timeline',
+		  'planting/new': 'Plantings.add',
+		  'planting/:planting_id/edit': 'Plantings.edit',
+		  'planting/:planting_id': 'Plantings.show',
 
-			  'places': 'Places.dashboard',
+		  'places': 'Places.dashboard',
 
-			  'record': 'Record.record',
-			}
+		  'record': 'Record.record',
+		}
 
-   });
+	});
 });

@@ -50,6 +50,7 @@
 
     // Listen for relevant events.
     if (this.initialize) model.all().on('initialize', this.initialize, this);
+    //if (this.initialize) model.on('initialize', this.initialize, this);
     if (this.change) model.all().on('change', this.change, this);
     if (this.parse) model.all().on('parse', this.parse, this);
     if (this.destroy) model.all().on('destroy', this.destroy, this);
@@ -104,9 +105,14 @@
     _.defaults(this, {
       id: this.name + '_id'
     });
+    //listen in on the this model
     model.all()
       .on('associate:' + this.name, this.replace, this)
       .on('dissociate:' + this.name, this.remove, this);
+    //listen in on the other model
+    /*this.model.all()
+      .on('associate:' + this.inverse, this.replace, this)
+      .on('dissociate:' + this.inverse, this.remove, this);*/
   };
 
   _.extend(One.prototype, Association.prototype, {
@@ -125,6 +131,7 @@
     // Parse the models attributes.  If `source` isn't found use the `id`
     // attribute.
     initialize: function(model) {
+      console.log("INIT ASSOC for %o", model.type);
       this.parse(model, model.attributes);
       var id = model.get(this.id);
       if (id != null) this.replace(model, id);
@@ -135,7 +142,8 @@
     parse: function(model, resp) {
       if (!resp || !_.has(resp, this.source)) return;
       var attrs = resp[this.source];
-      delete resp[this.source];
+      
+      //delete resp[this.source];
       this.replace(model, attrs);
     },
 
@@ -168,13 +176,19 @@
 
       // If `other` is a primitive, assume it's an id.
       if (other != null && !_.isObject(other)) {
-        id = other;
-        (other = {})[this.model.prototype.idAttribute] = id;
+        //id = other;
+        //(other = {})[this.model.prototype.idAttribute] = id;
+        other = this.model.find({id: other});
+        console.log('Loading %s model by id %s... result:  %s', this.name, other.id || other, (!!other) );
+        if(!other)
+          return;
       }
 
       // Is `other` already the current model?
-      if (other && !(other instanceof Model)) other = this.model.create(other);
+      //if (other && !(other instanceof Model)) other = this.model.findOrCreate(other);
       if (current === other) return;
+
+      console.log('Replacing model for %o from(%o) to(%o)', this.id, current, other);
 
       // Tear down the current association.
       if (!other) model.unset(this.id);
@@ -237,7 +251,8 @@
       if (!resp) return;
       var attrs = resp[this.source];
       if (!attrs) return;
-      delete resp[this.source];
+      
+      //delete resp[this.source];
       var collection = this.get(model);
       attrs = collection.parse(attrs);
 
@@ -256,6 +271,31 @@
     // Parse the attributes to initialize a new model.
     initialize: function(model) {
       this.parse(model, model.attributes);
+
+      //ensure that when a hasMany association model is initialized /after/ the model
+      //on the hasOne side, that the hasOne model is notified of the existance of this
+      //model
+      console.log('%s hasMany %s attempting to notify inverse model of init...', this.inverse, this.name, model.id);
+      var 
+        where = {},
+        others,
+        inverseConstructor = this.get(model).model(),
+        inverseAssoc = inverseConstructor.associations()[this.inverse]
+      ;
+      //bail out of the inverse association doesn't exist, or if it doesn't define a source property
+      if(!inverseAssoc || !inverseAssoc.source) return;
+
+      where[ inverseAssoc.source ] = model.id;
+      others = inverseConstructor.all().where( where ) || [];
+      console.log('Checked inverseConstructor, found %s instances.', others.length, others, where, inverseConstructor.all().models);
+
+      if(others.length){
+        console.log('Found models to notify!');
+        _(others).each(function(other){
+          this.associate(other, model);
+        }, this);
+        
+      }
     },
 
     // Models added to the collection should be associated with the owner.
@@ -453,7 +493,6 @@
     initialize: function() {
       // Use `"cid"` for retrieving models by `attributes.cid`.
       this.set(this.cidAttribute, this.cid);
-
       // Add the model to `all` for each constructor in its prototype chain.
       var ctor = this.constructor;
       do { ctor.all().add(this); } while (ctor = ctor.parent);
@@ -482,23 +521,30 @@
     // Create a new model after checking for existence of a model with the same
     // id.
     create: function(attrs, options) {
-      var model;
-      var all = this.all();
       var id = attrs && attrs[this.prototype.idAttribute];
 
-      //find an existing model with matching cid or id
-      if(model = this.find(attrs, true) ){
+      var model = this.find(attrs);
+
+      if (!options) options = {};
+
+      // If `attrs` belongs to an existing model, return it.
+      if (model && attrs === model.attributes) return model;
+
+      // If found by id, modify and return it.
+      if (id && model) {
+        model.set(model.parse(attrs), _.extend(options, {silent: false}));
         return model;
       }
 
-      if (!id) return new this(attrs, options);
-
       // Throw if a model already exists with the same id in a superclass.
-      var ctor = this;
-      do {
-        if (!ctor.all().get(id)) continue;
+      var parent = this;
+      while (parent = parent.parent) {
+        if (!parent.all().get(id)) continue;
         throw new Error('Model with id "' + id + '" already exists.');
-      } while (ctor = ctor.parent);
+      }
+      //console.log("Could not find existing instance on this.all (%o) for %s: attrs %o", this.all(), attrs.id, attrs);
+      // Ensure attributes are parsed.
+      options.parse = true;
 
       return new this(attrs, options);
     },
@@ -506,26 +552,20 @@
     // ## find
     // Attempt to find an existing model matching the provided attrs
     find: function(attrs, merge){
-      var model;
-      var all = this.all();
-      var cid = attrs && attrs[this.prototype.cidAttribute];
-      var id = attrs && attrs[this.prototype.idAttribute];
+      if (!attrs) return false;
 
-      // If a model already exists for `id`, return it.
-      if (cid && (model = all.getByCid(cid))) {
-        return model;
-      }
-      // If `attrs` belongs to an existing model, return it.
-      if (id && (model = all.get(id))) {
-        if(model.attrs!==attrs && merge){
-          attrs = model.parse(attrs);
-          model.set(attrs);
-        }
-        return model;
-      }
+      var cid = attrs[this.prototype.cidAttribute];
+      var id = attrs[this.prototype.idAttribute];
 
-      return false;
-      
+      return (id || cid) && this.all().get( id || cid) || false;
+    },
+
+    findOrCreate: function(attrs, options){
+      var model = this.find(attrs, options);
+      if(! model ){
+        model = this.create(attrs, options);
+      }
+      return model;
     },
 
     // Create associations for a model.

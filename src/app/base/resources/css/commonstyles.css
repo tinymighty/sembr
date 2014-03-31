@@ -1,0 +1,47 @@
+html,
+body {
+  font-size: 15px;
+  height: 100%;
+}
+
+body {
+  font-family: "Museo Sans", "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  background: #f4ede0;
+  margin: 0px;
+  padding: 0px;
+  color: #555555;
+  text-rendering: optimizeLegibility;
+  min-width: 320px;
+}
+
+.ui.text.menu{
+	margin-right:0;
+}
+
+.ui.button{
+	text-transform: none;
+	font-weight:normal;
+}
+
+.ui.header {
+  font-family: 'Museo', "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+}
+
+.places.list{
+	list-style-type:none;
+}
+.places.list .item{
+
+}
+.places.list .item.active > .place.name{
+	color:Red;
+}
+.places.list .list{
+	margin:0;
+	padding:0 0 0 0.9rem;
+	border:1px solid #ccc;
+	border-width: 0 0 1px 1px;
+}
+.places.list .list .item{
+
+}

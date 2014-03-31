@@ -1,0 +1,78 @@
+@colors-emerald: #6bc25f;
+
+@appnav-bg-color: @colors-emerald;
+@appnav-inverse-bg-color: #fff;
+@appnav-content-color: #fff;
+@appnav-inverse-content-color: @colors-emerald;
+
+#app-nav{
+
+	position:fixed;
+	width:70px;
+	top:0;
+	left:0;
+	bottom:0;
+
+	padding-top:50px;
+
+	border-right:5px solid white;
+	
+	background:@colors-emerald;
+	
+	*{
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+	}
+
+	.item{
+		display:block;
+
+		margin-bottom:1em;
+		
+		color: @appnav-content-color;
+		text-decoration: none;
+		text-align:center;
+
+		cursor:pointer;
+
+		.icon{
+			width:auto;
+			height:auto;
+
+			font-size:2em;
+			padding:0.5em;
+
+			&:hover{
+				opacity:1;
+			}
+
+		}
+		&.active{
+			background:@appnav-inverse-bg-color;
+			color:@appnav-bg-color;
+		}
+
+		.label{
+			display:none;
+		}
+	}
+}
+.tooltip-element.sembr-menu .tooltip-content{
+	border-radius:0 5px 5px 0;
+
+	position: relative;
+  font-family: inherit;
+  background: @appnav-content-color;
+  color: @appnav-bg-color;
+  padding: 0.3em;
+  font-size: 1.5em;
+  line-height: 1.5em;
+
+  font-family:"Museo";
+  font-weight:500;
+}
+
+body{
+	padding-left:80px;
+}

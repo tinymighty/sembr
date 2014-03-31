@@ -2,7 +2,7 @@ define(["sembr", 'sembr.base', 'sembr.model', 'base/models/user'],
 function(sembr, base, Model, User) {
     // Creates a new Backbone Model class object
 
-    _(base.models.User).extend({
+    _(User).extend({
 
         type: 'user',
 
@@ -16,30 +16,7 @@ function(sembr, base, Model, User) {
             if(attrs.type!=='user'){
                 throw {error: 'type property must be plant'};
             }
-        },
-
-
-        relatedDocs:[
-
-            {
-                target: 'plantings',
-                key: 'plant_id',
-                source: 'remote',
-                autoFetch: false,
-                query: {
-                    map: function(doc){
-                        if(doc.type==='planting'){
-                            emit([doc.plant_id], null);
-                        }
-                    },
-                    options: function( docs, collection ){
-                        return {
-                            keys: _(docs).pluck('_id')
-                        }
-                    }
-                }
-            }
-        ]
+        }
 
     });
     

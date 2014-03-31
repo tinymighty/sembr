@@ -1,4 +1,4 @@
-<div class="ui relaxed inverted page grid segment">
+<!--<div class="ui relaxed inverted page grid segment">
 	<div class="column">
 		<div class="ui inverted form segment">
 			<div class="ui massive input">
@@ -8,15 +8,40 @@
 	</div>
 </div>
 
-<div class="parsed"></div>
+<div class="parsed"></div>-->
 
 <div class="ui action selection list">
-{{#each actions}}
-	<div class="list item">
-	{{this}}
-	</div>
-{{/each}}
+<input value="{{when}}" type="text" placeholder="when">
+<input value="{{verb}}" type="text" placeholder="verb">
+<input value="{{what}}" type="text" placeholder="to what">
+<input value="{{where}}" type="text" placeholder="where"><br />
+
+<select value="{{verb}}" proxy-change="verbSelect">
+{{#verbs}}
+	<option value="{{.}}">{{ . }}</option>
+{{/verbs}}
+</select>
 </div>
+
+{{#verb}}
+Objects for {{verb}} <br>
+{{#objects}}
+	{{type}}:
+	{{# type==='planting' }}
+		{{plant.use_name}} in {{place.name}}
+	{{/}}
+	{{# type==='plant' }}
+		{{use_name}}
+	{{/}}
+	{{# type==='place' }}
+		{{place.name}}
+	{{/}}
+	<i>{{id}}</i>
+	<br>
+{{/objects}}
+{{/verb}}
+
+
 
 <div class="ui plant selection">
 </div>

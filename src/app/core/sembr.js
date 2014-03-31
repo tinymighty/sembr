@@ -1,8 +1,9 @@
-define(['backbone', 'jquery', 'sembr.module', 'underscore', 'ractive', 'ractive.backbone',
+define(['backbone', 'jquery', 'sembr.module', 'underscore', 'ractive', 'ractive.backbone', 'moment',
 	'sembr.error', 'sembr.hoodup', 'sembr.mixins.readypromise'],
-function (Backbone, $, Marionette, _, Ractive, Rb,
+function (Backbone, $, Marionette, _, Ractive, Rb, moment,
 	Error, Hoodup, ReadyPromise) {
 
+	"use strict";
 
 	var sembr = new Backbone.Marionette.Application();
 
@@ -10,15 +11,18 @@ function (Backbone, $, Marionette, _, Ractive, Rb,
 	Hoodup.connect().attach();
 	//dev convenience for testing...
 	sembr.hoodup = Hoodup;
-	Hoodup.hoodie.account.signIn('andru', 'andru');
-
+	sembr.hoodie = Hoodup.hoodie;
+	//Hoodup.hoodie.account.signIn('andru', 'andru');
 
 	var settings = {
 		container: 'body'
 	}
 
+	//we should set this to user locale
+	moment.lang('en-GB'); 
+
 	sembr.initModule = function(name, options){
-		app_options = sembr.options[name] || {};
+		var app_options = sembr.options[name] || {};
 		options = _(options || {}).defaults(app_options);
 		return this.module(name).start(options);
 	}
@@ -29,7 +33,7 @@ function (Backbone, $, Marionette, _, Ractive, Rb,
 		return ((/iPhone|iPod|iPad|Android|BlackBerry|Opera Mini|IEMobile/).test(userAgent));
 	}
 	//mixin readypromise properties...
-	_(sembr).extend( new ReadyPromise() );
+	_.extend( sembr, new ReadyPromise() );
 
 	//sembr.log = (options.log && console) ? sembr.log : function(){};
 	sembr.log = _(console.log).bind(console);
@@ -51,11 +55,6 @@ function (Backbone, $, Marionette, _, Ractive, Rb,
 		});
 	});
 
-	//load current user for the whole application...
-	sembr.addInitializer(function(options){
-		//temporary demo user!
-		sembr.user = {};//new Backbone.Model({'_id': 'sembr.es/user/andru', 'username': 'andru', 'email':'andru@sembr.es'});
-	});
 
 	sembr.addInitializer(function (options) {
 		sembr.log('Sembr has loaded', sembr);
@@ -102,4 +101,4 @@ function (Backbone, $, Marionette, _, Ractive, Rb,
 	});
 
 	return sembr;
-});
+});

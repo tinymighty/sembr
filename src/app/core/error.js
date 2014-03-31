@@ -1,6 +1,6 @@
 define([], function(s){
-	
-	_error = function(msg){
+	"use strict";
+	var error = function(msg){
 		return new Error(msg);
 	}
 	Error = function(msg){
@@ -10,5 +10,5 @@ define([], function(s){
 		return this.message;
 	}
 
-	return _error;
+	return error;
 });

@@ -1,9 +1,9 @@
-sembr
+Gnome
 =====
 
 See project homepage at [tinymighty.github.io/sembr](http://tinymighty.github.io/sembr)
 
-sembr is an offline-first browser based crop planning and tracking application.
+Gnome is an offline-first browser based crop planning and tracking application.
 
 Built on the shoulders of these giants
 
