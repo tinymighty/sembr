@@ -4,14 +4,16 @@ define(['marionette', 'ractive', 'ractive.backbone'], function(Marionette, Racti
   	constructor: function( options ){
   		options = options || {};
 
-  		var template = options.template || this.template;
+      var 
+        template = options.template || this.template
+      ;
 
-  		if ( template === undefined ){
-  			throw new Error('Cannot instantiate RactiveView without a template.');
-  		}
-  		this._ensureElement();
+    if ( template === undefined ){
+      throw new Error('Cannot instantiate RactiveView without a template.');
+    }
+    this._ensureElement();
       if(!this.data){
-  		  this.data = {};
+        this.data = {};
       }
 
   		//bind class methods or functions as Ractive invocation expressions
@@ -25,12 +27,26 @@ define(['marionette', 'ractive', 'ractive.backbone'], function(Marionette, Racti
   			}, this);
   		}
 
-  		this.ractive = new Ractive({
+      if( this.decorators !== undefined ){
+        _( this.decorators ).each(function( method, name ){
+          if( !_(method).isFunction() && _(this[method]).isFunction() ){
+            this.decorators[name] = _(this[method]).bind(this);
+          }
+          this.decorators[name] = _(this.decorators[name]).bind(this);
+        }, this);
+      }
+      this._ractiveOptions = {};
+      this._beforeRactive( options );
+
+  		this.ractive = new Ractive( _({
   			el: this.$el,
-  			template: this.template,
+  			template: _( this.template ).clone(),
   			data: this.data,
   			adaptors: [ Ractive.adaptors.Backbone ],
-  		});
+        decorators: this.decorators
+  		}).defaults( this._ractiveOptions  ));
+
+      console.log('Ractive view initialized: %o', this.ractive);
 
       //bind class methods or functions as Ractive events,
       //but keep them bound to this view object
@@ -55,6 +71,7 @@ define(['marionette', 'ractive', 'ractive.backbone'], function(Marionette, Racti
         this.ractive.observe( this.observers );
       }
 
+
   		Marionette.View.prototype.constructor.apply(this, arguments);
 
   	},
@@ -62,6 +79,9 @@ define(['marionette', 'ractive', 'ractive.backbone'], function(Marionette, Racti
     //Evets are bound as Ractive events, so this is a no-op
     _delegateDOMEvents: function(){},
     undelegateEvents: function(){},
+
+    /* Define this method to do any data inits before Ractive is instantiated */
+    _beforeRactive: function(){},
 
   	set: function( keypath, value ){
       this.ractive.set(keypath, value);
