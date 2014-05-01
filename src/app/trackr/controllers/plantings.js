@@ -114,6 +114,7 @@ function (sembr, Controller, Backbone, Marionette, Ractive,
 						sembr.log('Loaded plantings. Showing dashboard view.');
 						this.timelineView = new TimelineView({collections: {places: this.places, plants: this.plants, plantings: plantings}});
 						this.layout.main.show( this.timelineView );
+						console.groupEnd();
 					}.bind(this))
 					.then(function(){
 						console.groupEnd();

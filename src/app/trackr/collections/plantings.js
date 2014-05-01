@@ -8,7 +8,11 @@ define(["sembr", "underscore", "sembr.collection"],
 		  		return sembr.trackr.models.Planting;
 		  	}
 		    return sembr.trackr.models.Planting.create(attrs, options);
-		  }
+		  },
+
+		  comparator: function(chapter) {
+			  return chapter.get("planted_from");
+			}
 
 		});
 

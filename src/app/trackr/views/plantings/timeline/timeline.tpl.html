@@ -30,6 +30,7 @@ Offset: <input value="{{offset}}" type="number" step="10">
 <g class="draggable timeline view" transform="translate( {{timeline_x}}, 0 )">
 	<g class="horizontal time axis" transform="translate( 0, 0)" height={{height}}>
 	{{#intervals : i }}
+	{{ echoInterval() }}
 		{{# type === 'year' }}<g class="year time interval" transform="translate({{ xScale( startIndex ) }}, 0)">
 			<line y1="0" y2="{{height}}"  />
 			<text x="0" y="20">{{ labels[0] }}</text>
@@ -77,7 +78,7 @@ Offset: <input value="{{offset}}" type="number" step="10">
 
 			<g class="harvest group">
 			{{#actions}}
-				<g class="harvest period" transform="">
+				<g class="harvest period" transform="" on-hover="dateTooltip" decorator="action">
 					<line x1="{{ xScale( dayIndex( from ) ) }}" x2="{{ xScale( dayIndex( until ) ) }}" />
 				</g>
 			{{/actions}}

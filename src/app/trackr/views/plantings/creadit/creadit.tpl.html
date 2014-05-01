@@ -5,7 +5,7 @@
 		<div class="field" id="add_planting-select_plant">
 			<label>Plant</label>
 
-			<select value="{{planting.plant_id}}" required>
+			<select value="{{planting.plant_id}}" class="plant" decorator="plantSelectize" required>
 				<option value="">Choose or Add a Plant</option>
 				{{#plants:i}}
 				<option value="{{id}}">{{use_name}}</option>
@@ -17,7 +17,7 @@
 		<div class="field" id="add_planting-select_place">
 			<label>Place</label>
 
-			<select value="{{planting.place_id}}" required>
+			<select value="{{planting.place_id}}" class="place" decorator="placeSelectize" required>
 				<option value="">Choose or Add a Place</option>
 				{{#places:i}}
 				<option value="{{id}}">{{name}}</option>
