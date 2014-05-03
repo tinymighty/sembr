@@ -4,7 +4,7 @@ function(sembr, Model, moment) {
 	var parent = Model.prototype;
 
 	var normalize_date = function( value ){
-  	return moment(value).isValid() ? moment(value).toISOString() : value;
+    return moment(value).isValid() ? moment(value).toISOString() : value;
   }
 
 	var Planting = Model.extend({
@@ -21,11 +21,11 @@ function(sembr, Model, moment) {
 			planted_until:null //date it (will be|has been) planted until
 		},
 
-	  validation: {
-	    type: {
-	      oneOf: ['planting']
-	    },
-	    plant_id: function( value, attr, computedState ){
+    validation: {
+      type: {
+        oneOf: ['planting']
+      },
+      plant_id: function( value, attr, computedState ){
 				if( !value || !sembr.trackr.models.Plant.find({'id': value}) ){
 					return 'Invalid Plant ID';
 				}
@@ -36,7 +36,8 @@ function(sembr, Model, moment) {
 				}
 			},
 	    planted_from: function( value, attr, computedState ){
-	    	if( !value || !moment(value).isValid() ){
+	      console.log('Validating planted_from date %o', value);
+	    	if( !value || !moment( value ).isValid() ){
 	    		return 'Invalid start date: '+moment(value).format();
 	    	}
 	    },
