@@ -24,12 +24,13 @@ template ){
   var 
     groupableBy = ['plant', 'place'],
     groupBy = 'plant',
-    plantingHeight = 50,
+    plantingHeight = 30,
     dayWidth = 10,  //the width for a day at scale factor 1
     defaultScale = 1,
     y_offset = 100, //the initial vertical offset for planting groups
-    planting_group_spacing = 50, //the spacing between planting groups
-    previous_group_y = y_offset //used when calculating vertical group positions
+    planting_group_spacing = 30, //the spacing between planting groups
+    previous_group_y = y_offset, //used when calculating vertical group positions
+    previous_group_height = 0 //used when calculating vertical group positions
   ;
 
   //ItemView provides some default rendering logic
@@ -42,16 +43,11 @@ template ){
     },
 
     data: {
-      'xScale': function(){ return 0; }, //temporary xScale object, it'll be overridden when rendered
-      'verticalGroupPos': function( index ){
-
-        previous_group_y = (index===0 ? 0 : previous_group_y) + y_offset + index*plantingHeight + (index===0 ? 0 : 1) * planting_group_spacing; 
-        return previous_group_y;
-      },
       'offset': 0,
       'zoomScale': 1,
       'showDays': false,
-      'formattingBreakpoint':0
+      'formattingBreakpoint':0,
+      'plantingHeight': plantingHeight
     },
 
     decorators: {
@@ -85,6 +81,7 @@ template ){
     },
 
     helpers: {
+      'xScale': function(){ return 0; }, //temporary xScale object, it'll be overridden when rendered
       'group': '_group',
       'formatDate': '_formatDate',
       'formatDay': '_formatDay',
@@ -94,7 +91,12 @@ template ){
       'plantingGroupIcon': '_plantingGroupIconFromGroup',
       'echoInterval': function(){
           console.log('Drawing intervals, yo.');
-      }
+      },
+      'verticalGroupPos': function( index ){
+        previous_group_y = previous_group_y + previous_group_height + (index===0 ? 0 :  planting_group_spacing); 
+        previous_group_height = this.groups[index].models.length * plantingHeight;
+        return previous_group_y;
+      },
     },
 
     observers: {
@@ -108,13 +110,15 @@ template ){
     },   
 
     min_scale: 0.00001,
-    max_scale: 4, 
+    max_scale: 10, 
 
     _beforeRactive: function( options ){
+      this.options = options = _(options).defaults({group_by: 'plant'});
+      
       this.data.plants = options.collections.plants;
       this.data.places = options.collections.places;
       options.collections.plantings.sortBy('planted_from');
-      this.data.groups = this.groupPlantings( options.collections.plantings, groupBy );
+      this.groups = this.data.groups = this.groupPlantings( options.collections.plantings, groupBy );
       this.data.group_by = options.group_by;
 
       this.data.intervals = [];//this.generateIntervals(this.from, this.until, this.scale)
@@ -122,14 +126,12 @@ template ){
       this._ractiveOptions.magic = false;
     },
 
-    initialize: function(options){
+    initialize: function( options ){
       var 
         ractive = this.ractive,
         from,
         until
       ;
-
-      this.options = _(options).defaults({group_by: 'plant'});
 
       if(!options.collections || _(['plants', 'places', 'plantings']).difference(_(options.collections).keys()).length  ){
         throw 'Plantings, places and plants collections must be passed to plantings/timeline view.';
@@ -138,6 +140,7 @@ template ){
       this.history = new Backbone.UndoManager();
       this.history.register(options.collections);
       
+      this.group_by = options.group_by;
       this.drawn = false;
       this.baseWidth = 0;
       this.screenWidth = $(window).width;
@@ -189,6 +192,7 @@ template ){
 
     onReady: function(){
       this.startScrollListeners();
+      this.onResize();
       this.render();
     },
 
@@ -354,7 +358,7 @@ template ){
       }
 
       var intervalDisplayBreakpoints = {
-        days: 5, //stop showing  the view is zoomed out more than 500%
+        days: 8, //stop showing  the view is zoomed out more than 500%
         weeks: 0.3, //over 100 days, don't show weeks
         months: 0, //always show months
         //seasons: 3000, //over 3000 days, don't show seasons
@@ -366,6 +370,8 @@ template ){
        */
       /*if(scale > intervalDisplayBreakpoints.days){
         this.set('showDays', true);
+      }else{
+        this.set('showDays', false);
       }*/
 
       //console.log('Checking formatting breakpoints', this.formattingBreakpoints);
@@ -588,12 +594,12 @@ template ){
       };
 
       _(grouped).each(function(models, id){
-        models = new sembr.trackr.collections.Plantings(models);
+        //models = new sembr.trackr.collections.Plantings(models);
         /*models.comparator = function(model){
           return model.get('planted_from');
         }
         models.sort();*/
-        groups.push( { name: getGroupName( models.at(0) ), models: models });
+        groups.push( { name: getGroupName( models[0] ), models: models });
       }.bind(this));
 
       return groups;
@@ -664,13 +670,17 @@ template ){
     /*
      * Ractive Helper. Get a planting group icon based on the group provided.
      */
+     _plantingGroupLabelFromGroup: function( group ){
+      return group.name;
+     },
+     
     _plantingGroupIconFromGroup: function( group ){
-      if( this.get('group_by') === 'plant' ){
-        return '';
+      if( this.group_by === 'plant' ){
+        return 'iconclass-plant-group';
       }
       else 
-      if( this.get('group_by') === 'place'){
-        return '';
+      if( this.group_by === 'place'){
+        return 'iconclass-place-group';
       }
     },
 

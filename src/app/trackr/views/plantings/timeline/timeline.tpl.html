@@ -19,10 +19,10 @@ Offset: <input value="{{offset}}" type="number" step="10">
 <div id="plantings_svg_wrapper">
 <svg>
 
-<g class="planting group axis" transform="translate( 0, 0)">
+<g class="planting group axis" transform="translate( 0, 0 )">
 {{#groups:i}}
 	<g class="planting group label" transform="translate(0, {{ verticalGroupPos( i ) }})">
-		<text class="{{group_by}} group label {{( plantingGroupIcon(.) )}}">{{ name }}</text>
+		<text class="{{group_by}} group label {{ plantingGroupIcon( this ) }}">{{ plantingGroupLabel( this ) }}</text>
 	</g>
 {{/groups}}
 </g>
@@ -33,7 +33,7 @@ Offset: <input value="{{offset}}" type="number" step="10">
 	{{ echoInterval() }}
 		{{# type === 'year' }}<g class="year time interval" transform="translate({{ xScale( startIndex ) }}, 0)">
 			<line y1="0" y2="{{height}}"  />
-			<text x="0" y="20">{{ labels[0] }}</text>
+			<text x="0" y="20">{{ moment.format('YYYY') }}</text>
 		</g>
 		{{/ #type }}
 		{{# type === 'quarter' }}<g class="quarter time interval" transform="translate({{ xScale( startIndex ) }})" width="{{ xScale( intervalLength ) }}">
@@ -63,7 +63,7 @@ Offset: <input value="{{offset}}" type="number" step="10">
 	<g class="planting group" transform="translate( 0, {{ verticalGroupPos( i ) }})">
 		{{#models:i2}}
 	 	<!-- plot a line for the entire planting, bookended by circles -->
-	 	<g class="planting line" transform="translate( 0, {{ i2*30 }})">
+	 	<g class="planting line" transform="translate( 0, {{ i2*plantingHeight }})">
 		 	
 		 	<g class="planting period" transform="" on-click="plantingClick">
 				<text x="{{ xScale( dayIndex( planted_from ) ) }}" y="-5">
