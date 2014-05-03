@@ -1,11 +1,11 @@
 /**
  * Create/Edit Planting screen
  */
-define( ['sembr', 'backbone', 'sembr.ractiveview', 'jquery', 'pickadate', 'selectize', 'vex', 'vex.dialog',
+define( ['sembr', 'backbone', 'sembr.ractiveview', 'jquery', 'moment', 'pickadate', 'selectize', 'vex', 'vex.dialog',
 'trackr/views/plantings/creadit/create_plant', 'trackr/views/plantings/creadit/create_place',
 'rv!./creadit.tpl',
 'less!./creadit.less'],
-function(sembr, Backbone, RactiveView, $, pickadate, Selectize, vex, dialog,
+function(sembr, Backbone, RactiveView, $, moment, pickadate, Selectize, vex, dialog,
 CreatePlantView, CreatePlaceView,
 template) {
 
@@ -47,103 +47,50 @@ template) {
 			"planting.place_id": function( newValue ){
 				this.set('place_name', sembr.trackr.places.findWhere({id: newValue}).get('name') );
 			},*/
-			actions: function( actions ){
+			'actions': function( actions ){
 				console.log('action change observed');
 			},
-			planted_from: function( newValue ){
+			'planted_from': function( newValue ){
 				console.log("planted_from set to ", newValue);
 			},
-			planted_until: function( newValue ){
+			'planted_until': function( newValue ){
 				console.log("planted_from set to ", newValue);
-			}
+			},
+		// 	'planting.plant_id': function( newValue ){
+  //       if( !this.model.has('name') ){
+  //         this.model.set('name', );
+  //       }
+		// 	}
 		},
 
 		decorators: {
-
-			plantSelectize: function( node ){
-				var self = this;
-				//Plant selectize field
-				$(node).selectize({
-					create: function( input, callback ){
-						//prompt to create a new plant with the name given in input
-						self.createPlantPrompt( input )
-							.done( function( model ){
-								console.log('Plant added, promise resolved with arguments %o', arguments);
-					     	callback({
-					     		text: model.get('use_name'),
-					     		value: model.get('id')
-					     	});
-					    })
-					    .fail( function(){
-					    	console.error('Failed to create a new plant.');
-					    	callback(false);
-					    });
-						
-					},
-					createOnBlur: false,
-					maxItems: 1,
-					hideSelected: false,
-					onChange: function( id ){
-						self.model.set('plant_id', id);
-					}
-				});
-
-				return {
-					teardown: function(){
-						node.selectize.destroy();
-					}
-				}
-			},
-
-			placeSelectize: function( node ){
-				var self = this;
-				$(node).selectize({
-					create: function( input, callback ){
-						//prompt to create a new plant with the name given in input
-						self.createPlacePrompt( input )
-							.done( function( model ){
-					     	callback({
-					     		text: model.get('name'), 
-					     		value: model.get('id')
-					     	});
-					    })
-					    .fail( function(){
-					    	console.error('Failed to create a new place.');
-					    	callback(false);
-					    });
-						
-					},
-					createOnBlur: false,
-					maxItems: 1,
-					hideSelected: false,
-					onChange: function( id ){
-						self.model.set('place_id', id);
-					}
-				});
-
-				return {
-					teardown: function(){
-						node.selectize.destroy();
-					}
-				}
-			}
-
+			plantSelectize: 'plantFieldDecorator',
+			placeSelectize: 'placeFieldDecorator'
 		},
 
 		_beforeRactive: function( options ){
-			this.data.plants = sembr.trackr.plants;
+			var plantNames = [];
+      sembr.trackr.plants.each(function( plant ){
+        plantNames.push({ id: plant.get('id'), name: plant.get('use_name') });
+        if( plant.has('binomial') ){
+          plantNames.push({ id: plant.get('id'), name: plant.get('binomial') });
+        }
+      });
+      console.log("PLANT NAMES", plantNames);
+      this.data.plantNames = plantNames;
 			this.data.places = sembr.trackr.places;
-
+      
 			if( options.model ){
 				this.model = options.model;
 			}else{
 				this.model = sembr.trackr.models.Planting.create();
+				this.model.set('planted_from', moment().format() );
 			}
 
 			this.data.planting = this.model;
 		},
 
-		initialize: function(opts){
+		initialize: function( opts ){
 			var 
 				ractive = this.ractive
 			;
@@ -179,6 +126,9 @@ template) {
 			//this.render();
 		},
 
+    /**
+     * A generic prompt modal
+     */
 		createPrompt: function( msg, viewEl ){
 			var deferred = new $.Deferred();
 			if(this.promptIsOpen){
@@ -188,38 +138,78 @@ template) {
 			this.promptIsOpen = true;
 			dialog.open({
 				className: 'vex-theme-flat-attack',
-		    message: msg,
-		    input: viewEl,
-		    buttons: [
-		        $.extend({}, dialog.buttons.YES, {text: 'Save'}),
-		        $.extend({}, dialog.buttons.NO, {text: 'Cancel'})
-		    ],
-		    callback: function(data){ 
-		    	this.promptIsOpen = false; 
-		    	if(data){
-		    		deferred.resolve();
-		    	}else{
-		    		deferred.reject()
-		    	}
-		   	}.bind(this)
-		  });
-		  return deferred.promise();
+        message: msg,
+        input: viewEl,
+        buttons: [
+            $.extend({}, dialog.buttons.YES, {text: 'Save'}),
+            $.extend({}, dialog.buttons.NO, {text: 'Cancel'})
+        ],
+        callback: function(data){ 
+          this.promptIsOpen = false; 
+          if(data){
+            deferred.resolve();
+          }else{
+            deferred.reject();
+          }
+        }.bind(this)
+      });
+      return deferred.promise();
 		},
+
+
+
+    /**
+    * Set up the Selectize instance for the Place selection field
+    */		
+		placeFieldDecorator: function( node ){
+      var self = this;
+      $(node).selectize({
+        create: function( input, callback ){
+          //prompt to create a new plant with the name given in input
+          self.createPlacePrompt( input )
+            .done( function( model ){
+              callback({
+                text: model.get('name'), 
+                value: model.get('id')
+                });
+              })
+            .fail( function(){
+              console.error('Failed to create a new place.');
+              callback(false);
+            })
+          ;
+          
+        },
+        createOnBlur: false,
+        maxItems: 1,
+        hideSelected: false,
+        onChange: function( id ){
+          self.model.set('place_id', id);
+        }
+      });
+
+      return {
+        teardown: function(){
+          node.selectize.destroy();
+        }
+      };
+    },
 
 		createPlacePrompt: function( name ){
 			var 
 				deferred = new $.Deferred(),
-				newPlaceModel = new sembr.trackr.models.Place({
+				model = new sembr.trackr.models.Place({
 					name: name
 				}),
-				newPlaceView = new CreatePlaceView( {model: newPlaceModel} )
+				view = new CreatePlaceView( {model: model} )
 			;
 
-			this.createPrompt( 'You are adding '+name+' as a new place...', newPlaceView.render().$el )
+			this.createPrompt( 'You are adding '+name+' as a new place...', view.render().$el )
 				.done(function( data ){
-					newPlaceModel.set( data );
-		    	newPlaceModel.save();
-		    	deferred.resolve( newPlaceModel );
+					model.set( data );
+          model.save();
+          view.close();
+          deferred.resolve( model );
 				})
 				.fail(function(){
 					deferred.reject();
@@ -229,6 +219,47 @@ template) {
 			return deferred.promise();
 
 		},
+		
+		
+
+    /**
+    * Set up the Selectize instance for the Plant selection field
+    */
+    plantFieldDecorator: function( node ){
+      var self = this;
+      //Plant selectize field
+      $(node).selectize({
+        create: function( input, callback ){
+          //prompt to create a new plant with the name given in input
+          self.createPlantPrompt( input )
+            .done( function( model ){
+              console.log('Plant added, promise resolved with arguments %o', arguments);
+              callback({
+                text: model.get('use_name'),
+                value: model.get('id')
+              });
+            })
+            .fail( function(){
+              console.error('Failed to create a new plant.');
+              callback(false);
+            })
+          ;
+          
+        },
+        createOnBlur: false,
+        maxItems: 1,
+        hideSelected: false,
+        onChange: function( id ){
+          self.model.set('plant_id', id);
+        }
+      });
+
+      return {
+        teardown: function(){
+          node.selectize.destroy();
+        }
+      }
+    },
 
 		createPlantPrompt: function( name ){
 			var 
