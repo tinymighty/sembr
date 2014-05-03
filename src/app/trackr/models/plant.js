@@ -4,6 +4,11 @@ function(sembr, Model) {
 
     var Plant = Model.extend({
         type: 'plant',
+        
+        defaults: {
+          use_name: undefined, //the name by which the user refers to this plant
+          binomial: undefined, //the binomial (eg. Malus domestica)
+        },
 
         plantingsCollectionOptions: function(){
             return { plant_id: this.get('_id') };
