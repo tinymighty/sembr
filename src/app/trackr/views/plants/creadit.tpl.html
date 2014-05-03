@@ -1,0 +1,28 @@
+<div class="ui creadit planting form">
+<h3 class="ui header">{{#is_new}}New{{/is_new}}{{^is_new}}Edit{{/is_new}} Plant</h3>
+
+  <div class="two fields">
+
+  <div class="field">
+    <label>How do you want to refer to this plant?</label>
+    <input type="text" name="date" required class="planted from date" value="{{use_name}}" placeholder="Purple Sprouting Brocolli">
+  </div>
+
+    <div class="field">
+      <div class="two fields">
+        <div class="field">
+          <label>Binomial (latin) name</label>
+          <input type="text" name="binomial" required class="planted from date" value="{{binomial}}" placeholder="Brassica oleracea">
+        </div>
+        <div class="field">
+          <label>Variety/Cultivar name</label>
+          <input type="text" name="cultivar" required class="planted until date" value="{{cultivar}}" placeholder="Early Purple Sprouting">
+        </div>
+      </div>      
+    </div>
+
+    <div class="row-fluid">
+      <hr>
+      <a class="ui large green labelled icon save button" on-click="save"><i class="icon ok sign"></i> Save</a>
+    </div>
+</div>
