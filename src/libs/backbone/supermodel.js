@@ -275,7 +275,7 @@
       //ensure that when a hasMany association model is initialized /after/ the model
       //on the hasOne side, that the hasOne model is notified of the existance of this
       //model
-      console.log('%s hasMany %s attempting to notify inverse model of init...', this.inverse, this.name, model.id);
+      console.log('%s[%s] hasMany %s attempting to notify inverse model of init...', this.inverse, model.id, this.name);
       var 
         where = {},
         others,
@@ -285,7 +285,8 @@
       //bail out of the inverse association doesn't exist, or if it doesn't define a source property
       if(!inverseAssoc || !inverseAssoc.source) return;
 
-      where[ inverseAssoc.source ] = model.id;
+      if( model.id || model.source )
+        where[ inverseAssoc.id || model.source ] = model.id;
       others = inverseConstructor.all().where( where ) || [];
       console.log('Checked inverseConstructor, found %s instances.', others.length, others, where, inverseConstructor.all().models);
 

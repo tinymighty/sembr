@@ -1,15 +1,27 @@
-define( ['sembr', 'backbone', 'sembr.ractiveview', 'underscore', 'backbone-undo', 'moment',
+define( ['sembr', 'backbone', 'sembr.ractiveview', 'jquery', 'underscore', 'backbone-undo', 'moment',
+'drop',
 'rv!./timeline.tpl',
 'less!./timeline'],
-function( sembr, Backbone, RactiveView, _, BackboneUndo, moment,
+
+/**
+ * The Timeline view renders plantings as a graph with a horiztonal time axis, 
+ * which can be scrolled to move through time, and zoomed in and out to change
+ * the granularity.
+ */
+function( sembr, Backbone, RactiveView, $, _, BackboneUndo, moment,
+Drop,
 template ){
 
   "use strict";
 
-  //linearScale and getPointsArray taken from graph example on ractivejs.org <3
-
-  // this returns a function that scales a value from a given domain
-  // to a given range. Hat-tip to D3
+  /**
+   * Given a domain and a range, returns a function which will scale
+   * a value from the domain to the range.  Crude example:
+   * domain 1-100
+   * range 1-10
+   * input 50
+   * output 5
+   */
   function linearScale( domain, range ) {
     var d0 = domain[0], r0 = range[0], multipler = ( range[1] - r0 ) / ( domain[1] - d0 );
 
@@ -17,19 +29,92 @@ template ){
       //console.log( 'Calculating linear scale: num(%o), multiplier(%o), domain(%o), range(%o)', num, multipler, domain, range);
       return r0 + ( ( num - d0 ) * multipler );
     };
-  };
+  }
 
+  /**
+   * Some core variables
+   */
   var 
     groupableBy = ['plant', 'place'],
-    plantingHeight = 50,
+    groupBy = 'plant',
+    plantingHeight = 30,
     dayWidth = 10,  //the width for a day at scale factor 1
     defaultScale = 1,
     y_offset = 100, //the initial vertical offset for planting groups
-    planting_group_spacing = 50, //the spacing between planting groups
-    previous_group_y = y_offset //used when calculating vertical group positions
+    planting_group_spacing = 30, //the spacing between planting groups
+    previous_group_y = y_offset, //used when calculating vertical group positions
+    previous_group_height = 0 //used when calculating vertical group positions
   ;
+  
+  
+  /**
+   * Ractive decorator.
+   * Show a tooltip when hovering over actions
+   */
+  var actionDecorator = function( node ){
+    console.log('Decorating planting action: %o', node._ractive.root.get(node._ractive.keypath));
+    var
+      model = node._ractive.root.get(node._ractive.keypath),
+      action_type = model.action_type,
+      from_moment = moment(model.from),
+      until_moment = moment(model.until)
+    ;
+    var drop = new Drop({
+      target: node,
+      position: 'top middle',
+      content: action_type + '<br>' + from_moment.format('Do MMM') + ' - ' + until_moment.format('Do MMM'),
+      openOn: 'hover',
+      classes: 'drop-theme-arrows-bounce-dark'
+    });
 
-  //ItemView provides some default rendering logic
+    return {
+      teardown: function(){
+        drop.destroy();
+      }
+    };
+  };
+  
+  /**
+   * Ractive decorator.
+   * Set up the filter field as a selectize widget.
+   */
+  var filterFieldDecorator = function( node ){
+    var 
+      self = this,
+      options = []
+    ;
+    sembr.trackr.plants.each(function( plant ){
+      options.push({
+        label: 'plant',
+        value: 'plant/'+plant.get('id'), 
+        text: plant.get('name') || plant.get('use_name')
+      });
+    })
+    $(node).selectize({
+      create: false,
+      createOnBlur: false,
+      //maxItems: 1,
+      options: options
+    });
+
+    return {
+      teardown: function(){
+        node.selectize.destroy();
+      }
+    }
+  }
+  
+  
+  /*
+  * Ractive Helper. 
+  Get a planting group icon based on the group provided.
+  */
+  var plantingGroupLabelFromGroup = function( group ){
+   return group.name;
+  };
+  
+
+
   return RactiveView.extend( {
     template: template,
 
@@ -39,16 +124,16 @@ template ){
     },
 
     data: {
-      'xScale': function(){ return 0; }, //temporary xScale object, it'll be overridden when rendered
-      'verticalGroupPos': function( index ){
-
-        previous_group_y = (index===0 ? 0 : previous_group_y) + y_offset + index*plantingHeight + (index===0 ? 0 : 1) * planting_group_spacing; 
-        return previous_group_y;
-      },
       'offset': 0,
       'zoomScale': 1,
       'showDays': false,
-      'formattingBreakpoint':0
+      'formattingBreakpoint':0,
+      'plantingHeight': plantingHeight
+    },
+
+    decorators: {
+      action: actionDecorator,
+      filterBy: filterFieldDecorator
     },
 
     events: {
@@ -57,13 +142,22 @@ template ){
     },
 
     helpers: {
+      'xScale': function(){ return 0; }, //temporary xScale object, it'll be overridden when rendered
       'group': '_group',
       'formatDate': '_formatDate',
       'formatDay': '_formatDay',
       'formatMonth': '_formatMonth',
       'dayIndex': '_getDayIndexFromDate',
-      'plantingGroupLabel': '_plantingGroupLabelFromGroup',
-      'plantingGroupIcon': '_plantingGroupIconFromGroup'
+      'plantingGroupLabel': plantingGroupLabelFromGroup,
+      'plantingGroupIcon': '_plantingGroupIconFromGroup',
+      'echoInterval': function(){
+          console.log('Drawing intervals, yo.');
+      },
+      'verticalGroupPos': function( index ){
+        previous_group_y = previous_group_y + previous_group_height + (index===0 ? 0 :  planting_group_spacing); 
+        previous_group_height = this.groups[index].models.length * plantingHeight;
+        return previous_group_y;
+      },
     },
 
     observers: {
@@ -71,30 +165,45 @@ template ){
       'width': 'widthObserver',
       'height': 'heightObserver',
       'offset': 'offsetObserver',
-      'formattingBreakpoint': 'formattingBreakpointObserver'
+      'filterBy': 'filterByObserver',
+      'formattingBreakpoint': 'formattingBreakpointObserver',
+      'xScale': 'xScaleObserver',
+      'intervals': 'intervalsObserver'
     },   
 
     min_scale: 0.00001,
-    max_scale: 4, 
+    max_scale: 10, 
 
-    initialize: function(options){
+    _beforeRactive: function( options ){
+      this.options = options = _(options).defaults({group_by: 'plant'});
+      
+      this.data.plants = options.collections.plants;
+      this.data.places = options.collections.places;
+      options.collections.plantings.sortBy('planted_from');
+      this.groups = this.data.groups = this.groupPlantings( options.collections.plantings, groupBy );
+      this.data.group_by = options.group_by;
+
+      this.data.intervals = [];//this.generateIntervals(this.from, this.until, this.scale)
+
+      this._ractiveOptions.magic = false;
+    },
+
+    initialize: function( options ){
       var 
         ractive = this.ractive,
         from,
         until
       ;
 
-      this.options = _(options).defaults({group_by: 'plant'});
-
       if(!options.collections || _(['plants', 'places', 'plantings']).difference(_(options.collections).keys()).length  ){
         throw 'Plantings, places and plants collections must be passed to plantings/timeline view.';
       }
 
-      this.history = new Backbone.UndoManager;
+      this.history = new Backbone.UndoManager();
       this.history.register(options.collections);
       
+      this.group_by = options.group_by;
       this.drawn = false;
-      this.group_by = 'plant';
       this.baseWidth = 0;
       this.screenWidth = $(window).width;
       this.width = this.baseWidth;
@@ -124,17 +233,6 @@ template ){
         sembr.error('Woah, trying to display 5 years of data. Performance is still too sucky for that, sorry!');
       }
 
-      var that = this;
-      
-      //init ractive variables
-      this.set( 'plants', options.collections.plants );
-      this.set( 'places', options.collections.places );
-      console.log("Wrapped plants and places", options.collections);
-      //this.set( 'plantings', options.collections.plantings );
-      options.collections.plantings.sortBy('planted_from');
-      this.set( 'groups', this.groupPlantings( options.collections.plantings ) );
-      this.set( 'group_by', this.options.group_by);
-      
 
       // update width and height when window resizes
       $(window).resize( _(this.onResize).bind(this) );
@@ -143,22 +241,25 @@ template ){
       //DomReady should have fired before the whole application
       //initialized, so I'm not sure why this is necessary, but it is...
       $( _(this.onReady).bind(this) );
-      //redraw();
+
     },
 
     /**
      * Handler for the render event
      */
     render: function(){
+      console.warn("RENDER CALLED!");
       this.draw();
     },
 
     onReady: function(){
       this.startScrollListeners();
+      this.onResize();
+      this.render();
     },
 
     draw: function ( force ) {
-      console.log('Draw called', force);
+      console.log('Draw called', !!force);
 
       var 
         containerWidth = $(this.ractive.nodes.plantings_svg_wrapper).width(), 
@@ -167,10 +268,10 @@ template ){
       ;
       //until width and height are plus values value, don't bother drawing!
       if( !containerWidth && !force ){
-        console.warn('Draw called before element is visible! Pass force argument as true to override.');
+        console.warn('Draw called before element %o has width (%s)!', this.ractive.nodes.plantings_svg_wrapper, $(this.ractive.nodes.plantings_svg_wrapper).width());
         return;
       }
-
+      
       if( this.drawn && containerWidth === this.screenWidth && !force){
         console.warn('Draw was called, but the screen width hasnt changed since it was last drawn. Pass the force argument as true to override this.');
         return;
@@ -183,31 +284,23 @@ template ){
 
       console.log('Redrawing scroll width(%o) for screen width (%o)', this.width, this.screenWidth);
 
-      //centerDay = untilMoment.subtract('days', untilMoment.diff(from, 'days') / 2 );
-      //ractive.set( 'zoomScale', currentScale );
 
-      //generate enough time to fill 3 screens width (to provide drag-padding)
-      //numDays = baseWidth / (baseDayWidth * currentScale);
-      //split those days either side (HARDCODED TO TODAY FOR NOW!!!)
       this.from = moment( this.earliestDate ).startOf('day').subtract(3, 'months');
       this.until = moment( this.latestDate ).endOf('day').add(3, 'months');
       this.numDays = this.until.diff( this.from, 'days');
-
       
       console.log('Calculated %o days based on planting dates with 3 months padding either side', this.numDays);
 
       intervals = this.generateIntervals(this.from, this.until, this.scale);
-      //this.set( 'center', center );
-      this.set( 'intervals', intervals );
-
       console.log('Setting xScale from domain(%o) to range(%o)', [ 0, this.numDays ], [ 0, this.baseWidth ]);
-      this.set( 'xScale', linearScale([ 0, this.numDays ], [ 0, this.baseWidth ]) );
-      //ractive.set( 'yScale', linearScale([ 0, options.collections.plantings.length ], [ 0, currentScale ]) );
 
-      this.set({
-        width: containerWidth,
-        height: containerHeight
+      //this.set( 'center', center );
+      this.set( {
+          'intervals': intervals,
+          'xScale': linearScale([ 0, this.numDays ], [ 0, this.baseWidth ])
       });
+
+      
       this.drawn = true;
     },
 
@@ -223,6 +316,14 @@ template ){
         width: containerWidth,
         height: containerHeight
       });
+    },
+    
+    intervalsObserver: function( intervals ){
+      console.log('intervals changed! %o', intervals);
+    },
+    
+    xScaleObserver: function( xScale ){
+        console.log('xScale changed!');
     },
 
     /**
@@ -249,11 +350,11 @@ template ){
       //console.log('Offset right side is %o, screenWidth is %o', offset+this.width, this.screenWidth);
       if(offset+this.width < this.screenWidth ){
         this.set('timeline_x', this.screenWidth-this.width );
-        return false;
+        return;
       }
       if(offset > 0){
         this.set('timeline_x', 0);
-        return false;
+        return;
       }
       this.set('timeline_x', offset);
     },
@@ -319,7 +420,7 @@ template ){
       }
 
       var intervalDisplayBreakpoints = {
-        days: 5, //stop showing  the view is zoomed out more than 500%
+        days: 8, //stop showing  the view is zoomed out more than 500%
         weeks: 0.3, //over 100 days, don't show weeks
         months: 0, //always show months
         //seasons: 3000, //over 3000 days, don't show seasons
@@ -331,6 +432,8 @@ template ){
        */
       /*if(scale > intervalDisplayBreakpoints.days){
         this.set('showDays', true);
+      }else{
+        this.set('showDays', false);
       }*/
 
       //console.log('Checking formatting breakpoints', this.formattingBreakpoints);
@@ -352,14 +455,33 @@ template ){
       }, this);
       
     },
+    
+    
+    /** 
+     * When the filter field changes, update the planting groups accordingly
+     */
+    filterByObserver: function(){
+      
+    },
+    
 
+    /**
+     * Attach listeners for Scroll Wheel events
+     */
     startScrollListeners: function(){
       console.log("Attaching scroll listeners.");
-      this.$el[0].addEventListener('DOMMouseScroll', _(this.onScroll).bind(this) ,false);
-      this.$el[0].addEventListener('mousewheel',_(this.onScroll).bind(this),false);
+      this.$el[0].addEventListener('DOMMouseScroll', _(this.onScrollWheel).bind(this) ,false);
+      this.$el[0].addEventListener('mousewheel',_(this.onScrollWheel).bind(this),false);
     },
 
-    onScroll: function( evt ){
+
+    /**
+     * Scroll wheel/track pad scroll event handler
+     * 
+     * Tries to balance out the various ways scroll deltas are set accross devices
+     * and browsers, then sets the current scale and offset accordingly
+     */ 
+    onScrollWheel: function( evt ){
       //for standard mouse wheels, try to balance out the various browser deltas
       var delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
 
@@ -386,11 +508,14 @@ template ){
     },
 
     /**
-     * Given an date range, return an array of intervals. 
-     * This is used to provide a resolution to the timeline vie with the interval granularity 
+     * Given a date range and the current view scale, return an array of intervals. 
+     * 
+     * Used to provide a resolution to the timeline vie with the interval granularity 
      * updating based on the zoom extent
-     * @param  Array days     An array of Date objects
-     * @param  Number scale   The current view scale in days (ie. how many days fit the screen)
+     * 
+     * @param  Date from      The starting date of the range
+     * @param  Date to        The ending date of the range
+     * @param  Number scale   The current view scale
      * @return Array 
      */
     generateIntervals: function( from, to, scale ){
@@ -415,7 +540,7 @@ template ){
         months: 0.05, //over 600 days, don't show months
         //seasons: 3000, //over 3000 days, don't show seasons
         years: 0 //years are visible all the way up to the maximum zoom extent
-      }
+      };
 
       //calculate the number of days in the specified range
       //2014-01-01 to 2014-12-31 would output as 0 years, so the values
@@ -427,7 +552,7 @@ template ){
         weeks: moment(toMoment).endOf('week').add(1, 'hour').diff( moment(fromMoment).startOf('week'), 'weeks' ),
         months: moment(toMoment).endOf('month').add(1, 'hour').diff( moment(fromMoment).startOf('month'), 'months' ),
         years: moment(toMoment).endOf('year').add(1, 'hour').diff( moment(fromMoment).startOf('year'), 'years' )
-      }
+      };
       
       console.log('Diffs %o', diffs);
       
@@ -511,7 +636,13 @@ template ){
     },
 
 
-
+    /**
+     * Given a Plantings collection and a property to group by, returns
+     * Collections of Planting models grouped by that property
+     * @param  {Plantings Collection} plantings A Plantings Collection
+     * @param  {String} by        Property name to group by
+     * @return {Array}           An array of Collections
+     */
     groupPlantings: function( plantings, by ){
       var 
         groups = [], 
@@ -519,17 +650,14 @@ template ){
         getGroupName
       ;
       if( by===undefined){
-        by = this.group_by;
+        by = groupBy;
       }else{
         if( _(groupableBy).indexOf(by) > -1){
-          this.group_by = by;
+          groupBy = by;
         }else{
-          by = this.group_by;
+          by = groupBy;
         }
       }
-
-      this.set('group_by', this.group_by);
-
 
       grouped = plantings.groupBy( function( model ){
         switch( by ){
@@ -537,11 +665,10 @@ template ){
             return model.get('plant_id');
           case 'place':
             return (model.place()) ? model.get('place_id') : null; //place can be undefined
-            break;
         }
       }.bind(this));
 
-      function getGroupName( member ){
+      getGroupName = function( member ){
         switch( by ){
           case 'plant':
             return member.plant().get('use_name');
@@ -551,9 +678,12 @@ template ){
       };
 
       _(grouped).each(function(models, id){
-        models = new Backbone.Collection(models);
-        models.sortBy('planted_from');
-        groups.push( { name: getGroupName( models.at(0) ), models: models });
+        //models = new sembr.trackr.collections.Plantings(models);
+        /*models.comparator = function(model){
+          return model.get('planted_from');
+        }
+        models.sort();*/
+        groups.push( { name: getGroupName( models[0] ), models: models });
       }.bind(this));
 
       return groups;
@@ -565,11 +695,10 @@ template ){
      * Get the index of the date in the days array, if present
      * otherwise -1
      */
-    _getDayIndexFromDate: function( iso_date_string ){
+    _getDayIndexFromDate: function( iso_date_string, fallback, fallback_adjustment ){
       var 
         from = this.from,
-        until = this.until,
-        referenceMoment = moment( iso_date_string ),
+        referenceMoment = moment( iso_date_string || fallback ).add(fallback_adjustment),
         diff = referenceMoment.diff( from, 'days' )
       ;
       //console.log('getDayIndexFromDate: ref(%o), until(%o), diff in days(%o)', referenceMoment.format(), until.format(), diff);
@@ -590,7 +719,7 @@ template ){
     },
 
     _formatMonth: function( m, formattingBreakpoint ){
-      console.log("RENDERING MONTH FORMATs", this.scale, formattingBreakpoint);
+      console.log("RENDERING MONTH FORMATs", m.format(), this.scale, formattingBreakpoint);
       if(this.scale > this.formattingBreakpoints.month[0]){
         return m.format('MMMM');
       }
@@ -602,7 +731,7 @@ template ){
 
     _formatDay: function( m, addDays, formattingBreakpoint ){
       console.log('RE-RENDERING DAY FORMATS!', this.scale, formattingBreakpoint);
-      dayMoment = moment(m).add(1, addDays);
+      var dayMoment = moment(m).add(1, addDays);
       if( this.scale > this.formattingBreakpoints.day[0] ){
         return dayMoment.format('dddd');
       }
@@ -620,17 +749,15 @@ template ){
         return '';
       }
     },
-
-    /*
-     * Ractive Helper. Get a planting group icon based on the group provided.
-     */
+    
+     
     _plantingGroupIconFromGroup: function( group ){
-      if( this.get('group_by') === 'plant' ){
-        return '';
+      if( this.group_by === 'plant' ){
+        return 'iconclass-plant-group';
       }
       else 
-      if( this.get('group_by') === 'place'){
-        return '';
+      if( this.group_by === 'place'){
+        return 'iconclass-place-group';
       }
     },
 
