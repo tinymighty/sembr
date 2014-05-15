@@ -2,16 +2,26 @@ define( ['sembr', 'backbone', 'sembr.ractiveview', 'jquery', 'underscore', 'back
 'drop',
 'rv!./timeline.tpl',
 'less!./timeline'],
+
+/**
+ * The Timeline view renders plantings as a graph with a horiztonal time axis, 
+ * which can be scrolled to move through time, and zoomed in and out to change
+ * the granularity.
+ */
 function( sembr, Backbone, RactiveView, $, _, BackboneUndo, moment,
 Drop,
 template ){
 
   "use strict";
 
-  //linearScale and getPointsArray taken from graph example on ractivejs.org <3
-
-  // this returns a function that scales a value from a given domain
-  // to a given range. Hat-tip to D3
+  /**
+   * Given a domain and a range, returns a function which will scale
+   * a value from the domain to the range.  Crude example:
+   * domain 1-100
+   * range 1-10
+   * input 50
+   * output 5
+   */
   function linearScale( domain, range ) {
     var d0 = domain[0], r0 = range[0], multipler = ( range[1] - r0 ) / ( domain[1] - d0 );
 
@@ -21,6 +31,9 @@ template ){
     };
   }
 
+  /**
+   * Some core variables
+   */
   var 
     groupableBy = ['plant', 'place'],
     groupBy = 'plant',
@@ -32,8 +45,76 @@ template ){
     previous_group_y = y_offset, //used when calculating vertical group positions
     previous_group_height = 0 //used when calculating vertical group positions
   ;
+  
+  
+  /**
+   * Ractive decorator.
+   * Show a tooltip when hovering over actions
+   */
+  var actionDecorator = function( node ){
+    console.log('Decorating planting action: %o', node._ractive.root.get(node._ractive.keypath));
+    var
+      model = node._ractive.root.get(node._ractive.keypath),
+      action_type = model.action_type,
+      from_moment = moment(model.from),
+      until_moment = moment(model.until)
+    ;
+    var drop = new Drop({
+      target: node,
+      position: 'top middle',
+      content: action_type + '<br>' + from_moment.format('Do MMM') + ' - ' + until_moment.format('Do MMM'),
+      openOn: 'hover',
+      classes: 'drop-theme-arrows-bounce-dark'
+    });
 
-  //ItemView provides some default rendering logic
+    return {
+      teardown: function(){
+        drop.destroy();
+      }
+    };
+  };
+  
+  /**
+   * Ractive decorator.
+   * Set up the filter field as a selectize widget.
+   */
+  var filterFieldDecorator = function( node ){
+    var 
+      self = this,
+      options = []
+    ;
+    sembr.trackr.plants.each(function( plant ){
+      options.push({
+        label: 'plant',
+        value: 'plant/'+plant.get('id'), 
+        text: plant.get('name') || plant.get('use_name')
+      });
+    })
+    $(node).selectize({
+      create: false,
+      createOnBlur: false,
+      //maxItems: 1,
+      options: options
+    });
+
+    return {
+      teardown: function(){
+        node.selectize.destroy();
+      }
+    }
+  }
+  
+  
+  /*
+  * Ractive Helper. 
+  Get a planting group icon based on the group provided.
+  */
+  var plantingGroupLabelFromGroup = function( group ){
+   return group.name;
+  };
+  
+
+
   return RactiveView.extend( {
     template: template,
 
@@ -51,28 +132,8 @@ template ){
     },
 
     decorators: {
-      action: function( node ){
-        console.log('Decorating planting action: %o', node._ractive.root.get(node._ractive.keypath));
-        var
-          model = node._ractive.root.get(node._ractive.keypath),
-          action_type = model.action_type,
-          from_moment = moment(model.from),
-          until_moment = moment(model.until)
-        ;
-        var drop = new Drop({
-          target: node,
-          position: 'top middle',
-          content: action_type + '<br>' + from_moment.format('Do MMM') + ' - ' + until_moment.format('Do MMM'),
-          openOn: 'hover',
-          classes: 'drop-theme-arrows-bounce-dark'
-        });
-
-        return {
-          teardown: function(){
-            drop.destroy();
-          }
-        };
-      }
+      action: actionDecorator,
+      filterBy: filterFieldDecorator
     },
 
     events: {
@@ -87,7 +148,7 @@ template ){
       'formatDay': '_formatDay',
       'formatMonth': '_formatMonth',
       'dayIndex': '_getDayIndexFromDate',
-      'plantingGroupLabel': '_plantingGroupLabelFromGroup',
+      'plantingGroupLabel': plantingGroupLabelFromGroup,
       'plantingGroupIcon': '_plantingGroupIconFromGroup',
       'echoInterval': function(){
           console.log('Drawing intervals, yo.');
@@ -104,6 +165,7 @@ template ){
       'width': 'widthObserver',
       'height': 'heightObserver',
       'offset': 'offsetObserver',
+      'filterBy': 'filterByObserver',
       'formattingBreakpoint': 'formattingBreakpointObserver',
       'xScale': 'xScaleObserver',
       'intervals': 'intervalsObserver'
@@ -393,14 +455,33 @@ template ){
       }, this);
       
     },
+    
+    
+    /** 
+     * When the filter field changes, update the planting groups accordingly
+     */
+    filterByObserver: function(){
+      
+    },
+    
 
+    /**
+     * Attach listeners for Scroll Wheel events
+     */
     startScrollListeners: function(){
       console.log("Attaching scroll listeners.");
-      this.$el[0].addEventListener('DOMMouseScroll', _(this.onScroll).bind(this) ,false);
-      this.$el[0].addEventListener('mousewheel',_(this.onScroll).bind(this),false);
+      this.$el[0].addEventListener('DOMMouseScroll', _(this.onScrollWheel).bind(this) ,false);
+      this.$el[0].addEventListener('mousewheel',_(this.onScrollWheel).bind(this),false);
     },
 
-    onScroll: function( evt ){
+
+    /**
+     * Scroll wheel/track pad scroll event handler
+     * 
+     * Tries to balance out the various ways scroll deltas are set accross devices
+     * and browsers, then sets the current scale and offset accordingly
+     */ 
+    onScrollWheel: function( evt ){
       //for standard mouse wheels, try to balance out the various browser deltas
       var delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
 
@@ -427,11 +508,14 @@ template ){
     },
 
     /**
-     * Given an date range, return an array of intervals. 
-     * This is used to provide a resolution to the timeline vie with the interval granularity 
+     * Given a date range and the current view scale, return an array of intervals. 
+     * 
+     * Used to provide a resolution to the timeline vie with the interval granularity 
      * updating based on the zoom extent
-     * @param  Array days     An array of Date objects
-     * @param  Number scale   The current view scale in days (ie. how many days fit the screen)
+     * 
+     * @param  Date from      The starting date of the range
+     * @param  Date to        The ending date of the range
+     * @param  Number scale   The current view scale
      * @return Array 
      */
     generateIntervals: function( from, to, scale ){
@@ -611,11 +695,10 @@ template ){
      * Get the index of the date in the days array, if present
      * otherwise -1
      */
-    _getDayIndexFromDate: function( iso_date_string ){
+    _getDayIndexFromDate: function( iso_date_string, fallback, fallback_adjustment ){
       var 
         from = this.from,
-        until = this.until,
-        referenceMoment = moment( iso_date_string ),
+        referenceMoment = moment( iso_date_string || fallback ).add(fallback_adjustment),
         diff = referenceMoment.diff( from, 'days' )
       ;
       //console.log('getDayIndexFromDate: ref(%o), until(%o), diff in days(%o)', referenceMoment.format(), until.format(), diff);
@@ -666,13 +749,7 @@ template ){
         return '';
       }
     },
-
-    /*
-     * Ractive Helper. Get a planting group icon based on the group provided.
-     */
-     _plantingGroupLabelFromGroup: function( group ){
-      return group.name;
-     },
+    
      
     _plantingGroupIconFromGroup: function( group ){
       if( this.group_by === 'plant' ){

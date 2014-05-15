@@ -11,9 +11,9 @@
 </div>
 
 Group by: {{group_by}}
-Scale: <input value="{{zoomScale}}" type="number" step="0.05"> <button on-click="setScale" value="9">Week</button> <button on-click="setScale" value="40">Month</button> <button on-click="setScale" value="370">Year</button>  <button on-click="setScale" value="1825">5 Years</button>
+Scale: <input value="{{zoomScale}}" type="number" step="0.05">
 Offset: <input value="{{offset}}" type="number" step="10">
-
+Filter by: <input value="{{filterBy}}" type="text" decorator="filterBy">
 
 
 <div id="plantings_svg_wrapper">
@@ -76,10 +76,10 @@ Offset: <input value="{{offset}}" type="number" step="10">
 		 		<!--<text>{{planted_from}} / {{planted_until}} / {{ dayIndex( planted_until ) }} / {{ xScale( dayIndex( planted_until ) ) }}</text>-->
 		 	</g>
 
-			<g class="harvest group">
+			<g class="action group">
 			{{#actions}}
-				<g class="harvest period" transform="" on-hover="dateTooltip" decorator="action">
-					<line x1="{{ xScale( dayIndex( from ) ) }}" x2="{{ xScale( dayIndex( until ) ) }}" />
+				<g class="action period" transform="" on-hover="dateTooltip" decorator="action">
+					<line x1="{{ xScale( dayIndex( from ) ) }}" x2="{{ xScale( dayIndex( until, from, '1 day' ) ) }}" />
 				</g>
 			{{/actions}}
 			</g>
